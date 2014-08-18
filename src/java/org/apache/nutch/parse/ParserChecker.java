@@ -17,7 +17,6 @@
 
 package org.apache.nutch.parse;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -48,8 +47,8 @@ import java.util.Map.Entry;
  * duplicates during the dedup procedure. 
  * It is calculated using {@link org.apache.nutch.crawl.MD5Signature} or
  * {@link org.apache.nutch.crawl.TextProfileSignature}.</li>
- * <li><tt>Version</tt>: From {@link org.apache.nutch.parse.ParseData}.</li>
- * <li><tt>Status</tt>: From {@link org.apache.nutch.parse.ParseData}.</li>
+ * <li><tt>Version</tt>: From {@link org.apache.nutch.parse}.</li>
+ * <li><tt>Status</tt>: From {@link org.apache.nutch.parse}.</li>
  * <li><tt>Title</tt>: of the URL</li>
  * <li><tt>Outlinks</tt>: associated with the URL</li>
  * <li><tt>Content Metadata</tt>: such as <i>X-AspNet-Version</i>, <i>Date</i>,
@@ -107,7 +106,7 @@ public class ParserChecker implements Tool {
     
     ProtocolOutput protocolOutput = protocol.getProtocolOutput(url, page);
     
-    if(!protocolOutput.getStatus().isSuccess()) {
+    if(!(protocolOutput.getStatus().getCode()==0)) {
       LOG.error("Fetch failed with protocol status: "
           + ProtocolStatusUtils.getName(protocolOutput.getStatus().getCode())
           + ": " + ProtocolStatusUtils.getMessage(protocolOutput.getStatus()));
@@ -119,7 +118,7 @@ public class ParserChecker implements Tool {
       LOG.error("No content for " + url);
       return (-1);
     }
-    page.setBaseUrl(new org.apache.avro.util.Utf8(url));
+    page.setBaseUrl(url);
     page.setContent(ByteBuffer.wrap(content.getContent()));
 
     if (force) {
@@ -133,7 +132,7 @@ public class ParserChecker implements Tool {
       return (-1);
     }
 
-    page.setContentType(new Utf8(contentType));
+    page.setContentType(contentType);
 
     if (ParserJob.isTruncated(url, page)) {
       LOG.warn("Content is truncated, parse may fail!");
@@ -159,13 +158,12 @@ public class ParserChecker implements Tool {
     LOG.info("---------\nUrl\n---------------\n");
     System.out.print(url + "\n");
     LOG.info("---------\nMetadata\n---------\n");
-    Map<CharSequence, ByteBuffer> metadata = page.getMetadata();
+    Map<String, ByteBuffer> metadata = page.getMetadata();
     StringBuffer sb = new StringBuffer();
     if (metadata != null) {
-      Iterator<Entry<CharSequence, ByteBuffer>> iterator = metadata.entrySet()
-          .iterator();
+      Iterator<Entry<String, ByteBuffer>> iterator = metadata.entrySet().iterator();
       while (iterator.hasNext()) {
-        Entry<CharSequence, ByteBuffer> entry = iterator.next();
+        Entry<String, ByteBuffer> entry = iterator.next();
         sb.append(entry.getKey().toString()).append(" : \t")
             .append(Bytes.toString(entry.getValue())).append("\n");
       }

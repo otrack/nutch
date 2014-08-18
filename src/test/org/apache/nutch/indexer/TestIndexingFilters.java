@@ -16,7 +16,6 @@
  */
 package org.apache.nutch.indexer;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.metadata.Metadata;
 import org.apache.nutch.storage.WebPage;
@@ -44,8 +43,8 @@ public class TestIndexingFilters {
 
     IndexingFilters filters = new IndexingFilters(conf);
     WebPage page = WebPage.newBuilder().build();
-    page.setText(new Utf8("text"));
-    page.setTitle(new Utf8("title"));
+    page.setText("text");
+    page.setTitle("title");
     filters.filter(new NutchDocument(),"http://www.example.com/",page);
   }
 
@@ -61,8 +60,8 @@ public class TestIndexingFilters {
 
     IndexingFilters filters = new IndexingFilters(conf);
     WebPage page = WebPage.newBuilder().build();
-    page.setText(new Utf8("text"));
-    page.setTitle(new Utf8("title"));
+    page.setText("text");
+    page.setTitle("title");
     NutchDocument doc = filters.filter(null,"http://www.example.com/",page);
 
     assertNull(doc);
@@ -84,8 +83,8 @@ public class TestIndexingFilters {
 
     IndexingFilters filters1 = new IndexingFilters(conf);
     WebPage page = WebPage.newBuilder().build();
-    page.setText(new Utf8("text"));
-    page.setTitle(new Utf8("title"));
+    page.setText("text");
+    page.setTitle("title");
     NutchDocument fdoc1 = filters1.filter(new NutchDocument(),"http://www.example.com/",page);
 
     // add another index filter

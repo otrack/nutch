@@ -6,35 +6,36 @@
 package org.apache.nutch.storage;  
 @SuppressWarnings("all")
 public class WebPage extends org.apache.gora.persistency.impl.PersistentBase implements org.apache.avro.specific.SpecificRecord, org.apache.gora.persistency.Persistent {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"WebPage\",\"namespace\":\"org.apache.nutch.storage\",\"fields\":[{\"name\":\"__g__dirty\",\"type\":\"bytes\",\"doc\":\"Bytes used to represent weather or not a field is dirty.\",\"default\":\"AAAAAA==\"},{\"name\":\"baseUrl\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"status\",\"type\":\"int\",\"default\":0},{\"name\":\"fetchTime\",\"type\":\"long\",\"default\":0},{\"name\":\"prevFetchTime\",\"type\":\"long\",\"default\":0},{\"name\":\"fetchInterval\",\"type\":\"int\",\"default\":0},{\"name\":\"retriesSinceFetch\",\"type\":\"int\",\"default\":0},{\"name\":\"modifiedTime\",\"type\":\"long\",\"default\":0},{\"name\":\"prevModifiedTime\",\"type\":\"long\",\"default\":0},{\"name\":\"protocolStatus\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"ProtocolStatus\",\"fields\":[{\"name\":\"__g__dirty\",\"type\":\"bytes\",\"doc\":\"Bytes used to represent weather or not a field is dirty.\",\"default\":\"AA==\"},{\"name\":\"code\",\"type\":\"int\",\"default\":0},{\"name\":\"args\",\"type\":{\"type\":\"array\",\"items\":\"string\"},\"default\":[]},{\"name\":\"lastModified\",\"type\":\"long\",\"default\":0}]}],\"default\":null},{\"name\":\"content\",\"type\":[\"null\",\"bytes\"],\"default\":null},{\"name\":\"contentType\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"prevSignature\",\"type\":[\"null\",\"bytes\"],\"default\":null},{\"name\":\"signature\",\"type\":[\"null\",\"bytes\"],\"default\":null},{\"name\":\"title\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"text\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"parseStatus\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"ParseStatus\",\"fields\":[{\"name\":\"__g__dirty\",\"type\":\"bytes\",\"doc\":\"Bytes used to represent weather or not a field is dirty.\",\"default\":\"AA==\"},{\"name\":\"majorCode\",\"type\":\"int\",\"default\":0},{\"name\":\"minorCode\",\"type\":\"int\",\"default\":0},{\"name\":\"args\",\"type\":{\"type\":\"array\",\"items\":\"string\"},\"default\":[]}]}],\"default\":null},{\"name\":\"score\",\"type\":\"float\",\"default\":0},{\"name\":\"reprUrl\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"headers\",\"type\":{\"type\":\"map\",\"values\":[\"null\",\"string\"]},\"default\":{}},{\"name\":\"outlinks\",\"type\":{\"type\":\"map\",\"values\":[\"null\",\"string\"]},\"default\":{}},{\"name\":\"inlinks\",\"type\":{\"type\":\"map\",\"values\":[\"null\",\"string\"]},\"default\":{}},{\"name\":\"markers\",\"type\":{\"type\":\"map\",\"values\":[\"null\",\"string\"]},\"default\":{}},{\"name\":\"metadata\",\"type\":{\"type\":\"map\",\"values\":[\"null\",\"bytes\"]},\"default\":{}},{\"name\":\"batchId\",\"type\":[\"null\",\"string\"],\"default\":null}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"WebPage\",\"namespace\":\"org.apache.nutch.storage\",\"fields\":[{\"name\":\"__g__dirty\",\"type\":\"bytes\",\"doc\":\"Bytes used to represent weather or not a field is dirty.\",\"default\":\"AAAAAA==\"},{\"name\":\"key\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"baseUrl\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"status\",\"type\":\"int\",\"default\":0},{\"name\":\"fetchTime\",\"type\":\"long\",\"default\":0},{\"name\":\"prevFetchTime\",\"type\":\"long\",\"default\":0},{\"name\":\"fetchInterval\",\"type\":\"int\",\"default\":0},{\"name\":\"retriesSinceFetch\",\"type\":\"int\",\"default\":0},{\"name\":\"modifiedTime\",\"type\":\"long\",\"default\":0},{\"name\":\"prevModifiedTime\",\"type\":\"long\",\"default\":0},{\"name\":\"protocolStatus\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"ProtocolStatus\",\"fields\":[{\"name\":\"__g__dirty\",\"type\":\"bytes\",\"doc\":\"Bytes used to represent weather or not a field is dirty.\",\"default\":\"AA==\"},{\"name\":\"code\",\"type\":\"int\",\"default\":0},{\"name\":\"args\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"default\":[]},{\"name\":\"lastModified\",\"type\":\"long\",\"default\":0}]}],\"default\":null},{\"name\":\"content\",\"type\":[\"null\",\"bytes\"],\"default\":null},{\"name\":\"contentType\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"prevSignature\",\"type\":[\"null\",\"bytes\"],\"default\":null},{\"name\":\"signature\",\"type\":[\"null\",\"bytes\"],\"default\":null},{\"name\":\"title\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"text\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"parseStatus\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"ParseStatus\",\"fields\":[{\"name\":\"__g__dirty\",\"type\":\"bytes\",\"doc\":\"Bytes used to represent weather or not a field is dirty.\",\"default\":\"AA==\"},{\"name\":\"majorCode\",\"type\":\"int\",\"default\":0},{\"name\":\"minorCode\",\"type\":\"int\",\"default\":0},{\"name\":\"args\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"default\":[]}]}],\"default\":null},{\"name\":\"score\",\"type\":\"float\",\"default\":0},{\"name\":\"reprUrl\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"headers\",\"type\":{\"type\":\"map\",\"values\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"avro.java.string\":\"String\"},\"default\":{}},{\"name\":\"outlinks\",\"type\":{\"type\":\"map\",\"values\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"avro.java.string\":\"String\"},\"default\":{}},{\"name\":\"inlinks\",\"type\":{\"type\":\"map\",\"values\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"avro.java.string\":\"String\"},\"default\":{}},{\"name\":\"markers\",\"type\":{\"type\":\"map\",\"values\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"avro.java.string\":\"String\"},\"default\":{}},{\"name\":\"metadata\",\"type\":{\"type\":\"map\",\"values\":[\"null\",\"bytes\"],\"avro.java.string\":\"String\"},\"default\":{}},{\"name\":\"batchId\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null}]}");
 
   /** Enum containing all data bean's fields. */
   public static enum Field {
     __G__DIRTY(0, "__g__dirty"),
-    BASE_URL(1, "baseUrl"),
-    STATUS(2, "status"),
-    FETCH_TIME(3, "fetchTime"),
-    PREV_FETCH_TIME(4, "prevFetchTime"),
-    FETCH_INTERVAL(5, "fetchInterval"),
-    RETRIES_SINCE_FETCH(6, "retriesSinceFetch"),
-    MODIFIED_TIME(7, "modifiedTime"),
-    PREV_MODIFIED_TIME(8, "prevModifiedTime"),
-    PROTOCOL_STATUS(9, "protocolStatus"),
-    CONTENT(10, "content"),
-    CONTENT_TYPE(11, "contentType"),
-    PREV_SIGNATURE(12, "prevSignature"),
-    SIGNATURE(13, "signature"),
-    TITLE(14, "title"),
-    TEXT(15, "text"),
-    PARSE_STATUS(16, "parseStatus"),
-    SCORE(17, "score"),
-    REPR_URL(18, "reprUrl"),
-    HEADERS(19, "headers"),
-    OUTLINKS(20, "outlinks"),
-    INLINKS(21, "inlinks"),
-    MARKERS(22, "markers"),
-    METADATA(23, "metadata"),
-    BATCH_ID(24, "batchId"),
+    KEY(1, "key"),
+    BASE_URL(2, "baseUrl"),
+    STATUS(3, "status"),
+    FETCH_TIME(4, "fetchTime"),
+    PREV_FETCH_TIME(5, "prevFetchTime"),
+    FETCH_INTERVAL(6, "fetchInterval"),
+    RETRIES_SINCE_FETCH(7, "retriesSinceFetch"),
+    MODIFIED_TIME(8, "modifiedTime"),
+    PREV_MODIFIED_TIME(9, "prevModifiedTime"),
+    PROTOCOL_STATUS(10, "protocolStatus"),
+    CONTENT(11, "content"),
+    CONTENT_TYPE(12, "contentType"),
+    PREV_SIGNATURE(13, "prevSignature"),
+    SIGNATURE(14, "signature"),
+    TITLE(15, "title"),
+    TEXT(16, "text"),
+    PARSE_STATUS(17, "parseStatus"),
+    SCORE(18, "score"),
+    REPR_URL(19, "reprUrl"),
+    HEADERS(20, "headers"),
+    OUTLINKS(21, "outlinks"),
+    INLINKS(22, "inlinks"),
+    MARKERS(23, "markers"),
+    METADATA(24, "metadata"),
+    BATCH_ID(25, "batchId"),
     ;
     /**
      * Field's index.
@@ -74,6 +75,7 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
 
   public static final String[] _ALL_FIELDS = {
   "__g__dirty",
+  "key",
   "baseUrl",
   "status",
   "fetchTime",
@@ -102,7 +104,8 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
 
   /** Bytes used to represent weather or not a field is dirty. */
   private java.nio.ByteBuffer __g__dirty = java.nio.ByteBuffer.wrap(new byte[4]);
-  private CharSequence baseUrl;
+  private java.lang.String key;
+  private java.lang.String baseUrl;
   private int status;
   private long fetchTime;
   private long prevFetchTime;
@@ -110,92 +113,118 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
   private int retriesSinceFetch;
   private long modifiedTime;
   private long prevModifiedTime;
-  private ProtocolStatus protocolStatus;
+  private org.apache.nutch.storage.ProtocolStatus protocolStatus;
   private java.nio.ByteBuffer content;
-  private CharSequence contentType;
+  private java.lang.String contentType;
   private java.nio.ByteBuffer prevSignature;
   private java.nio.ByteBuffer signature;
-  private CharSequence title;
-  private CharSequence text;
-  private ParseStatus parseStatus;
+  private java.lang.String title;
+  private java.lang.String text;
+  private org.apache.nutch.storage.ParseStatus parseStatus;
   private float score;
-  private CharSequence reprUrl;
-  private java.util.Map<CharSequence,CharSequence> headers;
-  private java.util.Map<CharSequence,CharSequence> outlinks;
-  private java.util.Map<CharSequence,CharSequence> inlinks;
-  private java.util.Map<CharSequence,CharSequence> markers;
-  private java.util.Map<CharSequence,java.nio.ByteBuffer> metadata;
-  private CharSequence batchId;
+  private java.lang.String reprUrl;
+  private java.util.Map<java.lang.String,java.lang.String> headers;
+  private java.util.Map<java.lang.String,java.lang.String> outlinks;
+  private java.util.Map<java.lang.String,java.lang.String> inlinks;
+  private java.util.Map<java.lang.String,java.lang.String> markers;
+  private java.util.Map<java.lang.String,java.nio.ByteBuffer> metadata;
+  private java.lang.String batchId;
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
   // Used by DatumWriter.  Applications should not call. 
-  public Object get(int field$) {
+  public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return __g__dirty;
-    case 1: return baseUrl;
-    case 2: return status;
-    case 3: return fetchTime;
-    case 4: return prevFetchTime;
-    case 5: return fetchInterval;
-    case 6: return retriesSinceFetch;
-    case 7: return modifiedTime;
-    case 8: return prevModifiedTime;
-    case 9: return protocolStatus;
-    case 10: return content;
-    case 11: return contentType;
-    case 12: return prevSignature;
-    case 13: return signature;
-    case 14: return title;
-    case 15: return text;
-    case 16: return parseStatus;
-    case 17: return score;
-    case 18: return reprUrl;
-    case 19: return headers;
-    case 20: return outlinks;
-    case 21: return inlinks;
-    case 22: return markers;
-    case 23: return metadata;
-    case 24: return batchId;
+    case 1: return key;
+    case 2: return baseUrl;
+    case 3: return status;
+    case 4: return fetchTime;
+    case 5: return prevFetchTime;
+    case 6: return fetchInterval;
+    case 7: return retriesSinceFetch;
+    case 8: return modifiedTime;
+    case 9: return prevModifiedTime;
+    case 10: return protocolStatus;
+    case 11: return content;
+    case 12: return contentType;
+    case 13: return prevSignature;
+    case 14: return signature;
+    case 15: return title;
+    case 16: return text;
+    case 17: return parseStatus;
+    case 18: return score;
+    case 19: return reprUrl;
+    case 20: return headers;
+    case 21: return outlinks;
+    case 22: return inlinks;
+    case 23: return markers;
+    case 24: return metadata;
+    case 25: return batchId;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
   
   // Used by DatumReader.  Applications should not call. 
   @SuppressWarnings(value="unchecked")
-  public void put(int field$, Object value) {
+  public void put(int field$, java.lang.Object value) {
     switch (field$) {
     case 0: __g__dirty = (java.nio.ByteBuffer)(value); break;
-    case 1: baseUrl = (CharSequence)(value); break;
-    case 2: status = (Integer)(value); break;
-    case 3: fetchTime = (Long)(value); break;
-    case 4: prevFetchTime = (Long)(value); break;
-    case 5: fetchInterval = (Integer)(value); break;
-    case 6: retriesSinceFetch = (Integer)(value); break;
-    case 7: modifiedTime = (Long)(value); break;
-    case 8: prevModifiedTime = (Long)(value); break;
-    case 9: protocolStatus = (ProtocolStatus)(value); break;
-    case 10: content = (java.nio.ByteBuffer)(value); break;
-    case 11: contentType = (CharSequence)(value); break;
-    case 12: prevSignature = (java.nio.ByteBuffer)(value); break;
-    case 13: signature = (java.nio.ByteBuffer)(value); break;
-    case 14: title = (CharSequence)(value); break;
-    case 15: text = (CharSequence)(value); break;
-    case 16: parseStatus = (ParseStatus)(value); break;
-    case 17: score = (Float)(value); break;
-    case 18: reprUrl = (CharSequence)(value); break;
-    case 19: headers = (java.util.Map<CharSequence,CharSequence>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
-    case 20: outlinks = (java.util.Map<CharSequence,CharSequence>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
-    case 21: inlinks = (java.util.Map<CharSequence,CharSequence>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
-    case 22: markers = (java.util.Map<CharSequence,CharSequence>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
-    case 23: metadata = (java.util.Map<CharSequence,java.nio.ByteBuffer>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
-    case 24: batchId = (CharSequence)(value); break;
+    case 1: key = (java.lang.String)(value); break;
+    case 2: baseUrl = (java.lang.String)(value); break;
+    case 3: status = (java.lang.Integer)(value); break;
+    case 4: fetchTime = (java.lang.Long)(value); break;
+    case 5: prevFetchTime = (java.lang.Long)(value); break;
+    case 6: fetchInterval = (java.lang.Integer)(value); break;
+    case 7: retriesSinceFetch = (java.lang.Integer)(value); break;
+    case 8: modifiedTime = (java.lang.Long)(value); break;
+    case 9: prevModifiedTime = (java.lang.Long)(value); break;
+    case 10: protocolStatus = (org.apache.nutch.storage.ProtocolStatus)(value); break;
+    case 11: content = (java.nio.ByteBuffer)(value); break;
+    case 12: contentType = (java.lang.String)(value); break;
+    case 13: prevSignature = (java.nio.ByteBuffer)(value); break;
+    case 14: signature = (java.nio.ByteBuffer)(value); break;
+    case 15: title = (java.lang.String)(value); break;
+    case 16: text = (java.lang.String)(value); break;
+    case 17: parseStatus = (org.apache.nutch.storage.ParseStatus)(value); break;
+    case 18: score = (java.lang.Float)(value); break;
+    case 19: reprUrl = (java.lang.String)(value); break;
+    case 20: headers = (java.util.Map<java.lang.String,java.lang.String>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
+    case 21: outlinks = (java.util.Map<java.lang.String,java.lang.String>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
+    case 22: inlinks = (java.util.Map<java.lang.String,java.lang.String>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
+    case 23: markers = (java.util.Map<java.lang.String,java.lang.String>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
+    case 24: metadata = (java.util.Map<java.lang.String,java.nio.ByteBuffer>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
+    case 25: batchId = (java.lang.String)(value); break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
 
   /**
+   * Gets the value of the 'key' field.
+   */
+  public java.lang.String getKey() {
+    return key;
+  }
+
+  /**
+   * Sets the value of the 'key' field.
+   * @param value the value to set.
+   */
+  public void setKey(java.lang.String value) {
+    this.key = value;
+    setDirty(1);
+  }
+  
+  /**
+   * Checks the dirty status of the 'key' field. A field is dirty if it represents a change that has not yet been written to the database.
+   * @param value the value to set.
+   */
+  public boolean isKeyDirty(java.lang.String value) {
+    return isDirty(1);
+  }
+
+  /**
    * Gets the value of the 'baseUrl' field.
    */
-  public CharSequence getBaseUrl() {
+  public java.lang.String getBaseUrl() {
     return baseUrl;
   }
 
@@ -203,23 +232,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'baseUrl' field.
    * @param value the value to set.
    */
-  public void setBaseUrl(CharSequence value) {
+  public void setBaseUrl(java.lang.String value) {
     this.baseUrl = value;
-    setDirty(1);
+    setDirty(2);
   }
   
   /**
    * Checks the dirty status of the 'baseUrl' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isBaseUrlDirty(CharSequence value) {
-    return isDirty(1);
+  public boolean isBaseUrlDirty(java.lang.String value) {
+    return isDirty(2);
   }
 
   /**
    * Gets the value of the 'status' field.
    */
-  public Integer getStatus() {
+  public java.lang.Integer getStatus() {
     return status;
   }
 
@@ -227,23 +256,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'status' field.
    * @param value the value to set.
    */
-  public void setStatus(Integer value) {
+  public void setStatus(java.lang.Integer value) {
     this.status = value;
-    setDirty(2);
+    setDirty(3);
   }
   
   /**
    * Checks the dirty status of the 'status' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isStatusDirty(Integer value) {
-    return isDirty(2);
+  public boolean isStatusDirty(java.lang.Integer value) {
+    return isDirty(3);
   }
 
   /**
    * Gets the value of the 'fetchTime' field.
    */
-  public Long getFetchTime() {
+  public java.lang.Long getFetchTime() {
     return fetchTime;
   }
 
@@ -251,23 +280,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'fetchTime' field.
    * @param value the value to set.
    */
-  public void setFetchTime(Long value) {
+  public void setFetchTime(java.lang.Long value) {
     this.fetchTime = value;
-    setDirty(3);
+    setDirty(4);
   }
   
   /**
    * Checks the dirty status of the 'fetchTime' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isFetchTimeDirty(Long value) {
-    return isDirty(3);
+  public boolean isFetchTimeDirty(java.lang.Long value) {
+    return isDirty(4);
   }
 
   /**
    * Gets the value of the 'prevFetchTime' field.
    */
-  public Long getPrevFetchTime() {
+  public java.lang.Long getPrevFetchTime() {
     return prevFetchTime;
   }
 
@@ -275,23 +304,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'prevFetchTime' field.
    * @param value the value to set.
    */
-  public void setPrevFetchTime(Long value) {
+  public void setPrevFetchTime(java.lang.Long value) {
     this.prevFetchTime = value;
-    setDirty(4);
+    setDirty(5);
   }
   
   /**
    * Checks the dirty status of the 'prevFetchTime' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isPrevFetchTimeDirty(Long value) {
-    return isDirty(4);
+  public boolean isPrevFetchTimeDirty(java.lang.Long value) {
+    return isDirty(5);
   }
 
   /**
    * Gets the value of the 'fetchInterval' field.
    */
-  public Integer getFetchInterval() {
+  public java.lang.Integer getFetchInterval() {
     return fetchInterval;
   }
 
@@ -299,23 +328,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'fetchInterval' field.
    * @param value the value to set.
    */
-  public void setFetchInterval(Integer value) {
+  public void setFetchInterval(java.lang.Integer value) {
     this.fetchInterval = value;
-    setDirty(5);
+    setDirty(6);
   }
   
   /**
    * Checks the dirty status of the 'fetchInterval' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isFetchIntervalDirty(Integer value) {
-    return isDirty(5);
+  public boolean isFetchIntervalDirty(java.lang.Integer value) {
+    return isDirty(6);
   }
 
   /**
    * Gets the value of the 'retriesSinceFetch' field.
    */
-  public Integer getRetriesSinceFetch() {
+  public java.lang.Integer getRetriesSinceFetch() {
     return retriesSinceFetch;
   }
 
@@ -323,23 +352,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'retriesSinceFetch' field.
    * @param value the value to set.
    */
-  public void setRetriesSinceFetch(Integer value) {
+  public void setRetriesSinceFetch(java.lang.Integer value) {
     this.retriesSinceFetch = value;
-    setDirty(6);
+    setDirty(7);
   }
   
   /**
    * Checks the dirty status of the 'retriesSinceFetch' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isRetriesSinceFetchDirty(Integer value) {
-    return isDirty(6);
+  public boolean isRetriesSinceFetchDirty(java.lang.Integer value) {
+    return isDirty(7);
   }
 
   /**
    * Gets the value of the 'modifiedTime' field.
    */
-  public Long getModifiedTime() {
+  public java.lang.Long getModifiedTime() {
     return modifiedTime;
   }
 
@@ -347,23 +376,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'modifiedTime' field.
    * @param value the value to set.
    */
-  public void setModifiedTime(Long value) {
+  public void setModifiedTime(java.lang.Long value) {
     this.modifiedTime = value;
-    setDirty(7);
+    setDirty(8);
   }
   
   /**
    * Checks the dirty status of the 'modifiedTime' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isModifiedTimeDirty(Long value) {
-    return isDirty(7);
+  public boolean isModifiedTimeDirty(java.lang.Long value) {
+    return isDirty(8);
   }
 
   /**
    * Gets the value of the 'prevModifiedTime' field.
    */
-  public Long getPrevModifiedTime() {
+  public java.lang.Long getPrevModifiedTime() {
     return prevModifiedTime;
   }
 
@@ -371,23 +400,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'prevModifiedTime' field.
    * @param value the value to set.
    */
-  public void setPrevModifiedTime(Long value) {
+  public void setPrevModifiedTime(java.lang.Long value) {
     this.prevModifiedTime = value;
-    setDirty(8);
+    setDirty(9);
   }
   
   /**
    * Checks the dirty status of the 'prevModifiedTime' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isPrevModifiedTimeDirty(Long value) {
-    return isDirty(8);
+  public boolean isPrevModifiedTimeDirty(java.lang.Long value) {
+    return isDirty(9);
   }
 
   /**
    * Gets the value of the 'protocolStatus' field.
    */
-  public ProtocolStatus getProtocolStatus() {
+  public org.apache.nutch.storage.ProtocolStatus getProtocolStatus() {
     return protocolStatus;
   }
 
@@ -395,17 +424,17 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'protocolStatus' field.
    * @param value the value to set.
    */
-  public void setProtocolStatus(ProtocolStatus value) {
+  public void setProtocolStatus(org.apache.nutch.storage.ProtocolStatus value) {
     this.protocolStatus = value;
-    setDirty(9);
+    setDirty(10);
   }
   
   /**
    * Checks the dirty status of the 'protocolStatus' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isProtocolStatusDirty(ProtocolStatus value) {
-    return isDirty(9);
+  public boolean isProtocolStatusDirty(org.apache.nutch.storage.ProtocolStatus value) {
+    return isDirty(10);
   }
 
   /**
@@ -421,7 +450,7 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    */
   public void setContent(java.nio.ByteBuffer value) {
     this.content = value;
-    setDirty(10);
+    setDirty(11);
   }
   
   /**
@@ -429,13 +458,13 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * @param value the value to set.
    */
   public boolean isContentDirty(java.nio.ByteBuffer value) {
-    return isDirty(10);
+    return isDirty(11);
   }
 
   /**
    * Gets the value of the 'contentType' field.
    */
-  public CharSequence getContentType() {
+  public java.lang.String getContentType() {
     return contentType;
   }
 
@@ -443,17 +472,17 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'contentType' field.
    * @param value the value to set.
    */
-  public void setContentType(CharSequence value) {
+  public void setContentType(java.lang.String value) {
     this.contentType = value;
-    setDirty(11);
+    setDirty(12);
   }
   
   /**
    * Checks the dirty status of the 'contentType' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isContentTypeDirty(CharSequence value) {
-    return isDirty(11);
+  public boolean isContentTypeDirty(java.lang.String value) {
+    return isDirty(12);
   }
 
   /**
@@ -469,7 +498,7 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    */
   public void setPrevSignature(java.nio.ByteBuffer value) {
     this.prevSignature = value;
-    setDirty(12);
+    setDirty(13);
   }
   
   /**
@@ -477,7 +506,7 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * @param value the value to set.
    */
   public boolean isPrevSignatureDirty(java.nio.ByteBuffer value) {
-    return isDirty(12);
+    return isDirty(13);
   }
 
   /**
@@ -493,7 +522,7 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    */
   public void setSignature(java.nio.ByteBuffer value) {
     this.signature = value;
-    setDirty(13);
+    setDirty(14);
   }
   
   /**
@@ -501,13 +530,13 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * @param value the value to set.
    */
   public boolean isSignatureDirty(java.nio.ByteBuffer value) {
-    return isDirty(13);
+    return isDirty(14);
   }
 
   /**
    * Gets the value of the 'title' field.
    */
-  public CharSequence getTitle() {
+  public java.lang.String getTitle() {
     return title;
   }
 
@@ -515,23 +544,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'title' field.
    * @param value the value to set.
    */
-  public void setTitle(CharSequence value) {
+  public void setTitle(java.lang.String value) {
     this.title = value;
-    setDirty(14);
+    setDirty(15);
   }
   
   /**
    * Checks the dirty status of the 'title' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isTitleDirty(CharSequence value) {
-    return isDirty(14);
+  public boolean isTitleDirty(java.lang.String value) {
+    return isDirty(15);
   }
 
   /**
    * Gets the value of the 'text' field.
    */
-  public CharSequence getText() {
+  public java.lang.String getText() {
     return text;
   }
 
@@ -539,23 +568,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'text' field.
    * @param value the value to set.
    */
-  public void setText(CharSequence value) {
+  public void setText(java.lang.String value) {
     this.text = value;
-    setDirty(15);
+    setDirty(16);
   }
   
   /**
    * Checks the dirty status of the 'text' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isTextDirty(CharSequence value) {
-    return isDirty(15);
+  public boolean isTextDirty(java.lang.String value) {
+    return isDirty(16);
   }
 
   /**
    * Gets the value of the 'parseStatus' field.
    */
-  public ParseStatus getParseStatus() {
+  public org.apache.nutch.storage.ParseStatus getParseStatus() {
     return parseStatus;
   }
 
@@ -563,23 +592,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'parseStatus' field.
    * @param value the value to set.
    */
-  public void setParseStatus(ParseStatus value) {
+  public void setParseStatus(org.apache.nutch.storage.ParseStatus value) {
     this.parseStatus = value;
-    setDirty(16);
+    setDirty(17);
   }
   
   /**
    * Checks the dirty status of the 'parseStatus' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isParseStatusDirty(ParseStatus value) {
-    return isDirty(16);
+  public boolean isParseStatusDirty(org.apache.nutch.storage.ParseStatus value) {
+    return isDirty(17);
   }
 
   /**
    * Gets the value of the 'score' field.
    */
-  public Float getScore() {
+  public java.lang.Float getScore() {
     return score;
   }
 
@@ -587,23 +616,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'score' field.
    * @param value the value to set.
    */
-  public void setScore(Float value) {
+  public void setScore(java.lang.Float value) {
     this.score = value;
-    setDirty(17);
+    setDirty(18);
   }
   
   /**
    * Checks the dirty status of the 'score' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isScoreDirty(Float value) {
-    return isDirty(17);
+  public boolean isScoreDirty(java.lang.Float value) {
+    return isDirty(18);
   }
 
   /**
    * Gets the value of the 'reprUrl' field.
    */
-  public CharSequence getReprUrl() {
+  public java.lang.String getReprUrl() {
     return reprUrl;
   }
 
@@ -611,23 +640,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'reprUrl' field.
    * @param value the value to set.
    */
-  public void setReprUrl(CharSequence value) {
+  public void setReprUrl(java.lang.String value) {
     this.reprUrl = value;
-    setDirty(18);
+    setDirty(19);
   }
   
   /**
    * Checks the dirty status of the 'reprUrl' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isReprUrlDirty(CharSequence value) {
-    return isDirty(18);
+  public boolean isReprUrlDirty(java.lang.String value) {
+    return isDirty(19);
   }
 
   /**
    * Gets the value of the 'headers' field.
    */
-  public java.util.Map<CharSequence,CharSequence> getHeaders() {
+  public java.util.Map<java.lang.String,java.lang.String> getHeaders() {
     return headers;
   }
 
@@ -635,23 +664,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'headers' field.
    * @param value the value to set.
    */
-  public void setHeaders(java.util.Map<CharSequence,CharSequence> value) {
+  public void setHeaders(java.util.Map<java.lang.String,java.lang.String> value) {
     this.headers = (value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper(value);
-    setDirty(19);
+    setDirty(20);
   }
   
   /**
    * Checks the dirty status of the 'headers' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isHeadersDirty(java.util.Map<CharSequence,CharSequence> value) {
-    return isDirty(19);
+  public boolean isHeadersDirty(java.util.Map<java.lang.String,java.lang.String> value) {
+    return isDirty(20);
   }
 
   /**
    * Gets the value of the 'outlinks' field.
    */
-  public java.util.Map<CharSequence,CharSequence> getOutlinks() {
+  public java.util.Map<java.lang.String,java.lang.String> getOutlinks() {
     return outlinks;
   }
 
@@ -659,23 +688,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'outlinks' field.
    * @param value the value to set.
    */
-  public void setOutlinks(java.util.Map<CharSequence,CharSequence> value) {
+  public void setOutlinks(java.util.Map<java.lang.String,java.lang.String> value) {
     this.outlinks = (value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper(value);
-    setDirty(20);
+    setDirty(21);
   }
   
   /**
    * Checks the dirty status of the 'outlinks' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isOutlinksDirty(java.util.Map<CharSequence,CharSequence> value) {
-    return isDirty(20);
+  public boolean isOutlinksDirty(java.util.Map<java.lang.String,java.lang.String> value) {
+    return isDirty(21);
   }
 
   /**
    * Gets the value of the 'inlinks' field.
    */
-  public java.util.Map<CharSequence,CharSequence> getInlinks() {
+  public java.util.Map<java.lang.String,java.lang.String> getInlinks() {
     return inlinks;
   }
 
@@ -683,23 +712,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'inlinks' field.
    * @param value the value to set.
    */
-  public void setInlinks(java.util.Map<CharSequence,CharSequence> value) {
+  public void setInlinks(java.util.Map<java.lang.String,java.lang.String> value) {
     this.inlinks = (value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper(value);
-    setDirty(21);
+    setDirty(22);
   }
   
   /**
    * Checks the dirty status of the 'inlinks' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isInlinksDirty(java.util.Map<CharSequence,CharSequence> value) {
-    return isDirty(21);
+  public boolean isInlinksDirty(java.util.Map<java.lang.String,java.lang.String> value) {
+    return isDirty(22);
   }
 
   /**
    * Gets the value of the 'markers' field.
    */
-  public java.util.Map<CharSequence,CharSequence> getMarkers() {
+  public java.util.Map<java.lang.String,java.lang.String> getMarkers() {
     return markers;
   }
 
@@ -707,23 +736,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'markers' field.
    * @param value the value to set.
    */
-  public void setMarkers(java.util.Map<CharSequence,CharSequence> value) {
+  public void setMarkers(java.util.Map<java.lang.String,java.lang.String> value) {
     this.markers = (value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper(value);
-    setDirty(22);
+    setDirty(23);
   }
   
   /**
    * Checks the dirty status of the 'markers' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isMarkersDirty(java.util.Map<CharSequence,CharSequence> value) {
-    return isDirty(22);
+  public boolean isMarkersDirty(java.util.Map<java.lang.String,java.lang.String> value) {
+    return isDirty(23);
   }
 
   /**
    * Gets the value of the 'metadata' field.
    */
-  public java.util.Map<CharSequence,java.nio.ByteBuffer> getMetadata() {
+  public java.util.Map<java.lang.String,java.nio.ByteBuffer> getMetadata() {
     return metadata;
   }
 
@@ -731,23 +760,23 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'metadata' field.
    * @param value the value to set.
    */
-  public void setMetadata(java.util.Map<CharSequence,java.nio.ByteBuffer> value) {
+  public void setMetadata(java.util.Map<java.lang.String,java.nio.ByteBuffer> value) {
     this.metadata = (value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper(value);
-    setDirty(23);
+    setDirty(24);
   }
   
   /**
    * Checks the dirty status of the 'metadata' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isMetadataDirty(java.util.Map<CharSequence,java.nio.ByteBuffer> value) {
-    return isDirty(23);
+  public boolean isMetadataDirty(java.util.Map<java.lang.String,java.nio.ByteBuffer> value) {
+    return isDirty(24);
   }
 
   /**
    * Gets the value of the 'batchId' field.
    */
-  public CharSequence getBatchId() {
+  public java.lang.String getBatchId() {
     return batchId;
   }
 
@@ -755,35 +784,35 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
    * Sets the value of the 'batchId' field.
    * @param value the value to set.
    */
-  public void setBatchId(CharSequence value) {
+  public void setBatchId(java.lang.String value) {
     this.batchId = value;
-    setDirty(24);
+    setDirty(25);
   }
   
   /**
    * Checks the dirty status of the 'batchId' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isBatchIdDirty(CharSequence value) {
-    return isDirty(24);
+  public boolean isBatchIdDirty(java.lang.String value) {
+    return isDirty(25);
   }
 
   /** Creates a new WebPage RecordBuilder */
-  public static Builder newBuilder() {
-    return new Builder();
+  public static org.apache.nutch.storage.WebPage.Builder newBuilder() {
+    return new org.apache.nutch.storage.WebPage.Builder();
   }
   
   /** Creates a new WebPage RecordBuilder by copying an existing Builder */
-  public static Builder newBuilder(Builder other) {
-    return new Builder(other);
+  public static org.apache.nutch.storage.WebPage.Builder newBuilder(org.apache.nutch.storage.WebPage.Builder other) {
+    return new org.apache.nutch.storage.WebPage.Builder(other);
   }
   
   /** Creates a new WebPage RecordBuilder by copying an existing WebPage instance */
-  public static Builder newBuilder(WebPage other) {
-    return new Builder(other);
+  public static org.apache.nutch.storage.WebPage.Builder newBuilder(org.apache.nutch.storage.WebPage other) {
+    return new org.apache.nutch.storage.WebPage.Builder(other);
   }
   
-  private static java.nio.ByteBuffer deepCopyToWriteOnlyBuffer(
+  private static java.nio.ByteBuffer deepCopyToReadOnlyBuffer(
       java.nio.ByteBuffer input) {
     java.nio.ByteBuffer copy = java.nio.ByteBuffer.allocate(input.capacity());
     int position = input.position();
@@ -813,7 +842,8 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
     implements org.apache.avro.data.RecordBuilder<WebPage> {
 
     private java.nio.ByteBuffer __g__dirty;
-    private CharSequence baseUrl;
+    private java.lang.String key;
+    private java.lang.String baseUrl;
     private int status;
     private long fetchTime;
     private long prevFetchTime;
@@ -821,353 +851,382 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
     private int retriesSinceFetch;
     private long modifiedTime;
     private long prevModifiedTime;
-    private ProtocolStatus protocolStatus;
+    private org.apache.nutch.storage.ProtocolStatus protocolStatus;
     private java.nio.ByteBuffer content;
-    private CharSequence contentType;
+    private java.lang.String contentType;
     private java.nio.ByteBuffer prevSignature;
     private java.nio.ByteBuffer signature;
-    private CharSequence title;
-    private CharSequence text;
-    private ParseStatus parseStatus;
+    private java.lang.String title;
+    private java.lang.String text;
+    private org.apache.nutch.storage.ParseStatus parseStatus;
     private float score;
-    private CharSequence reprUrl;
-    private java.util.Map<CharSequence,CharSequence> headers;
-    private java.util.Map<CharSequence,CharSequence> outlinks;
-    private java.util.Map<CharSequence,CharSequence> inlinks;
-    private java.util.Map<CharSequence,CharSequence> markers;
-    private java.util.Map<CharSequence,java.nio.ByteBuffer> metadata;
-    private CharSequence batchId;
+    private java.lang.String reprUrl;
+    private java.util.Map<java.lang.String,java.lang.String> headers;
+    private java.util.Map<java.lang.String,java.lang.String> outlinks;
+    private java.util.Map<java.lang.String,java.lang.String> inlinks;
+    private java.util.Map<java.lang.String,java.lang.String> markers;
+    private java.util.Map<java.lang.String,java.nio.ByteBuffer> metadata;
+    private java.lang.String batchId;
 
     /** Creates a new Builder */
     private Builder() {
-      super(WebPage.SCHEMA$);
+      super(org.apache.nutch.storage.WebPage.SCHEMA$);
     }
     
     /** Creates a Builder by copying an existing Builder */
-    private Builder(Builder other) {
+    private Builder(org.apache.nutch.storage.WebPage.Builder other) {
       super(other);
     }
     
     /** Creates a Builder by copying an existing WebPage instance */
-    private Builder(WebPage other) {
-            super(WebPage.SCHEMA$);
+    private Builder(org.apache.nutch.storage.WebPage other) {
+            super(org.apache.nutch.storage.WebPage.SCHEMA$);
       if (isValidValue(fields()[0], other.__g__dirty)) {
         this.__g__dirty = (java.nio.ByteBuffer) data().deepCopy(fields()[0].schema(), other.__g__dirty);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.baseUrl)) {
-        this.baseUrl = (CharSequence) data().deepCopy(fields()[1].schema(), other.baseUrl);
+      if (isValidValue(fields()[1], other.key)) {
+        this.key = (java.lang.String) data().deepCopy(fields()[1].schema(), other.key);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.status)) {
-        this.status = (Integer) data().deepCopy(fields()[2].schema(), other.status);
+      if (isValidValue(fields()[2], other.baseUrl)) {
+        this.baseUrl = (java.lang.String) data().deepCopy(fields()[2].schema(), other.baseUrl);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.fetchTime)) {
-        this.fetchTime = (Long) data().deepCopy(fields()[3].schema(), other.fetchTime);
+      if (isValidValue(fields()[3], other.status)) {
+        this.status = (java.lang.Integer) data().deepCopy(fields()[3].schema(), other.status);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.prevFetchTime)) {
-        this.prevFetchTime = (Long) data().deepCopy(fields()[4].schema(), other.prevFetchTime);
+      if (isValidValue(fields()[4], other.fetchTime)) {
+        this.fetchTime = (java.lang.Long) data().deepCopy(fields()[4].schema(), other.fetchTime);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.fetchInterval)) {
-        this.fetchInterval = (Integer) data().deepCopy(fields()[5].schema(), other.fetchInterval);
+      if (isValidValue(fields()[5], other.prevFetchTime)) {
+        this.prevFetchTime = (java.lang.Long) data().deepCopy(fields()[5].schema(), other.prevFetchTime);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.retriesSinceFetch)) {
-        this.retriesSinceFetch = (Integer) data().deepCopy(fields()[6].schema(), other.retriesSinceFetch);
+      if (isValidValue(fields()[6], other.fetchInterval)) {
+        this.fetchInterval = (java.lang.Integer) data().deepCopy(fields()[6].schema(), other.fetchInterval);
         fieldSetFlags()[6] = true;
       }
-      if (isValidValue(fields()[7], other.modifiedTime)) {
-        this.modifiedTime = (Long) data().deepCopy(fields()[7].schema(), other.modifiedTime);
+      if (isValidValue(fields()[7], other.retriesSinceFetch)) {
+        this.retriesSinceFetch = (java.lang.Integer) data().deepCopy(fields()[7].schema(), other.retriesSinceFetch);
         fieldSetFlags()[7] = true;
       }
-      if (isValidValue(fields()[8], other.prevModifiedTime)) {
-        this.prevModifiedTime = (Long) data().deepCopy(fields()[8].schema(), other.prevModifiedTime);
+      if (isValidValue(fields()[8], other.modifiedTime)) {
+        this.modifiedTime = (java.lang.Long) data().deepCopy(fields()[8].schema(), other.modifiedTime);
         fieldSetFlags()[8] = true;
       }
-      if (isValidValue(fields()[9], other.protocolStatus)) {
-        this.protocolStatus = (ProtocolStatus) data().deepCopy(fields()[9].schema(), other.protocolStatus);
+      if (isValidValue(fields()[9], other.prevModifiedTime)) {
+        this.prevModifiedTime = (java.lang.Long) data().deepCopy(fields()[9].schema(), other.prevModifiedTime);
         fieldSetFlags()[9] = true;
       }
-      if (isValidValue(fields()[10], other.content)) {
-        this.content = (java.nio.ByteBuffer) data().deepCopy(fields()[10].schema(), other.content);
+      if (isValidValue(fields()[10], other.protocolStatus)) {
+        this.protocolStatus = (org.apache.nutch.storage.ProtocolStatus) data().deepCopy(fields()[10].schema(), other.protocolStatus);
         fieldSetFlags()[10] = true;
       }
-      if (isValidValue(fields()[11], other.contentType)) {
-        this.contentType = (CharSequence) data().deepCopy(fields()[11].schema(), other.contentType);
+      if (isValidValue(fields()[11], other.content)) {
+        this.content = (java.nio.ByteBuffer) data().deepCopy(fields()[11].schema(), other.content);
         fieldSetFlags()[11] = true;
       }
-      if (isValidValue(fields()[12], other.prevSignature)) {
-        this.prevSignature = (java.nio.ByteBuffer) data().deepCopy(fields()[12].schema(), other.prevSignature);
+      if (isValidValue(fields()[12], other.contentType)) {
+        this.contentType = (java.lang.String) data().deepCopy(fields()[12].schema(), other.contentType);
         fieldSetFlags()[12] = true;
       }
-      if (isValidValue(fields()[13], other.signature)) {
-        this.signature = (java.nio.ByteBuffer) data().deepCopy(fields()[13].schema(), other.signature);
+      if (isValidValue(fields()[13], other.prevSignature)) {
+        this.prevSignature = (java.nio.ByteBuffer) data().deepCopy(fields()[13].schema(), other.prevSignature);
         fieldSetFlags()[13] = true;
       }
-      if (isValidValue(fields()[14], other.title)) {
-        this.title = (CharSequence) data().deepCopy(fields()[14].schema(), other.title);
+      if (isValidValue(fields()[14], other.signature)) {
+        this.signature = (java.nio.ByteBuffer) data().deepCopy(fields()[14].schema(), other.signature);
         fieldSetFlags()[14] = true;
       }
-      if (isValidValue(fields()[15], other.text)) {
-        this.text = (CharSequence) data().deepCopy(fields()[15].schema(), other.text);
+      if (isValidValue(fields()[15], other.title)) {
+        this.title = (java.lang.String) data().deepCopy(fields()[15].schema(), other.title);
         fieldSetFlags()[15] = true;
       }
-      if (isValidValue(fields()[16], other.parseStatus)) {
-        this.parseStatus = (ParseStatus) data().deepCopy(fields()[16].schema(), other.parseStatus);
+      if (isValidValue(fields()[16], other.text)) {
+        this.text = (java.lang.String) data().deepCopy(fields()[16].schema(), other.text);
         fieldSetFlags()[16] = true;
       }
-      if (isValidValue(fields()[17], other.score)) {
-        this.score = (Float) data().deepCopy(fields()[17].schema(), other.score);
+      if (isValidValue(fields()[17], other.parseStatus)) {
+        this.parseStatus = (org.apache.nutch.storage.ParseStatus) data().deepCopy(fields()[17].schema(), other.parseStatus);
         fieldSetFlags()[17] = true;
       }
-      if (isValidValue(fields()[18], other.reprUrl)) {
-        this.reprUrl = (CharSequence) data().deepCopy(fields()[18].schema(), other.reprUrl);
+      if (isValidValue(fields()[18], other.score)) {
+        this.score = (java.lang.Float) data().deepCopy(fields()[18].schema(), other.score);
         fieldSetFlags()[18] = true;
       }
-      if (isValidValue(fields()[19], other.headers)) {
-        this.headers = (java.util.Map<CharSequence,CharSequence>) data().deepCopy(fields()[19].schema(), other.headers);
+      if (isValidValue(fields()[19], other.reprUrl)) {
+        this.reprUrl = (java.lang.String) data().deepCopy(fields()[19].schema(), other.reprUrl);
         fieldSetFlags()[19] = true;
       }
-      if (isValidValue(fields()[20], other.outlinks)) {
-        this.outlinks = (java.util.Map<CharSequence,CharSequence>) data().deepCopy(fields()[20].schema(), other.outlinks);
+      if (isValidValue(fields()[20], other.headers)) {
+        this.headers = (java.util.Map<java.lang.String,java.lang.String>) data().deepCopy(fields()[20].schema(), other.headers);
         fieldSetFlags()[20] = true;
       }
-      if (isValidValue(fields()[21], other.inlinks)) {
-        this.inlinks = (java.util.Map<CharSequence,CharSequence>) data().deepCopy(fields()[21].schema(), other.inlinks);
+      if (isValidValue(fields()[21], other.outlinks)) {
+        this.outlinks = (java.util.Map<java.lang.String,java.lang.String>) data().deepCopy(fields()[21].schema(), other.outlinks);
         fieldSetFlags()[21] = true;
       }
-      if (isValidValue(fields()[22], other.markers)) {
-        this.markers = (java.util.Map<CharSequence,CharSequence>) data().deepCopy(fields()[22].schema(), other.markers);
+      if (isValidValue(fields()[22], other.inlinks)) {
+        this.inlinks = (java.util.Map<java.lang.String,java.lang.String>) data().deepCopy(fields()[22].schema(), other.inlinks);
         fieldSetFlags()[22] = true;
       }
-      if (isValidValue(fields()[23], other.metadata)) {
-        this.metadata = (java.util.Map<CharSequence,java.nio.ByteBuffer>) data().deepCopy(fields()[23].schema(), other.metadata);
+      if (isValidValue(fields()[23], other.markers)) {
+        this.markers = (java.util.Map<java.lang.String,java.lang.String>) data().deepCopy(fields()[23].schema(), other.markers);
         fieldSetFlags()[23] = true;
       }
-      if (isValidValue(fields()[24], other.batchId)) {
-        this.batchId = (CharSequence) data().deepCopy(fields()[24].schema(), other.batchId);
+      if (isValidValue(fields()[24], other.metadata)) {
+        this.metadata = (java.util.Map<java.lang.String,java.nio.ByteBuffer>) data().deepCopy(fields()[24].schema(), other.metadata);
         fieldSetFlags()[24] = true;
+      }
+      if (isValidValue(fields()[25], other.batchId)) {
+        this.batchId = (java.lang.String) data().deepCopy(fields()[25].schema(), other.batchId);
+        fieldSetFlags()[25] = true;
       }
     }
 
+    /** Gets the value of the 'key' field */
+    public java.lang.String getKey() {
+      return key;
+    }
+    
+    /** Sets the value of the 'key' field */
+    public org.apache.nutch.storage.WebPage.Builder setKey(java.lang.String value) {
+      validate(fields()[1], value);
+      this.key = value;
+      fieldSetFlags()[1] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'key' field has been set */
+    public boolean hasKey() {
+      return fieldSetFlags()[1];
+    }
+    
+    /** Clears the value of the 'key' field */
+    public org.apache.nutch.storage.WebPage.Builder clearKey() {
+      key = null;
+      fieldSetFlags()[1] = false;
+      return this;
+    }
+    
     /** Gets the value of the 'baseUrl' field */
-    public CharSequence getBaseUrl() {
+    public java.lang.String getBaseUrl() {
       return baseUrl;
     }
     
     /** Sets the value of the 'baseUrl' field */
-    public Builder setBaseUrl(CharSequence value) {
-      validate(fields()[1], value);
+    public org.apache.nutch.storage.WebPage.Builder setBaseUrl(java.lang.String value) {
+      validate(fields()[2], value);
       this.baseUrl = value;
-      fieldSetFlags()[1] = true;
+      fieldSetFlags()[2] = true;
       return this; 
     }
     
     /** Checks whether the 'baseUrl' field has been set */
     public boolean hasBaseUrl() {
-      return fieldSetFlags()[1];
+      return fieldSetFlags()[2];
     }
     
     /** Clears the value of the 'baseUrl' field */
-    public Builder clearBaseUrl() {
+    public org.apache.nutch.storage.WebPage.Builder clearBaseUrl() {
       baseUrl = null;
-      fieldSetFlags()[1] = false;
+      fieldSetFlags()[2] = false;
       return this;
     }
     
     /** Gets the value of the 'status' field */
-    public Integer getStatus() {
+    public java.lang.Integer getStatus() {
       return status;
     }
     
     /** Sets the value of the 'status' field */
-    public Builder setStatus(int value) {
-      validate(fields()[2], value);
+    public org.apache.nutch.storage.WebPage.Builder setStatus(int value) {
+      validate(fields()[3], value);
       this.status = value;
-      fieldSetFlags()[2] = true;
+      fieldSetFlags()[3] = true;
       return this; 
     }
     
     /** Checks whether the 'status' field has been set */
     public boolean hasStatus() {
-      return fieldSetFlags()[2];
+      return fieldSetFlags()[3];
     }
     
     /** Clears the value of the 'status' field */
-    public Builder clearStatus() {
-      fieldSetFlags()[2] = false;
+    public org.apache.nutch.storage.WebPage.Builder clearStatus() {
+      fieldSetFlags()[3] = false;
       return this;
     }
     
     /** Gets the value of the 'fetchTime' field */
-    public Long getFetchTime() {
+    public java.lang.Long getFetchTime() {
       return fetchTime;
     }
     
     /** Sets the value of the 'fetchTime' field */
-    public Builder setFetchTime(long value) {
-      validate(fields()[3], value);
+    public org.apache.nutch.storage.WebPage.Builder setFetchTime(long value) {
+      validate(fields()[4], value);
       this.fetchTime = value;
-      fieldSetFlags()[3] = true;
+      fieldSetFlags()[4] = true;
       return this; 
     }
     
     /** Checks whether the 'fetchTime' field has been set */
     public boolean hasFetchTime() {
-      return fieldSetFlags()[3];
+      return fieldSetFlags()[4];
     }
     
     /** Clears the value of the 'fetchTime' field */
-    public Builder clearFetchTime() {
-      fieldSetFlags()[3] = false;
+    public org.apache.nutch.storage.WebPage.Builder clearFetchTime() {
+      fieldSetFlags()[4] = false;
       return this;
     }
     
     /** Gets the value of the 'prevFetchTime' field */
-    public Long getPrevFetchTime() {
+    public java.lang.Long getPrevFetchTime() {
       return prevFetchTime;
     }
     
     /** Sets the value of the 'prevFetchTime' field */
-    public Builder setPrevFetchTime(long value) {
-      validate(fields()[4], value);
+    public org.apache.nutch.storage.WebPage.Builder setPrevFetchTime(long value) {
+      validate(fields()[5], value);
       this.prevFetchTime = value;
-      fieldSetFlags()[4] = true;
+      fieldSetFlags()[5] = true;
       return this; 
     }
     
     /** Checks whether the 'prevFetchTime' field has been set */
     public boolean hasPrevFetchTime() {
-      return fieldSetFlags()[4];
+      return fieldSetFlags()[5];
     }
     
     /** Clears the value of the 'prevFetchTime' field */
-    public Builder clearPrevFetchTime() {
-      fieldSetFlags()[4] = false;
+    public org.apache.nutch.storage.WebPage.Builder clearPrevFetchTime() {
+      fieldSetFlags()[5] = false;
       return this;
     }
     
     /** Gets the value of the 'fetchInterval' field */
-    public Integer getFetchInterval() {
+    public java.lang.Integer getFetchInterval() {
       return fetchInterval;
     }
     
     /** Sets the value of the 'fetchInterval' field */
-    public Builder setFetchInterval(int value) {
-      validate(fields()[5], value);
+    public org.apache.nutch.storage.WebPage.Builder setFetchInterval(int value) {
+      validate(fields()[6], value);
       this.fetchInterval = value;
-      fieldSetFlags()[5] = true;
+      fieldSetFlags()[6] = true;
       return this; 
     }
     
     /** Checks whether the 'fetchInterval' field has been set */
     public boolean hasFetchInterval() {
-      return fieldSetFlags()[5];
+      return fieldSetFlags()[6];
     }
     
     /** Clears the value of the 'fetchInterval' field */
-    public Builder clearFetchInterval() {
-      fieldSetFlags()[5] = false;
+    public org.apache.nutch.storage.WebPage.Builder clearFetchInterval() {
+      fieldSetFlags()[6] = false;
       return this;
     }
     
     /** Gets the value of the 'retriesSinceFetch' field */
-    public Integer getRetriesSinceFetch() {
+    public java.lang.Integer getRetriesSinceFetch() {
       return retriesSinceFetch;
     }
     
     /** Sets the value of the 'retriesSinceFetch' field */
-    public Builder setRetriesSinceFetch(int value) {
-      validate(fields()[6], value);
+    public org.apache.nutch.storage.WebPage.Builder setRetriesSinceFetch(int value) {
+      validate(fields()[7], value);
       this.retriesSinceFetch = value;
-      fieldSetFlags()[6] = true;
+      fieldSetFlags()[7] = true;
       return this; 
     }
     
     /** Checks whether the 'retriesSinceFetch' field has been set */
     public boolean hasRetriesSinceFetch() {
-      return fieldSetFlags()[6];
+      return fieldSetFlags()[7];
     }
     
     /** Clears the value of the 'retriesSinceFetch' field */
-    public Builder clearRetriesSinceFetch() {
-      fieldSetFlags()[6] = false;
+    public org.apache.nutch.storage.WebPage.Builder clearRetriesSinceFetch() {
+      fieldSetFlags()[7] = false;
       return this;
     }
     
     /** Gets the value of the 'modifiedTime' field */
-    public Long getModifiedTime() {
+    public java.lang.Long getModifiedTime() {
       return modifiedTime;
     }
     
     /** Sets the value of the 'modifiedTime' field */
-    public Builder setModifiedTime(long value) {
-      validate(fields()[7], value);
+    public org.apache.nutch.storage.WebPage.Builder setModifiedTime(long value) {
+      validate(fields()[8], value);
       this.modifiedTime = value;
-      fieldSetFlags()[7] = true;
+      fieldSetFlags()[8] = true;
       return this; 
     }
     
     /** Checks whether the 'modifiedTime' field has been set */
     public boolean hasModifiedTime() {
-      return fieldSetFlags()[7];
+      return fieldSetFlags()[8];
     }
     
     /** Clears the value of the 'modifiedTime' field */
-    public Builder clearModifiedTime() {
-      fieldSetFlags()[7] = false;
+    public org.apache.nutch.storage.WebPage.Builder clearModifiedTime() {
+      fieldSetFlags()[8] = false;
       return this;
     }
     
     /** Gets the value of the 'prevModifiedTime' field */
-    public Long getPrevModifiedTime() {
+    public java.lang.Long getPrevModifiedTime() {
       return prevModifiedTime;
     }
     
     /** Sets the value of the 'prevModifiedTime' field */
-    public Builder setPrevModifiedTime(long value) {
-      validate(fields()[8], value);
+    public org.apache.nutch.storage.WebPage.Builder setPrevModifiedTime(long value) {
+      validate(fields()[9], value);
       this.prevModifiedTime = value;
-      fieldSetFlags()[8] = true;
+      fieldSetFlags()[9] = true;
       return this; 
     }
     
     /** Checks whether the 'prevModifiedTime' field has been set */
     public boolean hasPrevModifiedTime() {
-      return fieldSetFlags()[8];
+      return fieldSetFlags()[9];
     }
     
     /** Clears the value of the 'prevModifiedTime' field */
-    public Builder clearPrevModifiedTime() {
-      fieldSetFlags()[8] = false;
+    public org.apache.nutch.storage.WebPage.Builder clearPrevModifiedTime() {
+      fieldSetFlags()[9] = false;
       return this;
     }
     
     /** Gets the value of the 'protocolStatus' field */
-    public ProtocolStatus getProtocolStatus() {
+    public org.apache.nutch.storage.ProtocolStatus getProtocolStatus() {
       return protocolStatus;
     }
     
     /** Sets the value of the 'protocolStatus' field */
-    public Builder setProtocolStatus(ProtocolStatus value) {
-      validate(fields()[9], value);
+    public org.apache.nutch.storage.WebPage.Builder setProtocolStatus(org.apache.nutch.storage.ProtocolStatus value) {
+      validate(fields()[10], value);
       this.protocolStatus = value;
-      fieldSetFlags()[9] = true;
+      fieldSetFlags()[10] = true;
       return this; 
     }
     
     /** Checks whether the 'protocolStatus' field has been set */
     public boolean hasProtocolStatus() {
-      return fieldSetFlags()[9];
+      return fieldSetFlags()[10];
     }
     
     /** Clears the value of the 'protocolStatus' field */
-    public Builder clearProtocolStatus() {
+    public org.apache.nutch.storage.WebPage.Builder clearProtocolStatus() {
       protocolStatus = null;
-      fieldSetFlags()[9] = false;
+      fieldSetFlags()[10] = false;
       return this;
     }
     
@@ -1177,47 +1236,47 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
     }
     
     /** Sets the value of the 'content' field */
-    public Builder setContent(java.nio.ByteBuffer value) {
-      validate(fields()[10], value);
+    public org.apache.nutch.storage.WebPage.Builder setContent(java.nio.ByteBuffer value) {
+      validate(fields()[11], value);
       this.content = value;
-      fieldSetFlags()[10] = true;
+      fieldSetFlags()[11] = true;
       return this; 
     }
     
     /** Checks whether the 'content' field has been set */
     public boolean hasContent() {
-      return fieldSetFlags()[10];
+      return fieldSetFlags()[11];
     }
     
     /** Clears the value of the 'content' field */
-    public Builder clearContent() {
+    public org.apache.nutch.storage.WebPage.Builder clearContent() {
       content = null;
-      fieldSetFlags()[10] = false;
+      fieldSetFlags()[11] = false;
       return this;
     }
     
     /** Gets the value of the 'contentType' field */
-    public CharSequence getContentType() {
+    public java.lang.String getContentType() {
       return contentType;
     }
     
     /** Sets the value of the 'contentType' field */
-    public Builder setContentType(CharSequence value) {
-      validate(fields()[11], value);
+    public org.apache.nutch.storage.WebPage.Builder setContentType(java.lang.String value) {
+      validate(fields()[12], value);
       this.contentType = value;
-      fieldSetFlags()[11] = true;
+      fieldSetFlags()[12] = true;
       return this; 
     }
     
     /** Checks whether the 'contentType' field has been set */
     public boolean hasContentType() {
-      return fieldSetFlags()[11];
+      return fieldSetFlags()[12];
     }
     
     /** Clears the value of the 'contentType' field */
-    public Builder clearContentType() {
+    public org.apache.nutch.storage.WebPage.Builder clearContentType() {
       contentType = null;
-      fieldSetFlags()[11] = false;
+      fieldSetFlags()[12] = false;
       return this;
     }
     
@@ -1227,22 +1286,22 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
     }
     
     /** Sets the value of the 'prevSignature' field */
-    public Builder setPrevSignature(java.nio.ByteBuffer value) {
-      validate(fields()[12], value);
+    public org.apache.nutch.storage.WebPage.Builder setPrevSignature(java.nio.ByteBuffer value) {
+      validate(fields()[13], value);
       this.prevSignature = value;
-      fieldSetFlags()[12] = true;
+      fieldSetFlags()[13] = true;
       return this; 
     }
     
     /** Checks whether the 'prevSignature' field has been set */
     public boolean hasPrevSignature() {
-      return fieldSetFlags()[12];
+      return fieldSetFlags()[13];
     }
     
     /** Clears the value of the 'prevSignature' field */
-    public Builder clearPrevSignature() {
+    public org.apache.nutch.storage.WebPage.Builder clearPrevSignature() {
       prevSignature = null;
-      fieldSetFlags()[12] = false;
+      fieldSetFlags()[13] = false;
       return this;
     }
     
@@ -1252,296 +1311,296 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
     }
     
     /** Sets the value of the 'signature' field */
-    public Builder setSignature(java.nio.ByteBuffer value) {
-      validate(fields()[13], value);
+    public org.apache.nutch.storage.WebPage.Builder setSignature(java.nio.ByteBuffer value) {
+      validate(fields()[14], value);
       this.signature = value;
-      fieldSetFlags()[13] = true;
+      fieldSetFlags()[14] = true;
       return this; 
     }
     
     /** Checks whether the 'signature' field has been set */
     public boolean hasSignature() {
-      return fieldSetFlags()[13];
+      return fieldSetFlags()[14];
     }
     
     /** Clears the value of the 'signature' field */
-    public Builder clearSignature() {
+    public org.apache.nutch.storage.WebPage.Builder clearSignature() {
       signature = null;
-      fieldSetFlags()[13] = false;
+      fieldSetFlags()[14] = false;
       return this;
     }
     
     /** Gets the value of the 'title' field */
-    public CharSequence getTitle() {
+    public java.lang.String getTitle() {
       return title;
     }
     
     /** Sets the value of the 'title' field */
-    public Builder setTitle(CharSequence value) {
-      validate(fields()[14], value);
+    public org.apache.nutch.storage.WebPage.Builder setTitle(java.lang.String value) {
+      validate(fields()[15], value);
       this.title = value;
-      fieldSetFlags()[14] = true;
+      fieldSetFlags()[15] = true;
       return this; 
     }
     
     /** Checks whether the 'title' field has been set */
     public boolean hasTitle() {
-      return fieldSetFlags()[14];
+      return fieldSetFlags()[15];
     }
     
     /** Clears the value of the 'title' field */
-    public Builder clearTitle() {
+    public org.apache.nutch.storage.WebPage.Builder clearTitle() {
       title = null;
-      fieldSetFlags()[14] = false;
+      fieldSetFlags()[15] = false;
       return this;
     }
     
     /** Gets the value of the 'text' field */
-    public CharSequence getText() {
+    public java.lang.String getText() {
       return text;
     }
     
     /** Sets the value of the 'text' field */
-    public Builder setText(CharSequence value) {
-      validate(fields()[15], value);
+    public org.apache.nutch.storage.WebPage.Builder setText(java.lang.String value) {
+      validate(fields()[16], value);
       this.text = value;
-      fieldSetFlags()[15] = true;
+      fieldSetFlags()[16] = true;
       return this; 
     }
     
     /** Checks whether the 'text' field has been set */
     public boolean hasText() {
-      return fieldSetFlags()[15];
+      return fieldSetFlags()[16];
     }
     
     /** Clears the value of the 'text' field */
-    public Builder clearText() {
+    public org.apache.nutch.storage.WebPage.Builder clearText() {
       text = null;
-      fieldSetFlags()[15] = false;
+      fieldSetFlags()[16] = false;
       return this;
     }
     
     /** Gets the value of the 'parseStatus' field */
-    public ParseStatus getParseStatus() {
+    public org.apache.nutch.storage.ParseStatus getParseStatus() {
       return parseStatus;
     }
     
     /** Sets the value of the 'parseStatus' field */
-    public Builder setParseStatus(ParseStatus value) {
-      validate(fields()[16], value);
+    public org.apache.nutch.storage.WebPage.Builder setParseStatus(org.apache.nutch.storage.ParseStatus value) {
+      validate(fields()[17], value);
       this.parseStatus = value;
-      fieldSetFlags()[16] = true;
+      fieldSetFlags()[17] = true;
       return this; 
     }
     
     /** Checks whether the 'parseStatus' field has been set */
     public boolean hasParseStatus() {
-      return fieldSetFlags()[16];
+      return fieldSetFlags()[17];
     }
     
     /** Clears the value of the 'parseStatus' field */
-    public Builder clearParseStatus() {
+    public org.apache.nutch.storage.WebPage.Builder clearParseStatus() {
       parseStatus = null;
-      fieldSetFlags()[16] = false;
+      fieldSetFlags()[17] = false;
       return this;
     }
     
     /** Gets the value of the 'score' field */
-    public Float getScore() {
+    public java.lang.Float getScore() {
       return score;
     }
     
     /** Sets the value of the 'score' field */
-    public Builder setScore(float value) {
-      validate(fields()[17], value);
+    public org.apache.nutch.storage.WebPage.Builder setScore(float value) {
+      validate(fields()[18], value);
       this.score = value;
-      fieldSetFlags()[17] = true;
+      fieldSetFlags()[18] = true;
       return this; 
     }
     
     /** Checks whether the 'score' field has been set */
     public boolean hasScore() {
-      return fieldSetFlags()[17];
+      return fieldSetFlags()[18];
     }
     
     /** Clears the value of the 'score' field */
-    public Builder clearScore() {
-      fieldSetFlags()[17] = false;
+    public org.apache.nutch.storage.WebPage.Builder clearScore() {
+      fieldSetFlags()[18] = false;
       return this;
     }
     
     /** Gets the value of the 'reprUrl' field */
-    public CharSequence getReprUrl() {
+    public java.lang.String getReprUrl() {
       return reprUrl;
     }
     
     /** Sets the value of the 'reprUrl' field */
-    public Builder setReprUrl(CharSequence value) {
-      validate(fields()[18], value);
+    public org.apache.nutch.storage.WebPage.Builder setReprUrl(java.lang.String value) {
+      validate(fields()[19], value);
       this.reprUrl = value;
-      fieldSetFlags()[18] = true;
+      fieldSetFlags()[19] = true;
       return this; 
     }
     
     /** Checks whether the 'reprUrl' field has been set */
     public boolean hasReprUrl() {
-      return fieldSetFlags()[18];
+      return fieldSetFlags()[19];
     }
     
     /** Clears the value of the 'reprUrl' field */
-    public Builder clearReprUrl() {
+    public org.apache.nutch.storage.WebPage.Builder clearReprUrl() {
       reprUrl = null;
-      fieldSetFlags()[18] = false;
+      fieldSetFlags()[19] = false;
       return this;
     }
     
     /** Gets the value of the 'headers' field */
-    public java.util.Map<CharSequence,CharSequence> getHeaders() {
+    public java.util.Map<java.lang.String,java.lang.String> getHeaders() {
       return headers;
     }
     
     /** Sets the value of the 'headers' field */
-    public Builder setHeaders(java.util.Map<CharSequence,CharSequence> value) {
-      validate(fields()[19], value);
+    public org.apache.nutch.storage.WebPage.Builder setHeaders(java.util.Map<java.lang.String,java.lang.String> value) {
+      validate(fields()[20], value);
       this.headers = value;
-      fieldSetFlags()[19] = true;
+      fieldSetFlags()[20] = true;
       return this; 
     }
     
     /** Checks whether the 'headers' field has been set */
     public boolean hasHeaders() {
-      return fieldSetFlags()[19];
+      return fieldSetFlags()[20];
     }
     
     /** Clears the value of the 'headers' field */
-    public Builder clearHeaders() {
+    public org.apache.nutch.storage.WebPage.Builder clearHeaders() {
       headers = null;
-      fieldSetFlags()[19] = false;
+      fieldSetFlags()[20] = false;
       return this;
     }
     
     /** Gets the value of the 'outlinks' field */
-    public java.util.Map<CharSequence,CharSequence> getOutlinks() {
+    public java.util.Map<java.lang.String,java.lang.String> getOutlinks() {
       return outlinks;
     }
     
     /** Sets the value of the 'outlinks' field */
-    public Builder setOutlinks(java.util.Map<CharSequence,CharSequence> value) {
-      validate(fields()[20], value);
+    public org.apache.nutch.storage.WebPage.Builder setOutlinks(java.util.Map<java.lang.String,java.lang.String> value) {
+      validate(fields()[21], value);
       this.outlinks = value;
-      fieldSetFlags()[20] = true;
+      fieldSetFlags()[21] = true;
       return this; 
     }
     
     /** Checks whether the 'outlinks' field has been set */
     public boolean hasOutlinks() {
-      return fieldSetFlags()[20];
+      return fieldSetFlags()[21];
     }
     
     /** Clears the value of the 'outlinks' field */
-    public Builder clearOutlinks() {
+    public org.apache.nutch.storage.WebPage.Builder clearOutlinks() {
       outlinks = null;
-      fieldSetFlags()[20] = false;
+      fieldSetFlags()[21] = false;
       return this;
     }
     
     /** Gets the value of the 'inlinks' field */
-    public java.util.Map<CharSequence,CharSequence> getInlinks() {
+    public java.util.Map<java.lang.String,java.lang.String> getInlinks() {
       return inlinks;
     }
     
     /** Sets the value of the 'inlinks' field */
-    public Builder setInlinks(java.util.Map<CharSequence,CharSequence> value) {
-      validate(fields()[21], value);
+    public org.apache.nutch.storage.WebPage.Builder setInlinks(java.util.Map<java.lang.String,java.lang.String> value) {
+      validate(fields()[22], value);
       this.inlinks = value;
-      fieldSetFlags()[21] = true;
+      fieldSetFlags()[22] = true;
       return this; 
     }
     
     /** Checks whether the 'inlinks' field has been set */
     public boolean hasInlinks() {
-      return fieldSetFlags()[21];
+      return fieldSetFlags()[22];
     }
     
     /** Clears the value of the 'inlinks' field */
-    public Builder clearInlinks() {
+    public org.apache.nutch.storage.WebPage.Builder clearInlinks() {
       inlinks = null;
-      fieldSetFlags()[21] = false;
+      fieldSetFlags()[22] = false;
       return this;
     }
     
     /** Gets the value of the 'markers' field */
-    public java.util.Map<CharSequence,CharSequence> getMarkers() {
+    public java.util.Map<java.lang.String,java.lang.String> getMarkers() {
       return markers;
     }
     
     /** Sets the value of the 'markers' field */
-    public Builder setMarkers(java.util.Map<CharSequence,CharSequence> value) {
-      validate(fields()[22], value);
+    public org.apache.nutch.storage.WebPage.Builder setMarkers(java.util.Map<java.lang.String,java.lang.String> value) {
+      validate(fields()[23], value);
       this.markers = value;
-      fieldSetFlags()[22] = true;
+      fieldSetFlags()[23] = true;
       return this; 
     }
     
     /** Checks whether the 'markers' field has been set */
     public boolean hasMarkers() {
-      return fieldSetFlags()[22];
+      return fieldSetFlags()[23];
     }
     
     /** Clears the value of the 'markers' field */
-    public Builder clearMarkers() {
+    public org.apache.nutch.storage.WebPage.Builder clearMarkers() {
       markers = null;
-      fieldSetFlags()[22] = false;
+      fieldSetFlags()[23] = false;
       return this;
     }
     
     /** Gets the value of the 'metadata' field */
-    public java.util.Map<CharSequence,java.nio.ByteBuffer> getMetadata() {
+    public java.util.Map<java.lang.String,java.nio.ByteBuffer> getMetadata() {
       return metadata;
     }
     
     /** Sets the value of the 'metadata' field */
-    public Builder setMetadata(java.util.Map<CharSequence,java.nio.ByteBuffer> value) {
-      validate(fields()[23], value);
+    public org.apache.nutch.storage.WebPage.Builder setMetadata(java.util.Map<java.lang.String,java.nio.ByteBuffer> value) {
+      validate(fields()[24], value);
       this.metadata = value;
-      fieldSetFlags()[23] = true;
+      fieldSetFlags()[24] = true;
       return this; 
     }
     
     /** Checks whether the 'metadata' field has been set */
     public boolean hasMetadata() {
-      return fieldSetFlags()[23];
+      return fieldSetFlags()[24];
     }
     
     /** Clears the value of the 'metadata' field */
-    public Builder clearMetadata() {
+    public org.apache.nutch.storage.WebPage.Builder clearMetadata() {
       metadata = null;
-      fieldSetFlags()[23] = false;
+      fieldSetFlags()[24] = false;
       return this;
     }
     
     /** Gets the value of the 'batchId' field */
-    public CharSequence getBatchId() {
+    public java.lang.String getBatchId() {
       return batchId;
     }
     
     /** Sets the value of the 'batchId' field */
-    public Builder setBatchId(CharSequence value) {
-      validate(fields()[24], value);
+    public org.apache.nutch.storage.WebPage.Builder setBatchId(java.lang.String value) {
+      validate(fields()[25], value);
       this.batchId = value;
-      fieldSetFlags()[24] = true;
+      fieldSetFlags()[25] = true;
       return this; 
     }
     
     /** Checks whether the 'batchId' field has been set */
     public boolean hasBatchId() {
-      return fieldSetFlags()[24];
+      return fieldSetFlags()[25];
     }
     
     /** Clears the value of the 'batchId' field */
-    public Builder clearBatchId() {
+    public org.apache.nutch.storage.WebPage.Builder clearBatchId() {
       batchId = null;
-      fieldSetFlags()[24] = false;
+      fieldSetFlags()[25] = false;
       return this;
     }
     
@@ -1550,30 +1609,31 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
       try {
         WebPage record = new WebPage();
         record.__g__dirty = fieldSetFlags()[0] ? this.__g__dirty : (java.nio.ByteBuffer) java.nio.ByteBuffer.wrap(new byte[4]);
-        record.baseUrl = fieldSetFlags()[1] ? this.baseUrl : (CharSequence) defaultValue(fields()[1]);
-        record.status = fieldSetFlags()[2] ? this.status : (Integer) defaultValue(fields()[2]);
-        record.fetchTime = fieldSetFlags()[3] ? this.fetchTime : (Long) defaultValue(fields()[3]);
-        record.prevFetchTime = fieldSetFlags()[4] ? this.prevFetchTime : (Long) defaultValue(fields()[4]);
-        record.fetchInterval = fieldSetFlags()[5] ? this.fetchInterval : (Integer) defaultValue(fields()[5]);
-        record.retriesSinceFetch = fieldSetFlags()[6] ? this.retriesSinceFetch : (Integer) defaultValue(fields()[6]);
-        record.modifiedTime = fieldSetFlags()[7] ? this.modifiedTime : (Long) defaultValue(fields()[7]);
-        record.prevModifiedTime = fieldSetFlags()[8] ? this.prevModifiedTime : (Long) defaultValue(fields()[8]);
-        record.protocolStatus = fieldSetFlags()[9] ? this.protocolStatus : (ProtocolStatus) defaultValue(fields()[9]);
-        record.content = fieldSetFlags()[10] ? this.content : (java.nio.ByteBuffer) defaultValue(fields()[10]);
-        record.contentType = fieldSetFlags()[11] ? this.contentType : (CharSequence) defaultValue(fields()[11]);
-        record.prevSignature = fieldSetFlags()[12] ? this.prevSignature : (java.nio.ByteBuffer) defaultValue(fields()[12]);
-        record.signature = fieldSetFlags()[13] ? this.signature : (java.nio.ByteBuffer) defaultValue(fields()[13]);
-        record.title = fieldSetFlags()[14] ? this.title : (CharSequence) defaultValue(fields()[14]);
-        record.text = fieldSetFlags()[15] ? this.text : (CharSequence) defaultValue(fields()[15]);
-        record.parseStatus = fieldSetFlags()[16] ? this.parseStatus : (ParseStatus) defaultValue(fields()[16]);
-        record.score = fieldSetFlags()[17] ? this.score : (Float) defaultValue(fields()[17]);
-        record.reprUrl = fieldSetFlags()[18] ? this.reprUrl : (CharSequence) defaultValue(fields()[18]);
-        record.headers = fieldSetFlags()[19] ? this.headers : (java.util.Map<CharSequence,CharSequence>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[19]));
-        record.outlinks = fieldSetFlags()[20] ? this.outlinks : (java.util.Map<CharSequence,CharSequence>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[20]));
-        record.inlinks = fieldSetFlags()[21] ? this.inlinks : (java.util.Map<CharSequence,CharSequence>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[21]));
-        record.markers = fieldSetFlags()[22] ? this.markers : (java.util.Map<CharSequence,CharSequence>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[22]));
-        record.metadata = fieldSetFlags()[23] ? this.metadata : (java.util.Map<CharSequence,java.nio.ByteBuffer>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[23]));
-        record.batchId = fieldSetFlags()[24] ? this.batchId : (CharSequence) defaultValue(fields()[24]);
+        record.key = fieldSetFlags()[1] ? this.key : (java.lang.String) defaultValue(fields()[1]);
+        record.baseUrl = fieldSetFlags()[2] ? this.baseUrl : (java.lang.String) defaultValue(fields()[2]);
+        record.status = fieldSetFlags()[3] ? this.status : (java.lang.Integer) defaultValue(fields()[3]);
+        record.fetchTime = fieldSetFlags()[4] ? this.fetchTime : (java.lang.Long) defaultValue(fields()[4]);
+        record.prevFetchTime = fieldSetFlags()[5] ? this.prevFetchTime : (java.lang.Long) defaultValue(fields()[5]);
+        record.fetchInterval = fieldSetFlags()[6] ? this.fetchInterval : (java.lang.Integer) defaultValue(fields()[6]);
+        record.retriesSinceFetch = fieldSetFlags()[7] ? this.retriesSinceFetch : (java.lang.Integer) defaultValue(fields()[7]);
+        record.modifiedTime = fieldSetFlags()[8] ? this.modifiedTime : (java.lang.Long) defaultValue(fields()[8]);
+        record.prevModifiedTime = fieldSetFlags()[9] ? this.prevModifiedTime : (java.lang.Long) defaultValue(fields()[9]);
+        record.protocolStatus = fieldSetFlags()[10] ? this.protocolStatus : (org.apache.nutch.storage.ProtocolStatus) defaultValue(fields()[10]);
+        record.content = fieldSetFlags()[11] ? this.content : (java.nio.ByteBuffer) defaultValue(fields()[11]);
+        record.contentType = fieldSetFlags()[12] ? this.contentType : (java.lang.String) defaultValue(fields()[12]);
+        record.prevSignature = fieldSetFlags()[13] ? this.prevSignature : (java.nio.ByteBuffer) defaultValue(fields()[13]);
+        record.signature = fieldSetFlags()[14] ? this.signature : (java.nio.ByteBuffer) defaultValue(fields()[14]);
+        record.title = fieldSetFlags()[15] ? this.title : (java.lang.String) defaultValue(fields()[15]);
+        record.text = fieldSetFlags()[16] ? this.text : (java.lang.String) defaultValue(fields()[16]);
+        record.parseStatus = fieldSetFlags()[17] ? this.parseStatus : (org.apache.nutch.storage.ParseStatus) defaultValue(fields()[17]);
+        record.score = fieldSetFlags()[18] ? this.score : (java.lang.Float) defaultValue(fields()[18]);
+        record.reprUrl = fieldSetFlags()[19] ? this.reprUrl : (java.lang.String) defaultValue(fields()[19]);
+        record.headers = fieldSetFlags()[20] ? this.headers : (java.util.Map<java.lang.String,java.lang.String>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[20]));
+        record.outlinks = fieldSetFlags()[21] ? this.outlinks : (java.util.Map<java.lang.String,java.lang.String>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[21]));
+        record.inlinks = fieldSetFlags()[22] ? this.inlinks : (java.util.Map<java.lang.String,java.lang.String>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[22]));
+        record.markers = fieldSetFlags()[23] ? this.markers : (java.util.Map<java.lang.String,java.lang.String>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[23]));
+        record.metadata = fieldSetFlags()[24] ? this.metadata : (java.util.Map<java.lang.String,java.nio.ByteBuffer>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[24]));
+        record.batchId = fieldSetFlags()[25] ? this.batchId : (java.lang.String) defaultValue(fields()[25]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
@@ -1581,7 +1641,7 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
     }
   }
   
-  public Tombstone getTombstone(){
+  public WebPage.Tombstone getTombstone(){
   	return TOMBSTONE;
   }
 
@@ -1596,217 +1656,240 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
       private Tombstone() { }
   
 	  				  /**
+	   * Gets the value of the 'key' field.
+		   */
+	  public java.lang.String getKey() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
+	  }
+	
+	  /**
+	   * Sets the value of the 'key' field.
+		   * @param value the value to set.
+	   */
+	  public void setKey(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
+	  }
+	  
+	  /**
+	   * Checks the dirty status of the 'key' field. A field is dirty if it represents a change that has not yet been written to the database.
+		   * @param value the value to set.
+	   */
+	  public boolean isKeyDirty(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  }
+	
+				  /**
 	   * Gets the value of the 'baseUrl' field.
 		   */
-	  public CharSequence getBaseUrl() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.String getBaseUrl() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'baseUrl' field.
 		   * @param value the value to set.
 	   */
-	  public void setBaseUrl(CharSequence value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setBaseUrl(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'baseUrl' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isBaseUrlDirty(CharSequence value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isBaseUrlDirty(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'status' field.
 		   */
-	  public Integer getStatus() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.Integer getStatus() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'status' field.
 		   * @param value the value to set.
 	   */
-	  public void setStatus(Integer value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setStatus(java.lang.Integer value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'status' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isStatusDirty(Integer value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isStatusDirty(java.lang.Integer value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'fetchTime' field.
 		   */
-	  public Long getFetchTime() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.Long getFetchTime() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'fetchTime' field.
 		   * @param value the value to set.
 	   */
-	  public void setFetchTime(Long value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setFetchTime(java.lang.Long value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'fetchTime' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isFetchTimeDirty(Long value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isFetchTimeDirty(java.lang.Long value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'prevFetchTime' field.
 		   */
-	  public Long getPrevFetchTime() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.Long getPrevFetchTime() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'prevFetchTime' field.
 		   * @param value the value to set.
 	   */
-	  public void setPrevFetchTime(Long value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setPrevFetchTime(java.lang.Long value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'prevFetchTime' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isPrevFetchTimeDirty(Long value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isPrevFetchTimeDirty(java.lang.Long value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'fetchInterval' field.
 		   */
-	  public Integer getFetchInterval() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.Integer getFetchInterval() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'fetchInterval' field.
 		   * @param value the value to set.
 	   */
-	  public void setFetchInterval(Integer value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setFetchInterval(java.lang.Integer value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'fetchInterval' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isFetchIntervalDirty(Integer value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isFetchIntervalDirty(java.lang.Integer value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'retriesSinceFetch' field.
 		   */
-	  public Integer getRetriesSinceFetch() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.Integer getRetriesSinceFetch() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'retriesSinceFetch' field.
 		   * @param value the value to set.
 	   */
-	  public void setRetriesSinceFetch(Integer value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setRetriesSinceFetch(java.lang.Integer value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'retriesSinceFetch' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isRetriesSinceFetchDirty(Integer value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isRetriesSinceFetchDirty(java.lang.Integer value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'modifiedTime' field.
 		   */
-	  public Long getModifiedTime() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.Long getModifiedTime() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'modifiedTime' field.
 		   * @param value the value to set.
 	   */
-	  public void setModifiedTime(Long value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setModifiedTime(java.lang.Long value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'modifiedTime' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isModifiedTimeDirty(Long value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isModifiedTimeDirty(java.lang.Long value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'prevModifiedTime' field.
 		   */
-	  public Long getPrevModifiedTime() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.Long getPrevModifiedTime() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'prevModifiedTime' field.
 		   * @param value the value to set.
 	   */
-	  public void setPrevModifiedTime(Long value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setPrevModifiedTime(java.lang.Long value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'prevModifiedTime' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isPrevModifiedTimeDirty(Long value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isPrevModifiedTimeDirty(java.lang.Long value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'protocolStatus' field.
 		   */
-	  public ProtocolStatus getProtocolStatus() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public org.apache.nutch.storage.ProtocolStatus getProtocolStatus() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'protocolStatus' field.
 		   * @param value the value to set.
 	   */
-	  public void setProtocolStatus(ProtocolStatus value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setProtocolStatus(org.apache.nutch.storage.ProtocolStatus value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'protocolStatus' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isProtocolStatusDirty(ProtocolStatus value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isProtocolStatusDirty(org.apache.nutch.storage.ProtocolStatus value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'content' field.
 		   */
 	  public java.nio.ByteBuffer getContent() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
@@ -1814,7 +1897,7 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
 		   * @param value the value to set.
 	   */
 	  public void setContent(java.nio.ByteBuffer value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
@@ -1822,37 +1905,37 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
 		   * @param value the value to set.
 	   */
 	  public boolean isContentDirty(java.nio.ByteBuffer value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'contentType' field.
 		   */
-	  public CharSequence getContentType() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.String getContentType() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'contentType' field.
 		   * @param value the value to set.
 	   */
-	  public void setContentType(CharSequence value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setContentType(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'contentType' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isContentTypeDirty(CharSequence value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isContentTypeDirty(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'prevSignature' field.
 		   */
 	  public java.nio.ByteBuffer getPrevSignature() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
@@ -1860,7 +1943,7 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
 		   * @param value the value to set.
 	   */
 	  public void setPrevSignature(java.nio.ByteBuffer value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
@@ -1868,14 +1951,14 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
 		   * @param value the value to set.
 	   */
 	  public boolean isPrevSignatureDirty(java.nio.ByteBuffer value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'signature' field.
 		   */
 	  public java.nio.ByteBuffer getSignature() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
@@ -1883,7 +1966,7 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
 		   * @param value the value to set.
 	   */
 	  public void setSignature(java.nio.ByteBuffer value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
@@ -1891,261 +1974,264 @@ public class WebPage extends org.apache.gora.persistency.impl.PersistentBase imp
 		   * @param value the value to set.
 	   */
 	  public boolean isSignatureDirty(java.nio.ByteBuffer value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'title' field.
 		   */
-	  public CharSequence getTitle() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.String getTitle() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'title' field.
 		   * @param value the value to set.
 	   */
-	  public void setTitle(CharSequence value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setTitle(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'title' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isTitleDirty(CharSequence value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isTitleDirty(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'text' field.
 		   */
-	  public CharSequence getText() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.String getText() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'text' field.
 		   * @param value the value to set.
 	   */
-	  public void setText(CharSequence value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setText(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'text' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isTextDirty(CharSequence value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isTextDirty(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'parseStatus' field.
 		   */
-	  public ParseStatus getParseStatus() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public org.apache.nutch.storage.ParseStatus getParseStatus() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'parseStatus' field.
 		   * @param value the value to set.
 	   */
-	  public void setParseStatus(ParseStatus value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setParseStatus(org.apache.nutch.storage.ParseStatus value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'parseStatus' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isParseStatusDirty(ParseStatus value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isParseStatusDirty(org.apache.nutch.storage.ParseStatus value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'score' field.
 		   */
-	  public Float getScore() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.Float getScore() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'score' field.
 		   * @param value the value to set.
 	   */
-	  public void setScore(Float value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setScore(java.lang.Float value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'score' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isScoreDirty(Float value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isScoreDirty(java.lang.Float value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'reprUrl' field.
 		   */
-	  public CharSequence getReprUrl() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.String getReprUrl() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'reprUrl' field.
 		   * @param value the value to set.
 	   */
-	  public void setReprUrl(CharSequence value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setReprUrl(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'reprUrl' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isReprUrlDirty(CharSequence value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isReprUrlDirty(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'headers' field.
 		   */
-	  public java.util.Map<CharSequence,CharSequence> getHeaders() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.util.Map<java.lang.String,java.lang.String> getHeaders() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'headers' field.
 		   * @param value the value to set.
 	   */
-	  public void setHeaders(java.util.Map<CharSequence,CharSequence> value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setHeaders(java.util.Map<java.lang.String,java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'headers' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isHeadersDirty(java.util.Map<CharSequence,CharSequence> value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isHeadersDirty(java.util.Map<java.lang.String,java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'outlinks' field.
 		   */
-	  public java.util.Map<CharSequence,CharSequence> getOutlinks() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.util.Map<java.lang.String,java.lang.String> getOutlinks() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'outlinks' field.
 		   * @param value the value to set.
 	   */
-	  public void setOutlinks(java.util.Map<CharSequence,CharSequence> value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setOutlinks(java.util.Map<java.lang.String,java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'outlinks' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isOutlinksDirty(java.util.Map<CharSequence,CharSequence> value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isOutlinksDirty(java.util.Map<java.lang.String,java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'inlinks' field.
 		   */
-	  public java.util.Map<CharSequence,CharSequence> getInlinks() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.util.Map<java.lang.String,java.lang.String> getInlinks() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'inlinks' field.
 		   * @param value the value to set.
 	   */
-	  public void setInlinks(java.util.Map<CharSequence,CharSequence> value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setInlinks(java.util.Map<java.lang.String,java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'inlinks' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isInlinksDirty(java.util.Map<CharSequence,CharSequence> value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isInlinksDirty(java.util.Map<java.lang.String,java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'markers' field.
 		   */
-	  public java.util.Map<CharSequence,CharSequence> getMarkers() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.util.Map<java.lang.String,java.lang.String> getMarkers() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'markers' field.
 		   * @param value the value to set.
 	   */
-	  public void setMarkers(java.util.Map<CharSequence,CharSequence> value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setMarkers(java.util.Map<java.lang.String,java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'markers' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isMarkersDirty(java.util.Map<CharSequence,CharSequence> value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isMarkersDirty(java.util.Map<java.lang.String,java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'metadata' field.
 		   */
-	  public java.util.Map<CharSequence,java.nio.ByteBuffer> getMetadata() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.util.Map<java.lang.String,java.nio.ByteBuffer> getMetadata() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'metadata' field.
 		   * @param value the value to set.
 	   */
-	  public void setMetadata(java.util.Map<CharSequence,java.nio.ByteBuffer> value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setMetadata(java.util.Map<java.lang.String,java.nio.ByteBuffer> value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'metadata' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isMetadataDirty(java.util.Map<CharSequence,java.nio.ByteBuffer> value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isMetadataDirty(java.util.Map<java.lang.String,java.nio.ByteBuffer> value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'batchId' field.
 		   */
-	  public CharSequence getBatchId() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.String getBatchId() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'batchId' field.
 		   * @param value the value to set.
 	   */
-	  public void setBatchId(CharSequence value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setBatchId(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'batchId' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isBatchIdDirty(CharSequence value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isBatchIdDirty(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
+		  
   }
+  
 }
+

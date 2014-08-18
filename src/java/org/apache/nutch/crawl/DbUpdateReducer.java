@@ -171,7 +171,7 @@ extends GoraReducer<UrlWithScore, NutchWritable, String, WebPage> {
       if (inlinkDist < smallestDist) {
         smallestDist=inlinkDist;
       }
-      page.getInlinks().put(new Utf8(inlink.getUrl()), new Utf8(inlink.getAnchor()));
+      page.getInlinks().put(inlink.getUrl(), inlink.getAnchor());
     }
     if (smallestDist != Integer.MAX_VALUE) {
       int oldDistance=Integer.MAX_VALUE;
@@ -179,7 +179,7 @@ extends GoraReducer<UrlWithScore, NutchWritable, String, WebPage> {
       if (oldDistUtf8 != null)oldDistance=Integer.parseInt(oldDistUtf8.toString());
       int newDistance = smallestDist+1;
       if (newDistance < oldDistance) {
-        page.getMarkers().put(DbUpdaterJob.DISTANCE, new Utf8(Integer.toString(newDistance)));
+        page.getMarkers().put(DbUpdaterJob.DISTANCE, Integer.toString(newDistance));
       }
     }
 
@@ -198,7 +198,7 @@ extends GoraReducer<UrlWithScore, NutchWritable, String, WebPage> {
     }
     Mark.GENERATE_MARK.removeMarkIfExist(page);
     Mark.FETCH_MARK.removeMarkIfExist(page);
-    Utf8 parse_mark = Mark.PARSE_MARK.checkMark(page);
+    String parse_mark = Mark.PARSE_MARK.checkMark(page);
     if (parse_mark != null) {
       Mark.UPDATEDB_MARK.putMark(page, parse_mark);
       Mark.PARSE_MARK.removeMark(page);

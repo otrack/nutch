@@ -16,7 +16,6 @@
  ******************************************************************************/
 package org.apache.nutch.crawl;
 
-import org.apache.avro.util.Utf8;
 import org.apache.gora.mapreduce.GoraOutputFormat;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
@@ -62,7 +61,7 @@ public class InjectorJob extends NutchTool implements Tool {
 
   private static final Set<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
 
-  private static final Utf8 YES_STRING = new Utf8("y");
+  private static final String YES_STRING = "y";
   
   static {
     FIELDS.add(WebPage.Field.MARKERS);
@@ -160,7 +159,7 @@ public class InjectorJob extends NutchTool implements Tool {
       while (keysIter.hasNext()) {
         String keymd = keysIter.next();
         String valuemd = metadata.get(keymd);
-        row.getMetadata().put(new Utf8(keymd), ByteBuffer.wrap(valuemd.getBytes()));
+        row.getMetadata().put(new String(keymd), ByteBuffer.wrap(valuemd.getBytes()));
       }
 
       if (customScore != -1)
@@ -177,7 +176,7 @@ public class InjectorJob extends NutchTool implements Tool {
         }
       }
       context.getCounter("injector", "urls_injected").increment(1);
-      row.getMarkers().put(DbUpdaterJob.DISTANCE, new Utf8(String.valueOf(0)));
+      row.getMarkers().put(DbUpdaterJob.DISTANCE, String.valueOf(0));
       Mark.INJECT_MARK.putMark(row, YES_STRING);
       context.write(reversedUrl, row);
     }

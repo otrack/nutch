@@ -325,9 +325,9 @@ extends GoraReducer<IntWritable, FetchEntry, String, WebPage> {
             Host host = hostDb.getByHostName(hostname);
             if (host != null) {
               fiq = new FetchItemQueue(conf,
-                                       host.getInt("q_mt", maxThreads),
-                                       host.getLong("q_cd", crawlDelay),
-                                       host.getLong("q_mcd", minCrawlDelay));
+                                       maxThreads,
+                                       crawlDelay,
+                                       minCrawlDelay);
             }
             
           } catch (IOException e) {
@@ -598,13 +598,13 @@ extends GoraReducer<IntWritable, FetchEntry, String, WebPage> {
         }
       }
 
-      page.getOutlinks().put(new Utf8(newUrl), new Utf8());
+      page.getOutlinks().put(newUrl, "");
       page.getMetadata().put(FetcherJob.REDIRECT_DISCOVERED, TableUtil.YES_VAL);
       reprUrl = URLUtil.chooseRepr(reprUrl, newUrl, temp);
       if (reprUrl == null) {
         LOG.warn("reprUrl==null");
       } else {
-        page.setReprUrl(new Utf8(reprUrl));
+        page.setReprUrl(reprUrl);
         if (LOG.isDebugEnabled()) {
           LOG.debug(" - " + redirType + " redirect to " +
               reprUrl + " (fetching later)");
@@ -631,8 +631,8 @@ extends GoraReducer<IntWritable, FetchEntry, String, WebPage> {
 
       if (content != null) {
         fit.page.setContent(ByteBuffer.wrap(content.getContent()));
-        fit.page.setContentType(new Utf8(content.getContentType()));
-        fit.page.setBaseUrl(new Utf8(content.getBaseUrl()));
+        fit.page.setContentType(content.getContentType());
+        fit.page.setBaseUrl(content.getBaseUrl());
       }
       Mark.FETCH_MARK.putMark(fit.page, Mark.GENERATE_MARK.checkMark(fit.page));
       String key = TableUtil.reverseUrl(fit.url);

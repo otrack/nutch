@@ -16,15 +16,9 @@
  ******************************************************************************/
 package org.apache.nutch.crawl;
 
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-
 import org.apache.avro.util.Utf8;
 import org.apache.gora.filter.FilterOp;
 import org.apache.gora.filter.MapFieldValueFilter;
-import org.apache.gora.filter.SingleFieldValueFilter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -36,13 +30,14 @@ import org.apache.nutch.scoring.ScoringFilters;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
-import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.NutchJob;
-import org.apache.nutch.util.NutchTool;
-import org.apache.nutch.util.TimingUtil;
-import org.apache.nutch.util.ToolUtil;
+import org.apache.nutch.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
 
 public class DbUpdaterJob extends NutchTool implements Tool {
 
@@ -69,7 +64,7 @@ public class DbUpdaterJob extends NutchTool implements Tool {
     FIELDS.add(WebPage.Field.HEADERS);
   }
 
-  public static final Utf8 DISTANCE = new Utf8("dist");
+  public static final String DISTANCE = "dist";
 
   public DbUpdaterJob() {
 

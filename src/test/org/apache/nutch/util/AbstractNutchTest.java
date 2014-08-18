@@ -16,41 +16,69 @@
  */
 package org.apache.nutch.util;
 
+import org.apache.gora.infinispan.mapreduce.InfinispanStoreMapReduceAbstractTest;
 import org.apache.gora.store.DataStore;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
+import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+
 
 /**
  * This class provides common routines for setup/teardown of an in-memory data
  * store.
  */
-public class AbstractNutchTest {
+public class AbstractNutchTest extends InfinispanStoreMapReduceAbstractTest {
 
-  protected Configuration conf;
-  protected FileSystem fs;
-  protected Path testdir = new Path("build/test/working");
-  protected DataStore<String, WebPage> webPageStore;
-  protected boolean persistentDataStore = false;
+    public static final Logger LOG = LoggerFactory.getLogger(AbstractNutchTest.class);
 
-  public void setUp() throws Exception {
-    conf = CrawlTestUtil.createConfiguration();
-    conf.set("storage.data.store.class", "org.apache.gora.memory.store.MemStore");
-    fs = FileSystem.get(conf);
-    webPageStore = StorageUtils.createWebStore(conf, String.class,
-        WebPage.class);
-  }
+    protected Configuration conf;
+    protected FileSystem fs;
+    protected Path testdir = new Path("build/test/working");
+    protected DataStore<String, WebPage> webPageStore;
+    protected boolean persistentDataStore = true;
 
-  public void tearDown() throws Exception {
-    // empty the database after test
-    if (!persistentDataStore) {
-      webPageStore.deleteByQuery(webPageStore.newQuery());
-      webPageStore.flush();
-      webPageStore.close();
+    public AbstractNutchTest() throws IOException {
+        super();
     }
-    fs.delete(testdir, true);
-  }
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        LOG.info("Setting up Hadoop Test Case...");
+        try {
+            super.setUp();
+            conf = this.createJobConf();
+            conf.addResource("nutch-default.xml");
+            conf.addResource("nutch-site.xml");
+            conf.addResource("crawl-tests.xml");
+            fs = FileSystem.get(conf);
+            webPageStore = StorageUtils.createWebStore(conf, String.class,WebPage.class);
+            webPageStore.deleteSchema();
+        } catch (Exception e) {
+            LOG.error("Hadoop Test Case set up failed", e);
+            // cleanup
+            tearDown();
+            throw new RuntimeException();
+        }
+
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        // empty the database after test
+        if (!persistentDataStore) {
+            webPageStore.deleteByQuery(webPageStore.newQuery());
+            webPageStore.flush();
+            webPageStore.close();
+        }
+        super.tearDown();
+    }
 
 }

@@ -34,8 +34,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * Basic generator test. 1. Insert entries in webtable 2. Generates entries to
  * fetch 3. Verifies that number of generated urls match 4. Verifies that
@@ -50,7 +48,9 @@ public class TestGenerator extends AbstractNutchTest {
     WebPage.Field.MARKERS.getName(),
     WebPage.Field.SCORE.getName()
   };
-  
+
+  public TestGenerator() throws IOException {}
+
   @Override
   @Before
   public void setUp() throws Exception{
@@ -69,7 +69,7 @@ public class TestGenerator extends AbstractNutchTest {
    * @throws Exception
    */
   @Test
-  @Ignore("Temporarily diable until NUTCH-1572 is addressed.")
+  @Ignore("Temporarily disable until NUTCH-1572 is addressed.")
   public void testGenerateHighest() throws Exception {
 
     final int NUM_RESULTS = 2;
@@ -130,7 +130,7 @@ public class TestGenerator extends AbstractNutchTest {
    * @throws Exception
    */
   @Test
-  @Ignore("Temporarily diable until NUTCH-1572 is addressed.")
+  // @Ignore("Temporarily diable until NUTCH-1572 is addressed.")
   public void testGenerateHostLimit() throws Exception {
     ArrayList<URLWebPage> list = new ArrayList<URLWebPage>();
 
@@ -146,6 +146,7 @@ public class TestGenerator extends AbstractNutchTest {
     Configuration myConfiguration = new Configuration(conf);
     myConfiguration.setInt(GeneratorJob.GENERATOR_MAX_COUNT, 1);
     myConfiguration.set(GeneratorJob.GENERATOR_COUNT_MODE, GeneratorJob.GENERATOR_COUNT_VALUE_HOST);
+
     generateFetchlist(Integer.MAX_VALUE, myConfiguration, false);
 
     ArrayList<URLWebPage> fetchList = CrawlTestUtil.readContents(webPageStore, Mark.GENERATE_MARK, FIELDS);
@@ -179,7 +180,7 @@ public class TestGenerator extends AbstractNutchTest {
    * @throws Exception
    */
   @Test
-  @Ignore("Temporarily diable until NUTCH-1572 is addressed.")
+  // @Ignore("Temporarily diable until NUTCH-1572 is addressed.")
   public void testGenerateDomainLimit() throws Exception {
     ArrayList<URLWebPage> list = new ArrayList<URLWebPage>();
 
@@ -232,7 +233,7 @@ public class TestGenerator extends AbstractNutchTest {
    * @throws IOException
    */
   @Test
-  @Ignore("Temporarily diable until NUTCH-1572 is addressed.")
+  // @Ignore("Temporarily diable until NUTCH-1572 is addressed.")
   public void testFilter() throws IOException, Exception {
 
     ArrayList<URLWebPage> list = new ArrayList<URLWebPage>();
@@ -247,7 +248,8 @@ public class TestGenerator extends AbstractNutchTest {
     webPageStore.flush();
 
     Configuration myConfiguration = new Configuration(conf);
-    myConfiguration.set("urlfilter.suffix.file", "filter-all.txt");
+    // myConfiguration.set("urlfilter.suffix.file", "filter-all.txt");
+    myConfiguration.set("urlfilter.regex.rules","-.");
 
     generateFetchlist(Integer.MAX_VALUE, myConfiguration, true);
 
@@ -296,6 +298,7 @@ public class TestGenerator extends AbstractNutchTest {
   private URLWebPage createURLWebPage(final String url,
       final int fetchInterval, final float score) {
     WebPage page = WebPage.newBuilder().build();
+    page.setBaseUrl(url);
     page.setFetchInterval(fetchInterval);
     page.setScore(score);
     page.setStatus((int)CrawlStatus.STATUS_UNFETCHED);

@@ -16,23 +16,11 @@
  ******************************************************************************/
 package org.apache.nutch.crawl;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.Collection;
-
-import org.apache.hadoop.mapreduce.Job;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
+import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -40,11 +28,15 @@ import org.apache.nutch.crawl.URLPartitioner.SelectorEntryPartitioner;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
-import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.NutchJob;
-import org.apache.nutch.util.NutchTool;
-import org.apache.nutch.util.TimingUtil;
-import org.apache.nutch.util.ToolUtil;
+import org.apache.nutch.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class GeneratorJob extends NutchTool implements Tool {
   public static final String GENERATE_UPDATE_CRAWLDB = "generate.update.crawldb";
@@ -210,6 +202,14 @@ public class GeneratorJob extends NutchTool implements Tool {
   public String generate(long topN, long curTime, boolean filter, boolean norm)
       throws Exception {
 
+    String batchId = getConf().get(BATCH_ID);
+    // generate batchId if needed
+    if (batchId==null) {
+      int randomSeed = Math.abs(new Random().nextInt());
+      batchId = (curTime / 1000) + "-" + randomSeed;
+      getConf().set(BATCH_ID, batchId);
+    }
+
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     long start = System.currentTimeMillis();
     LOG.info("GeneratorJob: starting at " + sdf.format(start));
@@ -225,7 +225,6 @@ public class GeneratorJob extends NutchTool implements Tool {
         Nutch.ARG_CURTIME, curTime,
         Nutch.ARG_FILTER, filter,
         Nutch.ARG_NORMALIZE, norm));
-    String batchId =  getConf().get(BATCH_ID);
     long finish = System.currentTimeMillis();
     LOG.info("GeneratorJob: finished at " + sdf.format(finish) + ", time elapsed: " + TimingUtil.elapsedTime(start, finish));
     LOG.info("GeneratorJob: generated batch id: " + batchId + " containing " + GeneratorReducer.count + " URLs");
@@ -249,11 +248,6 @@ public class GeneratorJob extends NutchTool implements Tool {
 
     long curTime = System.currentTimeMillis(), topN = Long.MAX_VALUE;
     boolean filter = true, norm = true;
-
-    // generate batchId
-    int randomSeed = Math.abs(new Random().nextInt());
-    String batchId = (curTime / 1000) + "-" + randomSeed;
-    getConf().set(BATCH_ID, batchId);
 
     for (int i = 0; i < args.length; i++) {
       if ("-topN".equals(args[i])) {

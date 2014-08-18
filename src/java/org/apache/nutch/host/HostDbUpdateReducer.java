@@ -16,7 +16,6 @@
  ******************************************************************************/
 package org.apache.nutch.host;
 
-import org.apache.avro.util.Utf8;
 import org.apache.gora.mapreduce.GoraReducer;
 import org.apache.hadoop.io.Text;
 import org.apache.nutch.crawl.CrawlStatus;
@@ -58,14 +57,14 @@ public class HostDbUpdateReducer extends GoraReducer<Text, WebPage, String, Host
       // TODO: limit number of links
       if (buildLinkDb) {
         if (page.getInlinks() != null) {
-          Set<CharSequence> inlinks = page.getInlinks().keySet();
-          for (CharSequence inlink: inlinks) {
+          Set<String> inlinks = page.getInlinks().keySet();
+          for (String inlink: inlinks) {
             String host = URLUtil.getHost(inlink.toString());
             inlinkCount.add(host);
           }
         }
         if (page.getOutlinks() != null) {
-          Set<CharSequence> outlinks = page.getOutlinks().keySet();
+          Set<String> outlinks = page.getOutlinks().keySet();
           for (CharSequence outlink: outlinks) {
             String host = URLUtil.getHost(outlink.toString());
             outlinkCount.add(host);
@@ -76,15 +75,15 @@ public class HostDbUpdateReducer extends GoraReducer<Text, WebPage, String, Host
     
     // output host data
     Host host = new Host();
-    host.getMetadata().put(new Utf8("p"),ByteBuffer.wrap(Integer.toString(numPages).getBytes()));
+    host.getMetadata().put("p",ByteBuffer.wrap(Integer.toString(numPages).getBytes()));
     if (numFetched > 0) {
-      host.getMetadata().put(new Utf8("f"),ByteBuffer.wrap(Integer.toString(numFetched).getBytes()));
+      host.getMetadata().put("f",ByteBuffer.wrap(Integer.toString(numFetched).getBytes()));
     }
     for (String inlink: inlinkCount.getKeys()) {
-      host.getInlinks().put(new Utf8(inlink), new Utf8(Integer.toString(inlinkCount.getCount(inlink))));
+      host.getInlinks().put(inlink, Integer.toString(inlinkCount.getCount(inlink)));
     }
     for (String outlink: outlinkCount.getKeys()) {
-      host.getInlinks().put(new Utf8(outlink), new Utf8(Integer.toString(outlinkCount.getCount(outlink))));
+      host.getInlinks().put(outlink, Integer.toString(outlinkCount.getCount(outlink)));
     }
     
     context.write(key.toString(), host);

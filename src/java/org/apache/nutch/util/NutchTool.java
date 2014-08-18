@@ -16,14 +16,14 @@
  ******************************************************************************/
 package org.apache.nutch.util;
 
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.nutch.metadata.Nutch;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.nutch.metadata.Nutch;
 
 public abstract class NutchTool extends Configured {
   
@@ -32,7 +32,7 @@ public abstract class NutchTool extends Configured {
     Collections.synchronizedMap(new HashMap<String,Object>());
   protected Job currentJob;
   protected int numJobs;
-  protected int currentJobNum;
+    protected int currentJobNum;
   
   /** Runs the tool, using a map of arguments.
    * May return results, or null.

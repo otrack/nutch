@@ -3,14 +3,10 @@
  * 
  * DO NOT EDIT DIRECTLY
  */
-package org.apache.nutch.storage;
-
-import org.apache.avro.util.Utf8;
-import org.apache.nutch.util.Bytes;
-
+package org.apache.nutch.storage;  
 @SuppressWarnings("all")
 public class Host extends org.apache.gora.persistency.impl.PersistentBase implements org.apache.avro.specific.SpecificRecord, org.apache.gora.persistency.Persistent {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Host\",\"namespace\":\"org.apache.nutch.storage\",\"fields\":[{\"name\":\"__g__dirty\",\"type\":\"bytes\",\"doc\":\"Bytes used to represent weather or not a field is dirty.\",\"default\":\"AA==\"},{\"name\":\"metadata\",\"type\":{\"type\":\"map\",\"values\":\"bytes\"},\"default\":{}},{\"name\":\"outlinks\",\"type\":{\"type\":\"map\",\"values\":\"string\"},\"default\":{}},{\"name\":\"inlinks\",\"type\":{\"type\":\"map\",\"values\":\"string\"},\"default\":{}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Host\",\"namespace\":\"org.apache.nutch.storage\",\"fields\":[{\"name\":\"__g__dirty\",\"type\":\"bytes\",\"doc\":\"Bytes used to represent weather or not a field is dirty.\",\"default\":\"AA==\"},{\"name\":\"metadata\",\"type\":{\"type\":\"map\",\"values\":\"bytes\",\"avro.java.string\":\"String\"},\"default\":{}},{\"name\":\"outlinks\",\"type\":{\"type\":\"map\",\"values\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"avro.java.string\":\"String\"},\"default\":{}},{\"name\":\"inlinks\",\"type\":{\"type\":\"map\",\"values\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"avro.java.string\":\"String\"},\"default\":{}}]}");
 
   /** Enum containing all data bean's fields. */
   public static enum Field {
@@ -64,12 +60,12 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
 
   /** Bytes used to represent weather or not a field is dirty. */
   private java.nio.ByteBuffer __g__dirty = java.nio.ByteBuffer.wrap(new byte[1]);
-  private java.util.Map<CharSequence,java.nio.ByteBuffer> metadata;
-  private java.util.Map<CharSequence,CharSequence> outlinks;
-  private java.util.Map<CharSequence,CharSequence> inlinks;
+  private java.util.Map<java.lang.String,java.nio.ByteBuffer> metadata;
+  private java.util.Map<java.lang.String,java.lang.String> outlinks;
+  private java.util.Map<java.lang.String,java.lang.String> inlinks;
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
   // Used by DatumWriter.  Applications should not call. 
-  public Object get(int field$) {
+  public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return __g__dirty;
     case 1: return metadata;
@@ -81,12 +77,12 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
   
   // Used by DatumReader.  Applications should not call. 
   @SuppressWarnings(value="unchecked")
-  public void put(int field$, Object value) {
+  public void put(int field$, java.lang.Object value) {
     switch (field$) {
     case 0: __g__dirty = (java.nio.ByteBuffer)(value); break;
-    case 1: metadata = (java.util.Map<CharSequence,java.nio.ByteBuffer>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
-    case 2: outlinks = (java.util.Map<CharSequence,CharSequence>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
-    case 3: inlinks = (java.util.Map<CharSequence,CharSequence>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
+    case 1: metadata = (java.util.Map<java.lang.String,java.nio.ByteBuffer>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
+    case 2: outlinks = (java.util.Map<java.lang.String,java.lang.String>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
+    case 3: inlinks = (java.util.Map<java.lang.String,java.lang.String>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)value)); break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -94,7 +90,7 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
   /**
    * Gets the value of the 'metadata' field.
    */
-  public java.util.Map<CharSequence,java.nio.ByteBuffer> getMetadata() {
+  public java.util.Map<java.lang.String,java.nio.ByteBuffer> getMetadata() {
     return metadata;
   }
 
@@ -102,7 +98,7 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
    * Sets the value of the 'metadata' field.
    * @param value the value to set.
    */
-  public void setMetadata(java.util.Map<CharSequence,java.nio.ByteBuffer> value) {
+  public void setMetadata(java.util.Map<java.lang.String,java.nio.ByteBuffer> value) {
     this.metadata = (value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper(value);
     setDirty(1);
   }
@@ -111,14 +107,14 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
    * Checks the dirty status of the 'metadata' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isMetadataDirty(java.util.Map<CharSequence,java.nio.ByteBuffer> value) {
+  public boolean isMetadataDirty(java.util.Map<java.lang.String,java.nio.ByteBuffer> value) {
     return isDirty(1);
   }
 
   /**
    * Gets the value of the 'outlinks' field.
    */
-  public java.util.Map<CharSequence,CharSequence> getOutlinks() {
+  public java.util.Map<java.lang.String,java.lang.String> getOutlinks() {
     return outlinks;
   }
 
@@ -126,7 +122,7 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
    * Sets the value of the 'outlinks' field.
    * @param value the value to set.
    */
-  public void setOutlinks(java.util.Map<CharSequence,CharSequence> value) {
+  public void setOutlinks(java.util.Map<java.lang.String,java.lang.String> value) {
     this.outlinks = (value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper(value);
     setDirty(2);
   }
@@ -135,14 +131,14 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
    * Checks the dirty status of the 'outlinks' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isOutlinksDirty(java.util.Map<CharSequence,CharSequence> value) {
+  public boolean isOutlinksDirty(java.util.Map<java.lang.String,java.lang.String> value) {
     return isDirty(2);
   }
 
   /**
    * Gets the value of the 'inlinks' field.
    */
-  public java.util.Map<CharSequence,CharSequence> getInlinks() {
+  public java.util.Map<java.lang.String,java.lang.String> getInlinks() {
     return inlinks;
   }
 
@@ -150,7 +146,7 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
    * Sets the value of the 'inlinks' field.
    * @param value the value to set.
    */
-  public void setInlinks(java.util.Map<CharSequence,CharSequence> value) {
+  public void setInlinks(java.util.Map<java.lang.String,java.lang.String> value) {
     this.inlinks = (value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyMapWrapper(value);
     setDirty(3);
   }
@@ -159,48 +155,26 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
    * Checks the dirty status of the 'inlinks' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isInlinksDirty(java.util.Map<CharSequence,CharSequence> value) {
+  public boolean isInlinksDirty(java.util.Map<java.lang.String,java.lang.String> value) {
     return isDirty(3);
   }
 
-  public boolean contains(String key) {
-    return metadata.containsKey(new Utf8(key));
-  }
-
-  public String getValue(String key, String defaultValue) {
-    if (!contains(key))
-      return defaultValue;
-    return Bytes.toString(metadata.get(new Utf8(key)));
-  }
-
-  public int getInt(String key, int defaultValue) {
-    if (!contains(key))
-      return defaultValue;
-    return Integer.parseInt(getValue(key, null));
-  }
-
-  public long getLong(String key, long defaultValue) {
-    if (!contains(key))
-      return defaultValue;
-    return Long.parseLong(getValue(key, null));
-  }
-
   /** Creates a new Host RecordBuilder */
-  public static Builder newBuilder() {
-    return new Builder();
+  public static org.apache.nutch.storage.Host.Builder newBuilder() {
+    return new org.apache.nutch.storage.Host.Builder();
   }
   
   /** Creates a new Host RecordBuilder by copying an existing Builder */
-  public static Builder newBuilder(Builder other) {
-    return new Builder(other);
+  public static org.apache.nutch.storage.Host.Builder newBuilder(org.apache.nutch.storage.Host.Builder other) {
+    return new org.apache.nutch.storage.Host.Builder(other);
   }
   
   /** Creates a new Host RecordBuilder by copying an existing Host instance */
-  public static Builder newBuilder(Host other) {
-    return new Builder(other);
+  public static org.apache.nutch.storage.Host.Builder newBuilder(org.apache.nutch.storage.Host other) {
+    return new org.apache.nutch.storage.Host.Builder(other);
   }
   
-  private static java.nio.ByteBuffer deepCopyToWriteOnlyBuffer(
+  private static java.nio.ByteBuffer deepCopyToReadOnlyBuffer(
       java.nio.ByteBuffer input) {
     java.nio.ByteBuffer copy = java.nio.ByteBuffer.allocate(input.capacity());
     int position = input.position();
@@ -230,48 +204,48 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
     implements org.apache.avro.data.RecordBuilder<Host> {
 
     private java.nio.ByteBuffer __g__dirty;
-    private java.util.Map<CharSequence,java.nio.ByteBuffer> metadata;
-    private java.util.Map<CharSequence,CharSequence> outlinks;
-    private java.util.Map<CharSequence,CharSequence> inlinks;
+    private java.util.Map<java.lang.String,java.nio.ByteBuffer> metadata;
+    private java.util.Map<java.lang.String,java.lang.String> outlinks;
+    private java.util.Map<java.lang.String,java.lang.String> inlinks;
 
     /** Creates a new Builder */
     private Builder() {
-      super(Host.SCHEMA$);
+      super(org.apache.nutch.storage.Host.SCHEMA$);
     }
     
     /** Creates a Builder by copying an existing Builder */
-    private Builder(Builder other) {
+    private Builder(org.apache.nutch.storage.Host.Builder other) {
       super(other);
     }
     
     /** Creates a Builder by copying an existing Host instance */
-    private Builder(Host other) {
-            super(Host.SCHEMA$);
+    private Builder(org.apache.nutch.storage.Host other) {
+            super(org.apache.nutch.storage.Host.SCHEMA$);
       if (isValidValue(fields()[0], other.__g__dirty)) {
         this.__g__dirty = (java.nio.ByteBuffer) data().deepCopy(fields()[0].schema(), other.__g__dirty);
         fieldSetFlags()[0] = true;
       }
       if (isValidValue(fields()[1], other.metadata)) {
-        this.metadata = (java.util.Map<CharSequence,java.nio.ByteBuffer>) data().deepCopy(fields()[1].schema(), other.metadata);
+        this.metadata = (java.util.Map<java.lang.String,java.nio.ByteBuffer>) data().deepCopy(fields()[1].schema(), other.metadata);
         fieldSetFlags()[1] = true;
       }
       if (isValidValue(fields()[2], other.outlinks)) {
-        this.outlinks = (java.util.Map<CharSequence,CharSequence>) data().deepCopy(fields()[2].schema(), other.outlinks);
+        this.outlinks = (java.util.Map<java.lang.String,java.lang.String>) data().deepCopy(fields()[2].schema(), other.outlinks);
         fieldSetFlags()[2] = true;
       }
       if (isValidValue(fields()[3], other.inlinks)) {
-        this.inlinks = (java.util.Map<CharSequence,CharSequence>) data().deepCopy(fields()[3].schema(), other.inlinks);
+        this.inlinks = (java.util.Map<java.lang.String,java.lang.String>) data().deepCopy(fields()[3].schema(), other.inlinks);
         fieldSetFlags()[3] = true;
       }
     }
 
     /** Gets the value of the 'metadata' field */
-    public java.util.Map<CharSequence,java.nio.ByteBuffer> getMetadata() {
+    public java.util.Map<java.lang.String,java.nio.ByteBuffer> getMetadata() {
       return metadata;
     }
     
     /** Sets the value of the 'metadata' field */
-    public Builder setMetadata(java.util.Map<CharSequence,java.nio.ByteBuffer> value) {
+    public org.apache.nutch.storage.Host.Builder setMetadata(java.util.Map<java.lang.String,java.nio.ByteBuffer> value) {
       validate(fields()[1], value);
       this.metadata = value;
       fieldSetFlags()[1] = true;
@@ -284,19 +258,19 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
     }
     
     /** Clears the value of the 'metadata' field */
-    public Builder clearMetadata() {
+    public org.apache.nutch.storage.Host.Builder clearMetadata() {
       metadata = null;
       fieldSetFlags()[1] = false;
       return this;
     }
     
     /** Gets the value of the 'outlinks' field */
-    public java.util.Map<CharSequence,CharSequence> getOutlinks() {
+    public java.util.Map<java.lang.String,java.lang.String> getOutlinks() {
       return outlinks;
     }
     
     /** Sets the value of the 'outlinks' field */
-    public Builder setOutlinks(java.util.Map<CharSequence,CharSequence> value) {
+    public org.apache.nutch.storage.Host.Builder setOutlinks(java.util.Map<java.lang.String,java.lang.String> value) {
       validate(fields()[2], value);
       this.outlinks = value;
       fieldSetFlags()[2] = true;
@@ -309,19 +283,19 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
     }
     
     /** Clears the value of the 'outlinks' field */
-    public Builder clearOutlinks() {
+    public org.apache.nutch.storage.Host.Builder clearOutlinks() {
       outlinks = null;
       fieldSetFlags()[2] = false;
       return this;
     }
     
     /** Gets the value of the 'inlinks' field */
-    public java.util.Map<CharSequence,CharSequence> getInlinks() {
+    public java.util.Map<java.lang.String,java.lang.String> getInlinks() {
       return inlinks;
     }
     
     /** Sets the value of the 'inlinks' field */
-    public Builder setInlinks(java.util.Map<CharSequence,CharSequence> value) {
+    public org.apache.nutch.storage.Host.Builder setInlinks(java.util.Map<java.lang.String,java.lang.String> value) {
       validate(fields()[3], value);
       this.inlinks = value;
       fieldSetFlags()[3] = true;
@@ -334,7 +308,7 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
     }
     
     /** Clears the value of the 'inlinks' field */
-    public Builder clearInlinks() {
+    public org.apache.nutch.storage.Host.Builder clearInlinks() {
       inlinks = null;
       fieldSetFlags()[3] = false;
       return this;
@@ -345,9 +319,9 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
       try {
         Host record = new Host();
         record.__g__dirty = fieldSetFlags()[0] ? this.__g__dirty : (java.nio.ByteBuffer) java.nio.ByteBuffer.wrap(new byte[1]);
-        record.metadata = fieldSetFlags()[1] ? this.metadata : (java.util.Map<CharSequence,java.nio.ByteBuffer>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[1]));
-        record.outlinks = fieldSetFlags()[2] ? this.outlinks : (java.util.Map<CharSequence,CharSequence>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[2]));
-        record.inlinks = fieldSetFlags()[3] ? this.inlinks : (java.util.Map<CharSequence,CharSequence>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[3]));
+        record.metadata = fieldSetFlags()[1] ? this.metadata : (java.util.Map<java.lang.String,java.nio.ByteBuffer>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[1]));
+        record.outlinks = fieldSetFlags()[2] ? this.outlinks : (java.util.Map<java.lang.String,java.lang.String>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[2]));
+        record.inlinks = fieldSetFlags()[3] ? this.inlinks : (java.util.Map<java.lang.String,java.lang.String>) new org.apache.gora.persistency.impl.DirtyMapWrapper((java.util.Map)defaultValue(fields()[3]));
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
@@ -355,7 +329,7 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
     }
   }
   
-  public Tombstone getTombstone(){
+  public Host.Tombstone getTombstone(){
   	return TOMBSTONE;
   }
 
@@ -372,73 +346,74 @@ public class Host extends org.apache.gora.persistency.impl.PersistentBase implem
 	  				  /**
 	   * Gets the value of the 'metadata' field.
 		   */
-	  public java.util.Map<CharSequence,java.nio.ByteBuffer> getMetadata() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.util.Map<java.lang.String,java.nio.ByteBuffer> getMetadata() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'metadata' field.
 		   * @param value the value to set.
 	   */
-	  public void setMetadata(java.util.Map<CharSequence,java.nio.ByteBuffer> value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setMetadata(java.util.Map<java.lang.String,java.nio.ByteBuffer> value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'metadata' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isMetadataDirty(java.util.Map<CharSequence,java.nio.ByteBuffer> value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isMetadataDirty(java.util.Map<java.lang.String,java.nio.ByteBuffer> value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'outlinks' field.
 		   */
-	  public java.util.Map<CharSequence,CharSequence> getOutlinks() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.util.Map<java.lang.String,java.lang.String> getOutlinks() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'outlinks' field.
 		   * @param value the value to set.
 	   */
-	  public void setOutlinks(java.util.Map<CharSequence,CharSequence> value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setOutlinks(java.util.Map<java.lang.String,java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'outlinks' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isOutlinksDirty(java.util.Map<CharSequence,CharSequence> value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isOutlinksDirty(java.util.Map<java.lang.String,java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'inlinks' field.
 		   */
-	  public java.util.Map<CharSequence,CharSequence> getInlinks() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.util.Map<java.lang.String,java.lang.String> getInlinks() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'inlinks' field.
 		   * @param value the value to set.
 	   */
-	  public void setInlinks(java.util.Map<CharSequence,CharSequence> value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setInlinks(java.util.Map<java.lang.String,java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'inlinks' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isInlinksDirty(java.util.Map<CharSequence,CharSequence> value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isInlinksDirty(java.util.Map<java.lang.String,java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 		  
   }
   
 }
+

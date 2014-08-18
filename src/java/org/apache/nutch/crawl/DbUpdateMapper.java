@@ -16,26 +16,24 @@
  ******************************************************************************/
 package org.apache.nutch.crawl;
 
+import org.apache.avro.util.Utf8;
+import org.apache.gora.mapreduce.GoraMapper;
+import org.apache.hadoop.util.StringUtils;
+import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.scoring.ScoreDatum;
+import org.apache.nutch.scoring.ScoringFilterException;
+import org.apache.nutch.scoring.ScoringFilters;
+import org.apache.nutch.storage.Mark;
+import org.apache.nutch.storage.WebPage;
+import org.apache.nutch.util.TableUtil;
+import org.apache.nutch.util.WebPageWritable;
+import org.slf4j.Logger;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.apache.avro.util.Utf8;
-import org.apache.nutch.metadata.Nutch;
-import org.apache.nutch.storage.Mark;
-import org.apache.nutch.util.NutchJob;
-import org.slf4j.Logger;
-import org.apache.hadoop.io.FloatWritable;
-import org.apache.hadoop.util.StringUtils;
-import org.apache.nutch.scoring.ScoreDatum;
-import org.apache.nutch.scoring.ScoringFilterException;
-import org.apache.nutch.scoring.ScoringFilters;
-import org.apache.nutch.storage.WebPage;
-import org.apache.nutch.util.TableUtil;
-import org.apache.nutch.util.WebPageWritable;
-import org.apache.gora.mapreduce.GoraMapper;
 
 public class DbUpdateMapper
 extends GoraMapper<String, WebPage, UrlWithScore, NutchWritable> {
@@ -65,11 +63,11 @@ extends GoraMapper<String, WebPage, UrlWithScore, NutchWritable> {
     String url = TableUtil.unreverseUrl(key);
 
     scoreData.clear();
-    Map<CharSequence, CharSequence> outlinks = page.getOutlinks();
+    Map<String, String> outlinks = page.getOutlinks();
     if (outlinks != null) {
-      for (Entry<CharSequence, CharSequence> e : outlinks.entrySet()) {
+      for (Entry<String, String> e : outlinks.entrySet()) {
                 int depth=Integer.MAX_VALUE;
-        CharSequence depthUtf8 = page.getMarkers().get(DbUpdaterJob.DISTANCE);
+        String depthUtf8 = page.getMarkers().get(DbUpdaterJob.DISTANCE);
         if (depthUtf8 != null) depth=Integer.parseInt(depthUtf8.toString());
         scoreData.add(new ScoreDatum(0.0f, e.getKey().toString(), 
             e.getValue().toString(), depth));

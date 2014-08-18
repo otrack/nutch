@@ -16,11 +16,6 @@
  */
 package org.apache.nutch.indexer;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-
 import org.apache.avro.util.Utf8;
 import org.apache.gora.filter.FilterOp;
 import org.apache.gora.filter.MapFieldValueFilter;
@@ -43,13 +38,14 @@ import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.ParseStatus;
 import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
-import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.NutchJob;
-import org.apache.nutch.util.NutchTool;
-import org.apache.nutch.util.TableUtil;
-import org.apache.nutch.util.ToolUtil;
+import org.apache.nutch.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
 
 public class IndexingJob extends NutchTool implements Tool {
 
@@ -100,7 +96,7 @@ public class IndexingJob extends NutchTool implements Tool {
         return; // filter urls not parsed
       }
 
-      Utf8 mark = Mark.UPDATEDB_MARK.checkMark(page);
+      String mark = Mark.UPDATEDB_MARK.checkMark(page);
       if (mark == null) {
         if (LOG.isDebugEnabled()) {
           LOG.debug("Skipping " + TableUtil.unreverseUrl(key)

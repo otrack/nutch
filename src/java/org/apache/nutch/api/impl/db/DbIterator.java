@@ -16,10 +16,8 @@
  ******************************************************************************/
 package org.apache.nutch.api.impl.db;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.collect.Sets;
+import com.google.common.collect.UnmodifiableIterator;
 import org.apache.avro.util.Utf8;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.gora.query.Result;
@@ -30,8 +28,9 @@ import org.apache.nutch.util.TableUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Sets;
-import com.google.common.collect.UnmodifiableIterator;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 public class DbIterator extends UnmodifiableIterator<Map<String, Object>> {
   private static final Logger LOG = LoggerFactory.getLogger(DbIterator.class);
@@ -69,7 +68,7 @@ public class DbIterator extends UnmodifiableIterator<Map<String, Object>> {
 
     while (hasNext) {
       WebPage page = result.get();
-      Utf8 mark = Mark.UPDATEDB_MARK.checkMark(page);
+      String mark = Mark.UPDATEDB_MARK.checkMark(page);
       if (NutchJob.shouldProcess(mark, batchId)) {
         return;
       }

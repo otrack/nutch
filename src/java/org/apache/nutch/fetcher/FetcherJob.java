@@ -16,20 +16,10 @@
  ******************************************************************************/
 package org.apache.nutch.fetcher;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.StringTokenizer;
-
 import org.apache.avro.util.Utf8;
 import org.apache.gora.filter.FilterOp;
 import org.apache.gora.filter.MapFieldValueFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.gora.mapreduce.GoraMapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Job;
@@ -43,13 +33,16 @@ import org.apache.nutch.protocol.ProtocolFactory;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
-import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.NutchJob;
-import org.apache.nutch.util.NutchTool;
-import org.apache.nutch.util.TableUtil;
-import org.apache.nutch.util.TimingUtil;
-import org.apache.nutch.util.ToolUtil;
-import org.apache.gora.mapreduce.GoraMapper;
+import org.apache.nutch.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Multi-threaded fetcher.
@@ -61,7 +54,7 @@ public class FetcherJob extends NutchTool implements Tool {
 
   public static final int PERM_REFRESH_TIME = 5;
 
-  public static final Utf8 REDIRECT_DISCOVERED = new Utf8("___rdrdsc__");
+  public static final String REDIRECT_DISCOVERED = "___rdrdsc__";
 
   public static final String RESUME_KEY = "fetcher.job.resume";
   public static final String PARSE_KEY = "fetcher.parse";

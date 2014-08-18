@@ -19,7 +19,6 @@ package org.apache.nutch.parse;
 // Commons Logging imports
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.StringUtils;
@@ -214,7 +213,7 @@ public class ParseUtil extends Configured {
           LOG.warn("malformed url exception parsing redirect " + url);
           return;
         }
-        page.getOutlinks().put(new Utf8(newUrl), new Utf8());
+        page.getOutlinks().put(new String(newUrl), new String());
         page.getMetadata().put(FetcherJob.REDIRECT_DISCOVERED, TableUtil.YES_VAL);
         if (newUrl == null || newUrl.equals(url)) {
           String reprUrl = URLUtil.chooseRepr(url, newUrl,
@@ -223,12 +222,12 @@ public class ParseUtil extends Configured {
             LOG.warn("reprUrl==null for " + url);
             return;
           } else {
-            page.setReprUrl(new Utf8(reprUrl));
+            page.setReprUrl(new String(reprUrl));
           }
         }
       } else {
-        page.setText(new Utf8(parse.getText()));
-        page.setTitle(new Utf8(parse.getTitle()));
+        page.setText(new String(parse.getText()));
+        page.setTitle(new String(parse.getTitle()));
         ByteBuffer prevSig = page.getSignature();
         if (prevSig != null) {
           page.setPrevSignature(prevSig);
@@ -264,8 +263,7 @@ public class ParseUtil extends Configured {
           if (toUrl == null) {
             continue;
           }
-          Utf8 utf8ToUrl = new Utf8(toUrl);
-          if (page.getOutlinks().get(utf8ToUrl) != null) {
+          if (page.getOutlinks().get(toUrl) != null) {
             // skip duplicate outlinks
             continue;
           }
@@ -281,9 +279,9 @@ public class ParseUtil extends Configured {
             }
           }
           validCount++;
-          page.getOutlinks().put(utf8ToUrl, new Utf8(outlinks[i].getAnchor()));
+          page.getOutlinks().put(toUrl, outlinks[i].getAnchor());
         }
-        Utf8 fetchMark = Mark.FETCH_MARK.checkMark(page);
+        String fetchMark = Mark.FETCH_MARK.checkMark(page);
         if (fetchMark != null) {
           Mark.PARSE_MARK.putMark(page, fetchMark);
         }

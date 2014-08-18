@@ -6,7 +6,7 @@
 package org.apache.nutch.storage;  
 @SuppressWarnings("all")
 public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase implements org.apache.avro.specific.SpecificRecord, org.apache.gora.persistency.Persistent {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ParseStatus\",\"namespace\":\"org.apache.nutch.storage\",\"fields\":[{\"name\":\"__g__dirty\",\"type\":\"bytes\",\"doc\":\"Bytes used to represent weather or not a field is dirty.\",\"default\":\"AA==\"},{\"name\":\"majorCode\",\"type\":\"int\",\"default\":0},{\"name\":\"minorCode\",\"type\":\"int\",\"default\":0},{\"name\":\"args\",\"type\":{\"type\":\"array\",\"items\":\"string\"},\"default\":[]}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ParseStatus\",\"namespace\":\"org.apache.nutch.storage\",\"fields\":[{\"name\":\"__g__dirty\",\"type\":\"bytes\",\"doc\":\"Bytes used to represent weather or not a field is dirty.\",\"default\":\"AA==\"},{\"name\":\"majorCode\",\"type\":\"int\",\"default\":0},{\"name\":\"minorCode\",\"type\":\"int\",\"default\":0},{\"name\":\"args\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},\"default\":[]}]}");
 
   /** Enum containing all data bean's fields. */
   public static enum Field {
@@ -62,10 +62,10 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
   private java.nio.ByteBuffer __g__dirty = java.nio.ByteBuffer.wrap(new byte[1]);
   private int majorCode;
   private int minorCode;
-  private java.util.List<CharSequence> args;
+  private java.util.List<java.lang.String> args;
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
   // Used by DatumWriter.  Applications should not call. 
-  public Object get(int field$) {
+  public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return __g__dirty;
     case 1: return majorCode;
@@ -77,12 +77,12 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
   
   // Used by DatumReader.  Applications should not call. 
   @SuppressWarnings(value="unchecked")
-  public void put(int field$, Object value) {
+  public void put(int field$, java.lang.Object value) {
     switch (field$) {
     case 0: __g__dirty = (java.nio.ByteBuffer)(value); break;
-    case 1: majorCode = (Integer)(value); break;
-    case 2: minorCode = (Integer)(value); break;
-    case 3: args = (java.util.List<CharSequence>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyListWrapper((java.util.List)value)); break;
+    case 1: majorCode = (java.lang.Integer)(value); break;
+    case 2: minorCode = (java.lang.Integer)(value); break;
+    case 3: args = (java.util.List<java.lang.String>)((value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyListWrapper((java.util.List)value)); break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -90,7 +90,7 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
   /**
    * Gets the value of the 'majorCode' field.
    */
-  public Integer getMajorCode() {
+  public java.lang.Integer getMajorCode() {
     return majorCode;
   }
 
@@ -98,7 +98,7 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
    * Sets the value of the 'majorCode' field.
    * @param value the value to set.
    */
-  public void setMajorCode(Integer value) {
+  public void setMajorCode(java.lang.Integer value) {
     this.majorCode = value;
     setDirty(1);
   }
@@ -107,14 +107,14 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
    * Checks the dirty status of the 'majorCode' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isMajorCodeDirty(Integer value) {
+  public boolean isMajorCodeDirty(java.lang.Integer value) {
     return isDirty(1);
   }
 
   /**
    * Gets the value of the 'minorCode' field.
    */
-  public Integer getMinorCode() {
+  public java.lang.Integer getMinorCode() {
     return minorCode;
   }
 
@@ -122,7 +122,7 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
    * Sets the value of the 'minorCode' field.
    * @param value the value to set.
    */
-  public void setMinorCode(Integer value) {
+  public void setMinorCode(java.lang.Integer value) {
     this.minorCode = value;
     setDirty(2);
   }
@@ -131,14 +131,14 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
    * Checks the dirty status of the 'minorCode' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isMinorCodeDirty(Integer value) {
+  public boolean isMinorCodeDirty(java.lang.Integer value) {
     return isDirty(2);
   }
 
   /**
    * Gets the value of the 'args' field.
    */
-  public java.util.List<CharSequence> getArgs() {
+  public java.util.List<java.lang.String> getArgs() {
     return args;
   }
 
@@ -146,7 +146,7 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
    * Sets the value of the 'args' field.
    * @param value the value to set.
    */
-  public void setArgs(java.util.List<CharSequence> value) {
+  public void setArgs(java.util.List<java.lang.String> value) {
     this.args = (value instanceof org.apache.gora.persistency.Dirtyable) ? value : new org.apache.gora.persistency.impl.DirtyListWrapper(value);
     setDirty(3);
   }
@@ -155,26 +155,26 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
    * Checks the dirty status of the 'args' field. A field is dirty if it represents a change that has not yet been written to the database.
    * @param value the value to set.
    */
-  public boolean isArgsDirty(java.util.List<CharSequence> value) {
+  public boolean isArgsDirty(java.util.List<java.lang.String> value) {
     return isDirty(3);
   }
 
   /** Creates a new ParseStatus RecordBuilder */
-  public static Builder newBuilder() {
-    return new Builder();
+  public static org.apache.nutch.storage.ParseStatus.Builder newBuilder() {
+    return new org.apache.nutch.storage.ParseStatus.Builder();
   }
   
   /** Creates a new ParseStatus RecordBuilder by copying an existing Builder */
-  public static Builder newBuilder(Builder other) {
-    return new Builder(other);
+  public static org.apache.nutch.storage.ParseStatus.Builder newBuilder(org.apache.nutch.storage.ParseStatus.Builder other) {
+    return new org.apache.nutch.storage.ParseStatus.Builder(other);
   }
   
   /** Creates a new ParseStatus RecordBuilder by copying an existing ParseStatus instance */
-  public static Builder newBuilder(ParseStatus other) {
-    return new Builder(other);
+  public static org.apache.nutch.storage.ParseStatus.Builder newBuilder(org.apache.nutch.storage.ParseStatus other) {
+    return new org.apache.nutch.storage.ParseStatus.Builder(other);
   }
   
-  private static java.nio.ByteBuffer deepCopyToWriteOnlyBuffer(
+  private static java.nio.ByteBuffer deepCopyToReadOnlyBuffer(
       java.nio.ByteBuffer input) {
     java.nio.ByteBuffer copy = java.nio.ByteBuffer.allocate(input.capacity());
     int position = input.position();
@@ -206,46 +206,46 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
     private java.nio.ByteBuffer __g__dirty;
     private int majorCode;
     private int minorCode;
-    private java.util.List<CharSequence> args;
+    private java.util.List<java.lang.String> args;
 
     /** Creates a new Builder */
     private Builder() {
-      super(ParseStatus.SCHEMA$);
+      super(org.apache.nutch.storage.ParseStatus.SCHEMA$);
     }
     
     /** Creates a Builder by copying an existing Builder */
-    private Builder(Builder other) {
+    private Builder(org.apache.nutch.storage.ParseStatus.Builder other) {
       super(other);
     }
     
     /** Creates a Builder by copying an existing ParseStatus instance */
-    private Builder(ParseStatus other) {
-            super(ParseStatus.SCHEMA$);
+    private Builder(org.apache.nutch.storage.ParseStatus other) {
+            super(org.apache.nutch.storage.ParseStatus.SCHEMA$);
       if (isValidValue(fields()[0], other.__g__dirty)) {
         this.__g__dirty = (java.nio.ByteBuffer) data().deepCopy(fields()[0].schema(), other.__g__dirty);
         fieldSetFlags()[0] = true;
       }
       if (isValidValue(fields()[1], other.majorCode)) {
-        this.majorCode = (Integer) data().deepCopy(fields()[1].schema(), other.majorCode);
+        this.majorCode = (java.lang.Integer) data().deepCopy(fields()[1].schema(), other.majorCode);
         fieldSetFlags()[1] = true;
       }
       if (isValidValue(fields()[2], other.minorCode)) {
-        this.minorCode = (Integer) data().deepCopy(fields()[2].schema(), other.minorCode);
+        this.minorCode = (java.lang.Integer) data().deepCopy(fields()[2].schema(), other.minorCode);
         fieldSetFlags()[2] = true;
       }
       if (isValidValue(fields()[3], other.args)) {
-        this.args = (java.util.List<CharSequence>) data().deepCopy(fields()[3].schema(), other.args);
+        this.args = (java.util.List<java.lang.String>) data().deepCopy(fields()[3].schema(), other.args);
         fieldSetFlags()[3] = true;
       }
     }
 
     /** Gets the value of the 'majorCode' field */
-    public Integer getMajorCode() {
+    public java.lang.Integer getMajorCode() {
       return majorCode;
     }
     
     /** Sets the value of the 'majorCode' field */
-    public Builder setMajorCode(int value) {
+    public org.apache.nutch.storage.ParseStatus.Builder setMajorCode(int value) {
       validate(fields()[1], value);
       this.majorCode = value;
       fieldSetFlags()[1] = true;
@@ -258,18 +258,18 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
     }
     
     /** Clears the value of the 'majorCode' field */
-    public Builder clearMajorCode() {
+    public org.apache.nutch.storage.ParseStatus.Builder clearMajorCode() {
       fieldSetFlags()[1] = false;
       return this;
     }
     
     /** Gets the value of the 'minorCode' field */
-    public Integer getMinorCode() {
+    public java.lang.Integer getMinorCode() {
       return minorCode;
     }
     
     /** Sets the value of the 'minorCode' field */
-    public Builder setMinorCode(int value) {
+    public org.apache.nutch.storage.ParseStatus.Builder setMinorCode(int value) {
       validate(fields()[2], value);
       this.minorCode = value;
       fieldSetFlags()[2] = true;
@@ -282,18 +282,18 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
     }
     
     /** Clears the value of the 'minorCode' field */
-    public Builder clearMinorCode() {
+    public org.apache.nutch.storage.ParseStatus.Builder clearMinorCode() {
       fieldSetFlags()[2] = false;
       return this;
     }
     
     /** Gets the value of the 'args' field */
-    public java.util.List<CharSequence> getArgs() {
+    public java.util.List<java.lang.String> getArgs() {
       return args;
     }
     
     /** Sets the value of the 'args' field */
-    public Builder setArgs(java.util.List<CharSequence> value) {
+    public org.apache.nutch.storage.ParseStatus.Builder setArgs(java.util.List<java.lang.String> value) {
       validate(fields()[3], value);
       this.args = value;
       fieldSetFlags()[3] = true;
@@ -306,7 +306,7 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
     }
     
     /** Clears the value of the 'args' field */
-    public Builder clearArgs() {
+    public org.apache.nutch.storage.ParseStatus.Builder clearArgs() {
       args = null;
       fieldSetFlags()[3] = false;
       return this;
@@ -317,9 +317,9 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
       try {
         ParseStatus record = new ParseStatus();
         record.__g__dirty = fieldSetFlags()[0] ? this.__g__dirty : (java.nio.ByteBuffer) java.nio.ByteBuffer.wrap(new byte[1]);
-        record.majorCode = fieldSetFlags()[1] ? this.majorCode : (Integer) defaultValue(fields()[1]);
-        record.minorCode = fieldSetFlags()[2] ? this.minorCode : (Integer) defaultValue(fields()[2]);
-        record.args = fieldSetFlags()[3] ? this.args : (java.util.List<CharSequence>) new org.apache.gora.persistency.impl.DirtyListWrapper((java.util.List)defaultValue(fields()[3]));
+        record.majorCode = fieldSetFlags()[1] ? this.majorCode : (java.lang.Integer) defaultValue(fields()[1]);
+        record.minorCode = fieldSetFlags()[2] ? this.minorCode : (java.lang.Integer) defaultValue(fields()[2]);
+        record.args = fieldSetFlags()[3] ? this.args : (java.util.List<java.lang.String>) new org.apache.gora.persistency.impl.DirtyListWrapper((java.util.List)defaultValue(fields()[3]));
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
@@ -327,7 +327,7 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
     }
   }
   
-  public Tombstone getTombstone(){
+  public ParseStatus.Tombstone getTombstone(){
   	return TOMBSTONE;
   }
 
@@ -344,73 +344,74 @@ public class ParseStatus extends org.apache.gora.persistency.impl.PersistentBase
 	  				  /**
 	   * Gets the value of the 'majorCode' field.
 		   */
-	  public Integer getMajorCode() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.Integer getMajorCode() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'majorCode' field.
 		   * @param value the value to set.
 	   */
-	  public void setMajorCode(Integer value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setMajorCode(java.lang.Integer value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'majorCode' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isMajorCodeDirty(Integer value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isMajorCodeDirty(java.lang.Integer value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'minorCode' field.
 		   */
-	  public Integer getMinorCode() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.lang.Integer getMinorCode() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'minorCode' field.
 		   * @param value the value to set.
 	   */
-	  public void setMinorCode(Integer value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setMinorCode(java.lang.Integer value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'minorCode' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isMinorCodeDirty(Integer value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isMinorCodeDirty(java.lang.Integer value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 				  /**
 	   * Gets the value of the 'args' field.
 		   */
-	  public java.util.List<CharSequence> getArgs() {
-	    throw new UnsupportedOperationException("Get is not supported on tombstones");
+	  public java.util.List<java.lang.String> getArgs() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
 	  }
 	
 	  /**
 	   * Sets the value of the 'args' field.
 		   * @param value the value to set.
 	   */
-	  public void setArgs(java.util.List<CharSequence> value) {
-	    throw new UnsupportedOperationException("Set is not supported on tombstones");
+	  public void setArgs(java.util.List<java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
 	  }
 	  
 	  /**
 	   * Checks the dirty status of the 'args' field. A field is dirty if it represents a change that has not yet been written to the database.
 		   * @param value the value to set.
 	   */
-	  public boolean isArgsDirty(java.util.List<CharSequence> value) {
-	    throw new UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  public boolean isArgsDirty(java.util.List<java.lang.String> value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	
 		  
   }
   
 }
+

@@ -16,14 +16,10 @@
  ******************************************************************************/
 package org.apache.nutch.storage;
 
-import org.apache.avro.util.Utf8;
 import org.apache.commons.io.IOUtils;
 import org.apache.gora.query.Result;
 import org.apache.gora.store.DataStore;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.util.AbstractNutchTest;
-import org.apache.nutch.util.CrawlTestUtil;
-import org.hsqldb.Server;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -39,13 +35,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 /**
  * Tests basic Gora functionality by writing and reading webpages.
  */
 public class TestGoraStorage extends AbstractNutchTest {
+
+  public TestGoraStorage() throws IOException {}
 
   @Override
   @Before
@@ -65,26 +60,26 @@ public class TestGoraStorage extends AbstractNutchTest {
    * @throws Exception
    */
   @Test
-  @Ignore("GORA-326 Removal of _g_dirty field from _ALL_FIELDS array and Field Enum in Persistent classes")
   public void testSinglethreaded() throws Exception {
     String id = "singlethread";
     readWrite(id, webPageStore);
   }
 
-  private static void readWrite(String id, DataStore<String, WebPage> store) 
+  private static void readWrite(String id, DataStore<String, WebPage> store)
       throws IOException, Exception {
     WebPage page = WebPage.newBuilder().build();
-    int max = 1000;
+    int max = 1;
     for (int i = 0; i < max; i++) {
       // store a page with title
-      String key = "key-" + id + "-" + i;
+      String baseUrl = "key-" + id + "-" + i;
       String title = "title" + i;
-      page.setTitle(new Utf8(title));
-      store.put(key, page);
+      page.setTitle(title);
+      page.setBaseUrl(baseUrl);
+      store.put(baseUrl, page);
       store.flush();
 
       // retrieve page and check title
-      page = store.get(key);
+      page = store.get(baseUrl);
       assertNotNull(page);
       assertEquals(title, page.getTitle().toString());
     }
@@ -109,11 +104,10 @@ public class TestGoraStorage extends AbstractNutchTest {
    * Tests multiple thread reading and writing to the same store, this should be
    * no problem because {@link DataStore} implementations claim to be thread
    * safe.
-   * 
+   *
    * @throws Exception
    */
   @Test
-  @Ignore("Temporarily diable until NUTCH-1572 is addressed.")
   public void testMultithreaded() throws Exception {
     // create a fixed thread pool
     int numThreads = 8;
@@ -123,7 +117,7 @@ public class TestGoraStorage extends AbstractNutchTest {
     Collection<Callable<Integer>> tasks = new ArrayList<Callable<Integer>>();
     for (int i = 0; i < numThreads; i++) {
       tasks.add(new Callable<Integer>() {
-        @Override
+        //@Override
         public Integer call() {
           try {
             // run a sequence
@@ -147,40 +141,28 @@ public class TestGoraStorage extends AbstractNutchTest {
       assertEquals(0, (int) result.get());
     }
   }
-  
+
   /**
-   * Tests multiple processes reading and writing to the same store backend, 
+   * Tests multiple processes reading and writing to the same store backend,
    * this is to simulate a multi process Nutch environment (i.e. MapReduce).
-   * 
+   *
    * @throws Exception
    */
   @Test
-  @Ignore("GORA-326 Removal of _g_dirty field from _ALL_FIELDS array and Field Enum in Persistent classes")
+  @Ignore
   public void testMultiProcess() throws Exception {
-    // create and start a hsql server, a stand-alone (memory backed) db
-    // (important: a stand-alone server should be used because simple
-    //  file based access i.e. jdbc:hsqldb:file is NOT process-safe.)
-    Server server = new Server();
-    server.setDaemon(true);
-    server.setSilent(true); // disables LOTS of trace
-    final String className = getClass().getName();
+      final String className = getClass().getName();
     String dbName = "test";
-    server.setDatabasePath(0, "mem:"+dbName);
-    server.setDatabaseName(0, dbName);
-    server.start();
-    
-    //create the store so that the tests can start right away
-    StorageUtils.createWebStore(conf, String.class, WebPage.class);
-    
+
     // create a fixed thread pool
-    int numThreads = 4;
+    int numThreads = 1;
     ExecutorService pool = Executors.newFixedThreadPool(numThreads);
-    
+
     // spawn multiple processes, each thread spawns own process
     Collection<Callable<Integer>> tasks = new ArrayList<Callable<Integer>>();
     for (int i = 0; i < numThreads; i++) {
       tasks.add(new Callable<Integer>() {
-        @Override
+        //@Override
         public Integer call() {
           try {
             String separator = System.getProperty("file.separator");
@@ -219,20 +201,18 @@ public class TestGoraStorage extends AbstractNutchTest {
       assertEquals(0, (int) result.get());
     }
     
-    //stop db
-    server.stop();
   }
 
-  public static void main(String[] args) throws Exception {
-    // entry point for the multiprocess test
-    System.out.println("Starting!");
-
-    Configuration localConf = CrawlTestUtil.createConfiguration();
-    localConf.set("storage.data.store.class", "org.apache.gora.memory.store.MemStore");
-
-    DataStore<String, WebPage> store = StorageUtils.createWebStore(localConf,
-        String.class, WebPage.class);
-    readWrite("single_id", store);
-    System.out.println("Done.");
-  }
+//  public static void main(String[] args) throws Exception {
+//    // entry point for the multiprocess test
+//    System.out.println("Starting!");
+//
+//    Configuration localConf = CrawlTestUtil.createConfiguration();
+//    localConf.set("storage.data.store.class", "org.apache.gora.memory.store.MemStore");
+//
+//    DataStore<String, WebPage> store = StorageUtils.createWebStore(localConf,
+//        String.class, WebPage.class);
+//    readWrite("single_id", store);
+//    System.out.println("Done.");
+//  }
 }

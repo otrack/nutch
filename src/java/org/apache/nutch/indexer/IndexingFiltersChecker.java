@@ -17,10 +17,6 @@
  
 package org.apache.nutch.indexer;
 
-import java.nio.ByteBuffer;
-import java.util.List;
-
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
@@ -29,18 +25,16 @@ import org.apache.nutch.crawl.CrawlStatus;
 import org.apache.nutch.parse.ParseStatusUtils;
 import org.apache.nutch.parse.ParseUtil;
 import org.apache.nutch.parse.ParserJob;
-import org.apache.nutch.protocol.Content;
-import org.apache.nutch.protocol.Protocol;
-import org.apache.nutch.protocol.ProtocolFactory;
-import org.apache.nutch.protocol.ProtocolOutput;
-import org.apache.nutch.protocol.ProtocolStatusCodes;
-import org.apache.nutch.protocol.ProtocolStatusUtils;
+import org.apache.nutch.protocol.*;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.NutchConfiguration;
 import org.apache.nutch.util.StringUtil;
 import org.apache.nutch.util.URLUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.ByteBuffer;
+import java.util.List;
 
 /**
  * Reads and parses a URL and run the indexers on it. Displays the fields obtained and the first
@@ -81,7 +75,7 @@ public class IndexingFiltersChecker extends Configured implements Tool {
     Protocol protocol = factory.getProtocol(url);
 
     WebPage page = WebPage.newBuilder().build();
-    page.setBaseUrl(new org.apache.avro.util.Utf8(url));
+    page.setBaseUrl(url);
     ProtocolOutput protocolOutput = protocol.getProtocolOutput(url, page);
     page.setProtocolStatus(protocolOutput.getStatus());
     if (protocolOutput.getStatus().getCode() == ProtocolStatusCodes.SUCCESS) {
@@ -105,7 +99,7 @@ public class IndexingFiltersChecker extends Configured implements Tool {
     if (contentType == null) {
       return -1;
     }
-    page.setContentType(new Utf8(contentType));
+    page.setContentType(contentType);
     
     if (LOG.isInfoEnabled()) {
       LOG.info("parsing: " + url);

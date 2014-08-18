@@ -16,8 +16,6 @@
  ******************************************************************************/
 package org.apache.nutch.protocol;
 
-import org.apache.avro.generic.GenericArray;
-import org.apache.avro.util.Utf8;
 import org.apache.nutch.storage.ProtocolStatus;
 import org.apache.nutch.util.TableUtil;
 
@@ -85,7 +83,7 @@ public class ProtocolStatusUtils implements ProtocolStatusCodes {
 
   public static ProtocolStatus makeStatus(int code, String message) {
     ProtocolStatus pstatus = makeStatus(code);
-    pstatus.getArgs().add(new Utf8(message));
+    pstatus.getArgs().add(message);
     return pstatus;
   }
 
@@ -94,7 +92,7 @@ public class ProtocolStatusUtils implements ProtocolStatusCodes {
   }
 
   public static String getMessage(ProtocolStatus pstatus) {
-    List<CharSequence> args = pstatus.getArgs();
+    List<String> args = pstatus.getArgs();
     if (args == null || args.size() == 0) {
       return null;
     }
@@ -108,10 +106,10 @@ public class ProtocolStatusUtils implements ProtocolStatusCodes {
     StringBuilder sb = new StringBuilder();
     sb.append(getName(status.getCode()));
     sb.append(", args=[");
-    List<CharSequence> args = status.getArgs();
+    List<String> args = status.getArgs();
     if (args != null) {
       int i = 0;
-      Iterator<CharSequence> it = args.iterator();
+      Iterator<String> it = args.iterator();
       while (it.hasNext()) {
         if (i > 0) sb.append(',');
         sb.append(it.next());

@@ -16,8 +16,6 @@
  ******************************************************************************/
 package org.apache.nutch.parse;
 
-import org.apache.avro.generic.GenericArray;
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.storage.ParseStatus;
 import org.apache.nutch.util.TableUtil;
@@ -53,7 +51,7 @@ public class ParseStatusUtils {
    * argument, or null.
    */
   public static String getMessage(ParseStatus status) {
-    List<CharSequence> args = status.getArgs();
+    List<String> args = status.getArgs();
     if (args != null && args.size() > 0) {
       return TableUtil.toString(args.iterator().next());
     }
@@ -61,12 +59,12 @@ public class ParseStatusUtils {
   }
 
   public static String getArg(ParseStatus status, int n) {
-    List<CharSequence> args = status.getArgs();
+    List<String> args = status.getArgs();
     if (args == null) {
       return null;
     }
     int i = 0;
-    for (CharSequence arg : args) {
+    for (String arg : args) {
       if (i == n) {
         return TableUtil.toString(arg);
       }
@@ -79,7 +77,7 @@ public class ParseStatusUtils {
     ParseStatus status = ParseStatus.newBuilder().build();
     status.setMajorCode((int)ParseStatusCodes.FAILED);
     status.setMinorCode((int)ParseStatusCodes.FAILED_EXCEPTION);
-    status.getArgs().add(new Utf8(e.toString()));
+    status.getArgs().add(e.toString());
 
     return new Parse("", "", new Outlink[0], status);
   }
@@ -88,7 +86,7 @@ public class ParseStatusUtils {
     ParseStatus status = ParseStatus.newBuilder().build();
     status.setMajorCode((int)ParseStatusCodes.FAILED);
     status.setMinorCode(minorCode);
-    status.getArgs().add(new Utf8(message));
+    status.getArgs().add(message);
 
     return new Parse("", "", new Outlink[0], status);
   }
@@ -102,10 +100,10 @@ public class ParseStatusUtils {
         "/" + minorCodes.get(status.getMinorCode().shortValue()));
     sb.append(" (" + status.getMajorCode() + "/" + status.getMinorCode() + ")");
     sb.append(", args=[");
-    List<CharSequence> args = status.getArgs();
+    List<String> args = status.getArgs();
     if (args != null) {
       int i = 0;
-      Iterator<CharSequence> it = args.iterator();
+      Iterator<String> it = args.iterator();
       while (it.hasNext()) {
         if (i > 0) sb.append(',');
         sb.append(it.next());

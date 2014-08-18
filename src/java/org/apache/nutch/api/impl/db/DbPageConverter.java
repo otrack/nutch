@@ -16,13 +16,8 @@
  ******************************************************************************/
 package org.apache.nutch.api.impl.db;
 
-import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.util.Utf8;
 import org.apache.commons.collections.CollectionUtils;
@@ -34,8 +29,12 @@ import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.Bytes;
 import org.apache.nutch.util.StringUtil;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class DbPageConverter {
 
@@ -114,7 +113,7 @@ public class DbPageConverter {
   }
 
   private static Map<String, String> getSimpleMetadata(WebPage page) {
-    Map<CharSequence, ByteBuffer> metadata = page.getMetadata();
+    Map<String, ByteBuffer> metadata = page.getMetadata();
     if (MapUtils.isEmpty(metadata)) {
       return Collections.emptyMap();
     }

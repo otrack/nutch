@@ -17,7 +17,6 @@
 
 package org.apache.nutch.crawl;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.io.MD5Hash;
 import org.apache.nutch.storage.WebPage;
 
@@ -47,7 +46,7 @@ public class MD5Signature extends Signature {
     int of;
     int cb;
     if (buf == null) {
-      Utf8 baseUrl = (Utf8) page.getBaseUrl();
+      String baseUrl = page.getBaseUrl();
       if (baseUrl == null) {
         data = null;
         of = 0;

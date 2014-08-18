@@ -16,7 +16,6 @@
  ******************************************************************************/
 package org.apache.nutch.crawl;
 
-import org.apache.avro.util.Utf8;
 import org.apache.gora.mapreduce.GoraMapper;
 import org.apache.gora.query.Query;
 import org.apache.gora.query.Result;
@@ -370,41 +369,41 @@ public class WebTableReader extends NutchTool implements Tool {
     sb.append("title:\t" + page.getTitle()).append("\n");
     sb.append("score:\t" + page.getScore()).append("\n");
 
-    Map<CharSequence, CharSequence> markers = page.getMarkers();
+    Map<String, String> markers = page.getMarkers();
     sb.append("markers:\t" + markers).append("\n");
     sb.append("reprUrl:\t" + page.getReprUrl()).append("\n");
-    CharSequence batchId = page.getBatchId();
+    String batchId = page.getBatchId();
     if (batchId != null) {
       sb.append("batchId:\t" + batchId.toString()).append("\n");
     }
-    Map<CharSequence, ByteBuffer> metadata = page.getMetadata();
+    Map<String, ByteBuffer> metadata = page.getMetadata();
     if (metadata != null) {
-      Iterator<Entry<CharSequence, ByteBuffer>> iterator = metadata.entrySet()
+      Iterator<Entry<String, ByteBuffer>> iterator = metadata.entrySet()
           .iterator();
       while (iterator.hasNext()) {
-        Entry<CharSequence, ByteBuffer> entry = iterator.next();
+        Entry<String, ByteBuffer> entry = iterator.next();
         sb.append("metadata " + entry.getKey().toString()).append(" : \t")
             .append(Bytes.toString(entry.getValue())).append("\n");
       }
     }
     if (dumpLinks) {
-      Map<CharSequence, CharSequence> inlinks = page.getInlinks();
-      Map<CharSequence, CharSequence> outlinks = page.getOutlinks();
+      Map<String, String> inlinks = page.getInlinks();
+      Map<String, String> outlinks = page.getOutlinks();
       if (outlinks != null) {
-        for (Entry<CharSequence, CharSequence> e : outlinks.entrySet()) {
+        for (Entry<String, String> e : outlinks.entrySet()) {
           sb.append("outlink:\t" + e.getKey() + "\t" + e.getValue() + "\n");
         }
       }
       if (inlinks != null) {
-        for (Entry<CharSequence, CharSequence> e : inlinks.entrySet()) {
+        for (Entry<String, String> e : inlinks.entrySet()) {
           sb.append("inlink:\t" + e.getKey() + "\t" + e.getValue() + "\n");
         }
       }
     }
     if (dumpHeaders) {
-      Map<CharSequence, CharSequence> headers = page.getHeaders();
+      Map<String, String> headers = page.getHeaders();
       if (headers != null) {
-        for (Entry<CharSequence, CharSequence> e : headers.entrySet()) {
+        for (Entry<String, String> e : headers.entrySet()) {
           sb.append("header:\t" + e.getKey() + "\t" + e.getValue() + "\n");
         }
       }
@@ -416,7 +415,7 @@ public class WebTableReader extends NutchTool implements Tool {
       sb.append(Bytes.toString(content));
       sb.append("\ncontent:end:\n");
     }
-    CharSequence text = page.getText();
+    String text = page.getText();
     if (text != null && dumpText) {
       sb.append("text:start:\n");
       sb.append(text.toString());

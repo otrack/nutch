@@ -119,7 +119,7 @@ if [ "$NUTCH_HEAPSIZE" != "" ]; then
 fi
 
 # CLASSPATH initially contains $NUTCH_CONF_DIR, or defaults to $NUTCH_HOME/conf
-CLASSPATH=${NUTCH_CONF_DIR:=$NUTCH_HOME/conf}
+CLASSPATH=${NUTCH_CONF_DIR:=$NUTCH_HOME/conf}:${CLASSPATH}
 CLASSPATH=${CLASSPATH}:$JAVA_HOME/lib/tools.jar
 
 # so that filenames w/ spaces are handled correctly in loops below
@@ -136,6 +136,8 @@ if $local; then
      CLASSPATH=${NUTCH_HOME}:${CLASSPATH}
   fi
 fi
+
+echo ${CLASSPATH}
 
 # cygwin path translation
 if $cygwin; then

@@ -16,11 +16,6 @@
  */
 package org.apache.nutch.fetcher;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.hadoop.fs.Path;
 import org.apache.nutch.crawl.GeneratorJob;
 import org.apache.nutch.crawl.InjectorJob;
@@ -29,13 +24,16 @@ import org.apache.nutch.storage.Mark;
 import org.apache.nutch.util.AbstractNutchTest;
 import org.apache.nutch.util.Bytes;
 import org.apache.nutch.util.CrawlTestUtil;
-import org.mortbay.jetty.Server;
-
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.mortbay.jetty.Server;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Basic fetcher test
@@ -51,6 +49,8 @@ public class TestFetcher extends AbstractNutchTest {
   final static Path testdir=new Path("build/test/fetch-test");
   Path urlPath;
   Server server;
+
+  public TestFetcher() throws IOException {}
 
   @Override
   @Before
@@ -69,7 +69,7 @@ public class TestFetcher extends AbstractNutchTest {
   }
 
   @Test
-  @Ignore("Temporarily diable until NUTCH-1572 is addressed.")
+  // @Ignore("Temporarily diable until NUTCH-1572 is addressed.")
   public void testFetch() throws Exception {
 
     //generate seedlist

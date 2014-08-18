@@ -16,7 +16,6 @@
  */
 package org.apache.nutch.util;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.net.protocols.Response;
 import org.apache.nutch.storage.WebPage;
@@ -51,8 +50,8 @@ public class TestEncodingDetector {
     String encoding;
 
     WebPage page = WebPage.newBuilder().build();
-    page.setBaseUrl(new Utf8("http://www.example.com/"));
-    page.setContentType(new Utf8("text/plain"));
+    page.setBaseUrl("http://www.example.com/");
+    page.setContentType("text/plain");
     page.setContent(ByteBuffer.wrap(contentInOctets));
 
     detector = new EncodingDetector(conf);
@@ -62,10 +61,10 @@ public class TestEncodingDetector {
     assertEquals("windows-1252", encoding.toLowerCase());
 
     page = WebPage.newBuilder().build();
-    page.setBaseUrl(new Utf8("http://www.example.com/"));
-    page.setContentType(new Utf8("text/plain"));
+    page.setBaseUrl("http://www.example.com/");
+    page.setContentType("text/plain");
     page.setContent(ByteBuffer.wrap(contentInOctets));
-    page.getHeaders().put(EncodingDetector.CONTENT_TYPE_UTF8, new Utf8("text/plain; charset=UTF-16"));
+    page.getHeaders().put(Response.CONTENT_TYPE,"text/plain; charset=UTF-16");
     
     detector = new EncodingDetector(conf);
     detector.autoDetectClues(page, true);
@@ -73,8 +72,8 @@ public class TestEncodingDetector {
     assertEquals("utf-16", encoding.toLowerCase());
 
     page = WebPage.newBuilder().build();
-    page.setBaseUrl(new Utf8("http://www.example.com/"));
-    page.setContentType(new Utf8("text/plain"));
+    page.setBaseUrl("http://www.example.com/");
+    page.setContentType("text/plain");
     page.setContent(ByteBuffer.wrap(contentInOctets));
     
     detector = new EncodingDetector(conf);
@@ -86,10 +85,10 @@ public class TestEncodingDetector {
     // enable autodetection
     conf.setInt(EncodingDetector.MIN_CONFIDENCE_KEY, 50);
     page = WebPage.newBuilder().build();
-    page.setBaseUrl(new Utf8("http://www.example.com/"));
-    page.setContentType(new Utf8("text/plain"));
+    page.setBaseUrl("http://www.example.com/");
+    page.setContentType("text/plain");
     page.setContent(ByteBuffer.wrap(contentInOctets));
-    page.getMetadata().put(new Utf8(Response.CONTENT_TYPE), ByteBuffer.wrap("text/plain; charset=UTF-16".getBytes()));
+    page.getMetadata().put(Response.CONTENT_TYPE, ByteBuffer.wrap("text/plain; charset=UTF-16".getBytes()));
     
     detector = new EncodingDetector(conf);
     detector.autoDetectClues(page, true);

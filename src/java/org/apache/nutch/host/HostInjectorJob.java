@@ -123,7 +123,7 @@ public class HostInjectorJob implements Tool {
       while (keysIter.hasNext()) {
         String keymd = keysIter.next();
         String valuemd = metadata.get(keymd);
-        host.getMetadata().put(new Utf8(keymd), ByteBuffer.wrap(valuemd.getBytes()));
+        host.getMetadata().put(keymd, ByteBuffer.wrap(valuemd.getBytes()));
       }
       String hostname;
       if (url.indexOf("://")> -1) {

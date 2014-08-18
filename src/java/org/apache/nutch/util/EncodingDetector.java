@@ -60,8 +60,6 @@ import java.util.List;
  */
 public class EncodingDetector {
 
-  public final static Utf8 CONTENT_TYPE_UTF8 = new Utf8(Response.CONTENT_TYPE);
-
   private class EncodingClue {
     private final String value;
     private final String source;
@@ -164,7 +162,7 @@ public class EncodingDetector {
 
   public void autoDetectClues(WebPage page, boolean filter) {
     autoDetectClues(page.getContent(), page.getContentType(),
-        parseCharacterEncoding(page.getHeaders().get(CONTENT_TYPE_UTF8)), filter);
+        parseCharacterEncoding(page.getHeaders().get(Response.CONTENT_TYPE)), filter);
   }
 
   private void autoDetectClues(ByteBuffer dataBuffer, CharSequence typeUtf8,

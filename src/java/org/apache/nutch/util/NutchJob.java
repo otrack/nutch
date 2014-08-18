@@ -59,8 +59,7 @@ public class NutchJob extends Job {
   }
 
   public static boolean shouldProcess(CharSequence mark, Utf8 batchId) {
-    if (mark == null) {
-      return false;
+    if (mark == null) {      return false;
     }
     boolean isAll = batchId.equals(Nutch.ALL_CRAWL_ID);
     if (!isAll && !mark.equals(batchId)) {
@@ -68,4 +67,5 @@ public class NutchJob extends Job {
     }
     return true;
   }
+
 }

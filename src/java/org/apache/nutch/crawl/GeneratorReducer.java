@@ -16,16 +16,7 @@
  ******************************************************************************/
 package org.apache.nutch.crawl;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.avro.util.Utf8;
 import org.apache.gora.mapreduce.GoraReducer;
-import org.apache.gora.query.Query;
-import org.apache.gora.query.Result;
-import org.apache.gora.store.DataStore;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.crawl.GeneratorJob.SelectorEntry;
 import org.apache.nutch.fetcher.FetcherJob.FetcherMapper;
@@ -33,6 +24,11 @@ import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.TableUtil;
 import org.apache.nutch.util.URLUtil;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Map;
 
 /** Reduce class for generate
  *
@@ -48,7 +44,7 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
   protected static long count = 0;
   private boolean byDomain = false;
   private Map<String, Integer> hostCountMap = new HashMap<String, Integer>();
-  private Utf8 batchId;
+  private String batchId;
 
   @Override
   protected void reduce(SelectorEntry key, Iterable<WebPage> values,
@@ -100,7 +96,7 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
       limit = totalLimit / context.getNumReduceTasks();
     }
     maxCount = conf.getLong(GeneratorJob.GENERATOR_MAX_COUNT, -2);
-    batchId = new Utf8(conf.get(GeneratorJob.BATCH_ID));
+    batchId = new String(conf.get(GeneratorJob.BATCH_ID));
     String countMode =
       conf.get(GeneratorJob.GENERATOR_COUNT_MODE, GeneratorJob.GENERATOR_COUNT_VALUE_HOST);
     if (countMode.equals(GeneratorJob.GENERATOR_COUNT_VALUE_DOMAIN)) {
