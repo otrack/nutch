@@ -16,25 +16,24 @@
  */
 package org.apache.nutch.indexwriter.solr;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.util.ObjectCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SolrMappingReader {
   public static Logger LOG = LoggerFactory.getLogger(SolrMappingReader.class);
@@ -62,7 +61,8 @@ public class SolrMappingReader {
 
   private void parseMapping() {    
     InputStream ssInputStream = null;
-    ssInputStream = conf.getConfResourceAsInputStream(conf.get(SolrConstants.MAPPING_FILE, "solrindex-mapping.xml"));
+    ssInputStream = conf.getConfResourceAsInputStream(conf.get(SolrConstants.MAPPING_FILE,
+      "solrindex-mapping.xml"));
 
     InputSource inputSource = new InputSource(ssInputStream);
     try {

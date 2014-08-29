@@ -1,11 +1,5 @@
 package org.apache.nutch.indexer.more;
 
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-
-import org.apache.avro.util.Utf8;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.indexer.IndexingException;
@@ -16,15 +10,15 @@ import org.apache.nutch.net.protocols.HttpDateFormat;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.storage.WebPage.Field;
 import org.apache.nutch.util.MimeUtil;
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.MatchResult;
-import org.apache.oro.text.regex.PatternMatcher;
-import org.apache.oro.text.regex.Perl5Compiler;
-import org.apache.oro.text.regex.Perl5Matcher;
-import org.apache.oro.text.regex.Perl5Pattern;
+import org.apache.oro.text.regex.*;
 import org.apache.solr.common.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.ParseException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
 
 /**
  * Add (or reset) a few metaData properties as respective fields (if they are
@@ -68,8 +62,8 @@ public class MoreIndexingFilter implements IndexingFilter {
   // last-modified, or, if that's not present, use fetch time.
   private NutchDocument addTime(NutchDocument doc, WebPage page, String url) {
     long time = -1;
-    CharSequence lastModified = page
-        .getHeaders().get(new Utf8(HttpHeaders.LAST_MODIFIED));
+    String lastModified = page
+        .getHeaders().get(HttpHeaders.LAST_MODIFIED);
     // String lastModified = data.getMeta(Metadata.LAST_MODIFIED);
     if (lastModified != null) { // try parse last-modified
       time = getTime(lastModified.toString(), url); // use as time
@@ -123,8 +117,7 @@ public class MoreIndexingFilter implements IndexingFilter {
 
   // Add Content-Length
   private NutchDocument addLength(NutchDocument doc, WebPage page, String url) {
-    CharSequence contentLength = page.getHeaders().get(new Utf8(
-            HttpHeaders.CONTENT_LENGTH));
+    String contentLength = page.getHeaders().get(HttpHeaders.CONTENT_LENGTH);
     if (contentLength != null) {
       // NUTCH-1010 ContentLength not trimmed
       String trimmed = contentLength.toString().trim();
@@ -157,9 +150,9 @@ public class MoreIndexingFilter implements IndexingFilter {
    */
   private NutchDocument addType(NutchDocument doc, WebPage page, String url) {
     String mimeType = null;
-    CharSequence contentType = page.getContentType();
+    String contentType = page.getContentType();
     if (contentType == null)
-      contentType = page.getHeaders().get(new Utf8(HttpHeaders.CONTENT_TYPE));
+      contentType = page.getHeaders().get(HttpHeaders.CONTENT_TYPE);
     if (contentType == null) {
       // Note by Jerome Charron on 20050415:
       // Content Type not solved by a previous plugin
@@ -233,8 +226,7 @@ public class MoreIndexingFilter implements IndexingFilter {
   }
 
   private NutchDocument resetTitle(NutchDocument doc, WebPage page, String url) {
-    CharSequence contentDisposition = page.getHeaders().get(new Utf8(
-        HttpHeaders.CONTENT_DISPOSITION));
+    String contentDisposition = page.getHeaders().get(HttpHeaders.CONTENT_DISPOSITION);
     if (contentDisposition == null)
       return doc;
 

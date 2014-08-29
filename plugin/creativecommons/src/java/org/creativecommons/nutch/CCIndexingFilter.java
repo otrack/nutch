@@ -17,7 +17,6 @@
 
 package org.creativecommons.nutch;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
@@ -100,8 +99,8 @@ public class CCIndexingFilter implements IndexingFilter {
 	public NutchDocument filter(NutchDocument doc, String url, WebPage page)
 			throws IndexingException {
 
-		ByteBuffer blicense = page.getMetadata().get(new Utf8(
-				CreativeCommons.LICENSE_URL));
+		ByteBuffer blicense = page.getMetadata().get(
+      CreativeCommons.LICENSE_URL);
 		if (blicense != null) {
 			String licenseUrl = Bytes.toString(blicense);
 			if (LOG.isInfoEnabled()) {
@@ -117,16 +116,16 @@ public class CCIndexingFilter implements IndexingFilter {
 		}
 
 		// index the license location as cc:meta=xxx
-		ByteBuffer blicenseloc = page.getMetadata().get(new Utf8(
-				CreativeCommons.LICENSE_LOCATION));
+		ByteBuffer blicenseloc = page.getMetadata().get(
+      CreativeCommons.LICENSE_LOCATION);
 		if (blicenseloc != null) {
 			String licenseLocation = Bytes.toString(blicenseloc);
 			addFeature(doc, "meta=" + licenseLocation);
 		}
 
 		// index the work type cc:type=xxx
-		ByteBuffer bworkType = page.getMetadata().get(new Utf8(
-				CreativeCommons.WORK_TYPE));
+		ByteBuffer bworkType = page.getMetadata().get(
+      CreativeCommons.WORK_TYPE);
 		if (bworkType != null) {
 			String workType = Bytes.toString(bworkType);
 			addFeature(doc, workType);

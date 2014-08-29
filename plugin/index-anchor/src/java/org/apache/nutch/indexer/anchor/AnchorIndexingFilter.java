@@ -82,7 +82,7 @@ public class AnchorIndexingFilter implements IndexingFilter {
     HashSet<String> set = null;
     
     for (Entry<String, String> e : page.getInlinks().entrySet()) {
-      String anchor = TableUtil.toString(e.getValue());
+      String anchor = e.getValue();
       
       if(anchor.equals(""))
         continue;

@@ -17,7 +17,6 @@
 
 package org.apache.nutch.parse.tika;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.parse.Outlink;
 import org.apache.nutch.parse.Parse;
@@ -84,10 +83,10 @@ public class TestRSSParser {
       in.close();
 
       WebPage page = WebPage.newBuilder().build();
-      page.setBaseUrl(new Utf8(urlString));
+      page.setBaseUrl(urlString);
       page.setContent(ByteBuffer.wrap(bytes));
       String mtype = mimeutil.getMimeType(file);
-      page.setContentType(new Utf8(mtype));
+      page.setContentType(mtype);
 
       parse = new ParseUtil(conf).parse(urlString, page);
 

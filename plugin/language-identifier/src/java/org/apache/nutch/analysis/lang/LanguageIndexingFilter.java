@@ -18,7 +18,6 @@ package org.apache.nutch.analysis.lang;
 
 // Nutch imports
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
@@ -62,7 +61,7 @@ public class LanguageIndexingFilter implements IndexingFilter {
       throws IndexingException {
 
     // check if LANGUAGE found, possibly put there by HTMLLanguageParser
-    ByteBuffer blang = page.getMetadata().get(new Utf8(Metadata.LANGUAGE));
+    ByteBuffer blang = page.getMetadata().get(Metadata.LANGUAGE);
     String lang = Bytes.toString(blang);
 
     if (lang == null || lang.length() == 0) {

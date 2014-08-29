@@ -74,7 +74,7 @@ public class MetaTagsParser implements ParseFilter {
     Iterator<Entry<String, ByteBuffer>> iterator = page.getMetadata().entrySet().iterator();
     while (iterator.hasNext()) {
       Entry<String, ByteBuffer> entry = iterator.next();
-      String mdName = entry.getKey().toString();
+      String mdName = entry.getKey();
       String value = Bytes.toStringBinary(entry.getValue());
       if (metatagset.contains("*") || metatagset.contains(mdName.toLowerCase())) {
         // now add the metadata

@@ -17,11 +17,6 @@
 package org.apache.nutch.microformats.reltag;
 
 // Nutch imports
-import java.nio.ByteBuffer;
-import java.util.Collection;
-import java.util.HashSet;
-
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
@@ -29,6 +24,10 @@ import org.apache.nutch.indexer.NutchDocument;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.storage.WebPage.Field;
 import org.apache.nutch.util.Bytes;
+
+import java.nio.ByteBuffer;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * An {@link org.apache.nutch.indexer.IndexingFilter} that adds <code>tag</code>
@@ -85,7 +84,7 @@ public class RelTagIndexingFilter implements IndexingFilter {
   @Override
   public NutchDocument filter(NutchDocument doc, String url, WebPage page) throws IndexingException {
   // Check if some Rel-Tags found, possibly put there by RelTagParser
-    ByteBuffer bb = page.getMetadata().get(new Utf8(RelTagParser.REL_TAG));
+    ByteBuffer bb = page.getMetadata().get(RelTagParser.REL_TAG);
 		
     if (bb != null) {
       String[] tags = Bytes.toString(bb).split("\t");

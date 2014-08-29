@@ -18,7 +18,6 @@ package org.apache.nutch.analysis.lang;
 
 // JDK imports
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.metadata.Metadata;
 import org.apache.nutch.net.protocols.Response;
@@ -37,7 +36,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import java.lang.CharSequence;
+import java.lang.String;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -135,7 +134,7 @@ public class HTMLLanguageParser implements ParseFilter {
       return lang;
     }
 
-    CharSequence ulang = page.getHeaders().get(new Utf8(Response.CONTENT_LANGUAGE));
+    String ulang = page.getHeaders().get(Response.CONTENT_LANGUAGE);
     if (ulang != null) {
       lang = ulang.toString();
     }
@@ -178,15 +177,15 @@ public class HTMLLanguageParser implements ParseFilter {
       return null;
 
     // dublin core
-    ByteBuffer lang = metadata.get(new Utf8("dc.language"));
+    ByteBuffer lang = metadata.get("dc.language");
     if (lang != null)
       return lang;
     // meta content-language
-    lang = metadata.get(new Utf8("content-language"));
+    lang = metadata.get("content-language");
     if (lang != null)
       return lang;
     // lang attribute
-    return metadata.get(new Utf8("lang"));
+    return metadata.get("lang");
   }
 
   static class LanguageParser {

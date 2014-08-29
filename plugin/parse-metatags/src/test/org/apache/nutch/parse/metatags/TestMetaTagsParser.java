@@ -20,7 +20,6 @@ package org.apache.nutch.parse.metatags;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.html.dom.HTMLDocumentImpl;
 import org.apache.nutch.parse.HTMLMetaTags;
@@ -43,6 +42,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.String;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -65,7 +65,7 @@ public class TestMetaTagsParser {
    *          If value is True method use ParseUtil
    * @return If successfully document parsed, it return metatags
    */
-  public Map<CharSequence, ByteBuffer> parseMetaTags(String fileName, boolean useUtil) {
+  public Map<String, ByteBuffer> parseMetaTags(String fileName, boolean useUtil) {
     try {
       Configuration conf = NutchConfiguration.create();
       String urlString = "file:" + sampleDir + fileSeparator + fileName;
@@ -77,9 +77,9 @@ public class TestMetaTagsParser {
       in.close();
 
       WebPage page = WebPage.newBuilder().build();
-      page.setBaseUrl(new Utf8(urlString));
+      page.setBaseUrl(urlString);
       page.setContent(ByteBuffer.wrap(bytes));
-      page.setContentType(new Utf8("text/html"));
+      page.setContentType("text/html");
 
       if (useUtil) {
         ParseUtil parser = new ParseUtil(conf);
@@ -186,7 +186,7 @@ public class TestMetaTagsParser {
   @Test
   public void testMetaTagsParserWithConf() {
     // check that we get the same values
-    Map<CharSequence, ByteBuffer> meta = parseMetaTags(sampleFile, true);
+    Map<String, ByteBuffer> meta = parseMetaTags(sampleFile, true);
 
     assertEquals(description,
         getMeta(meta, MetaTagsParser.PARSE_META_PREFIX + "description"));
@@ -201,7 +201,7 @@ public class TestMetaTagsParser {
   @Test
   public void testFilter() {
     // check that we get the same values
-    Map<CharSequence, ByteBuffer> meta = parseMetaTags(sampleFile, false);
+    Map<String, ByteBuffer> meta = parseMetaTags(sampleFile, false);
 
     assertEquals(description,
         getMeta(meta, MetaTagsParser.PARSE_META_PREFIX + "description"));
@@ -209,8 +209,8 @@ public class TestMetaTagsParser {
         getMeta(meta, MetaTagsParser.PARSE_META_PREFIX + "keywords"));
   }
 
-  private String getMeta(Map<CharSequence, ByteBuffer> meta, String name) {
-    ByteBuffer raw = meta.get(new Utf8(name));
+  private String getMeta(Map<String, ByteBuffer> meta, String name) {
+    ByteBuffer raw = meta.get(name);
     return Bytes.toString(raw);
   }
 

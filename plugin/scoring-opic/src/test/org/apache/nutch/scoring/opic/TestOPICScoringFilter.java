@@ -16,25 +16,17 @@
  */
 package org.apache.nutch.scoring.opic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.scoring.ScoreDatum;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.NutchConfiguration;
 import org.apache.nutch.util.TableUtil;
-
-import java.text.DecimalFormat;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.Map.Entry;
 
 import static org.junit.Assert.assertTrue;
 
@@ -196,9 +188,9 @@ public class TestOPICScoringFilter {
         self.outlinkedScoreData.clear();
 
         // Existing outlinks are added to outlinkedScoreData
-        Map<CharSequence, CharSequence> outlinks = row.getOutlinks();
+        Map<String, String> outlinks = row.getOutlinks();
         if (outlinks != null) {
-          for (Entry<CharSequence, CharSequence> e : outlinks.entrySet()) {
+          for (Entry<String, String> e : outlinks.entrySet()) {
             int depth = Integer.MAX_VALUE;
             self.outlinkedScoreData.add(new ScoreDatum(0.0f, e.getKey()
                 .toString(), e.getValue().toString(), depth));

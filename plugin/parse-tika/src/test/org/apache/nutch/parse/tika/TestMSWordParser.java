@@ -17,7 +17,6 @@
 
 package org.apache.nutch.parse.tika;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.ParseException;
@@ -73,12 +72,12 @@ public class TestMSWordParser {
 	in.close();
 	Parse parse;
 	WebPage page = WebPage.newBuilder().build();
-	page.setBaseUrl(new Utf8("file:"+urlString));
+	page.setBaseUrl("file:"+urlString);
 	page.setContent(ByteBuffer.wrap(bytes));
 	// set the content type?
 	MimeUtil mimeutil = new MimeUtil(conf);
 	String mtype = mimeutil.getMimeType(file);
-	page.setContentType(new Utf8(mtype));
+	page.setContentType(mtype);
 		
 	parse = new ParseUtil(conf).parse("file:"+urlString, page);
 	return parse.getText();

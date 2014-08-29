@@ -20,7 +20,6 @@ package org.apache.nutch.parse.html;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.Parser;
@@ -110,9 +109,9 @@ public class TestHtmlParser {
 
   protected WebPage page(byte[] contentBytes) {
     WebPage page = WebPage.newBuilder().build();
-    page.setBaseUrl(new Utf8(dummyUrl));
+    page.setBaseUrl(dummyUrl);
     page.setContent(ByteBuffer.wrap(contentBytes));
-    page.setContentType(new Utf8("text/html"));
+    page.setContentType("text/html");
     return page;
   }
   
@@ -133,7 +132,7 @@ public class TestHtmlParser {
       String text = parse.getText();
       String title = parse.getTitle();
       //String keywords = parse.getMeta("keywords");
-      String keywords = Bytes.toString(page.getMetadata().get(new Utf8("keywords")));
+      String keywords = Bytes.toString(page.getMetadata().get("keywords"));
       LOG.info(name);
       LOG.info("title:\t" + title);
       LOG.info("keywords:\t" + keywords);

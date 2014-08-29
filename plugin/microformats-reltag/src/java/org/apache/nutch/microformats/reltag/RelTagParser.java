@@ -17,21 +17,11 @@
 package org.apache.nutch.microformats.reltag;
 
 // JDK imports
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.ByteBuffer;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.indexer.NutchDocument;
 import org.apache.nutch.parse.HTMLMetaTags;
-import org.apache.nutch.parse.ParseFilter;
 import org.apache.nutch.parse.Parse;
+import org.apache.nutch.parse.ParseFilter;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.storage.WebPage.Field;
 import org.apache.nutch.util.StringUtil;
@@ -41,6 +31,11 @@ import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.ByteBuffer;
+import java.util.*;
 
 /**
  * Adds microformat rel-tags of document if found.
@@ -171,7 +166,7 @@ public class RelTagParser implements ParseFilter {
       sb.append("\t");
     }
     ByteBuffer bb = ByteBuffer.wrap(sb.toString().getBytes());
-    page.getMetadata().put(new Utf8(REL_TAG), bb);
+    page.getMetadata().put(REL_TAG, bb);
     return parse;
   }
 }

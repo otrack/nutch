@@ -24,7 +24,6 @@ import org.apache.nutch.indexer.NutchDocument;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.Bytes;
-import org.apache.nutch.util.TableUtil;
 import org.apache.solr.common.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +74,7 @@ public class BasicIndexingFilter implements IndexingFilter {
 
     String reprUrl = null;
 //    if (page.isReadable(WebPage.Field.REPR_URL.getIndex())) {
-      reprUrl = TableUtil.toString(page.getReprUrl());
+      reprUrl = page.getReprUrl();
 //    }
 
     String host = null;
@@ -105,10 +104,10 @@ public class BasicIndexingFilter implements IndexingFilter {
     }
 
     // content is indexed, so that it's searchable, but not stored in index
-    doc.add("content", TableUtil.toString(page.getText()));
+    doc.add("content", page.getText());
 
     // title
-    String title = TableUtil.toString(page.getTitle());
+    String title = page.getTitle();
     if (MAX_TITLE_LENGTH > -1 && title.length() > MAX_TITLE_LENGTH) { // truncate title if needed
       title = title.substring(0, MAX_TITLE_LENGTH);
     }
@@ -118,7 +117,7 @@ public class BasicIndexingFilter implements IndexingFilter {
     }
     // add cached content/summary display policy, if available
     ByteBuffer cachingRaw = page
-        .getMetadata().get(Nutch.CACHING_FORBIDDEN_KEY_UTF8);
+        .getMetadata().get(Nutch.CACHING_FORBIDDEN_KEY);
     String caching = Bytes.toString(cachingRaw);
     if (caching != null && !caching.equals(Nutch.CACHING_FORBIDDEN_NONE)) {
       doc.add("cache", caching);

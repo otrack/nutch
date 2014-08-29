@@ -15,9 +15,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.nutch</groupId>
     <artifactId>nutch</artifactId>
@@ -34,7 +35,7 @@ limitations under the License.
     </licenses>
     <properties>
         <avro.version>1.7.6</avro.version>
-        <jackson.version>1.6.9</jackson.version>
+        <jackson.version>1.8.8</jackson.version>
         <hadoop.version>2.2.0</hadoop.version>
         <gora.version>0.5-SNAPSHOT</gora.version>
         <infinispan.version>7.0.0-SNAPSHOT</infinispan.version>
@@ -88,107 +89,87 @@ limitations under the License.
         </developer>
     </developers>
     <build>
-        <sourceDirectory>src/java</sourceDirectory>
-        <testSourceDirectory>src/test</testSourceDirectory>
-        <resources>
-            <resource>
-                <directory>${project.basedir}/conf</directory>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>${project.basedir}/src/testresources</directory>
-            </testResource>
-            <testResource>
-                <directory>${project.basedir}/src/testprocess</directory>
-            </testResource>
-        </testResources>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>1.7</source>
-                        <target>1.7</target>
-                        <encoding>UTF-8</encoding>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <mainClass>fully.qualified.MainClass</mainClass>
-                            </manifest>
-                        </archive>
-                        <descriptorRefs>
-                            <descriptorRef>jar-with-dependencies</descriptorRef>
-                        </descriptorRefs>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>1.9</version>
-                    <executions>
-                        <execution>
-                            <id>add-extra-sources</id>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>add-source</goal>
-                            </goals>
-                            <configuration>
-                                <sources>
-                                    <source>${project.basedir}/plugin/feed/src/java</source>
-                                    <source>${project.basedir}/plugin/index-more/src/java</source>
-                                    <source>${project.basedir}/plugin/scoring-opic/src/java</source>
-                                    <source>${project.basedir}/plugin/protocol-http/src/java</source>
-                                    <source>${project.basedir}/plugin/creativecommons/src/java</source>
-                                    <source>${project.basedir}/plugin/index-metadata/src/java</source>
-                                    <source>${project.basedir}/plugin/urlnormalizer-regex/src/java</source>
-                                    <source>${project.basedir}/plugin/protocol-sftp/src/java</source>
-                                    <source>${project.basedir}/plugin/parse-swf/src/java</source>
-                                    <source>${project.basedir}/plugin/parse-html/src/java</source>
-                                    <source>${project.basedir}/plugin/urlfilter-automaton/src/java</source>
-                                    <source>${project.basedir}/plugin/protocol-httpclient/src/java</source>
-                                    <source>${project.basedir}/plugin/tld/src/java</source>
-                                    <source>${project.basedir}/plugin/protocol-file/src/java</source>
-                                    <source>${project.basedir}/plugin/indexer-solr/src/java</source>
-                                    <source>${project.basedir}/plugin/microformats-reltag/src/java</source>
-                                    <source>${project.basedir}/plugin/urlnormalizer-basic/src/java</source>
-                                    <source>${project.basedir}/plugin/index-anchor/src/java</source>
-                                    <source>${project.basedir}/plugin/protocol-ftp/src/java</source>
-                                    <source>${project.basedir}/plugin/subcollection/src/java</source>
-                                    <source>${project.basedir}/plugin/lib-nekohtml/src/java</source>
-                                    <source>${project.basedir}/plugin/scoring-link/src/java</source>
-                                    <source>${project.basedir}/plugin/urlfilter-suffix/src/java</source>
-                                    <source>${project.basedir}/plugin/urlnormalizer-pass/src/java</source>
-                                    <source>${project.basedir}/plugin/parse-js/src/java</source>
-                                    <source>${project.basedir}/plugin/urlfilter-domain/src/java</source>
-                                    <source>${project.basedir}/plugin/parse-metatags/src/java</source>
-                                    <source>${project.basedir}/plugin/parse-ext/src/java</source>
-                                    <source>${project.basedir}/plugin/lib-xml/src/java</source>
-                                    <source>${project.basedir}/plugin/nutch-extensionpoints/src/java</source>
-                                    <source>${project.basedir}/plugin/lib-regex-filter/src/java</source>
-                                    <source>${project.basedir}/plugin/indexer-elastic/src/java</source>
-                                    <source>${project.basedir}/plugin/urlfilter-regex/src/java</source>
-                                    <source>${project.basedir}/plugin/parse-tika/src/java</source>
-                                    <source>${project.basedir}/plugin/parse-zip/src/java</source>
-                                    <source>${project.basedir}/plugin/lib-http/src/java</source>
-                                    <source>${project.basedir}/plugin/language-identifier/src/java</source>
-                                    <source>${project.basedir}/plugin/urlfilter-validator/src/java</source>
-                                    <source>${project.basedir}/plugin/index-basic/src/java</source>
-                                    <source>${project.basedir}/plugin/urlfilter-prefix/src/java</source>
-                                </sources>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-
-            </plugins>
-        </pluginManagement>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.9</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <!--<source>${project.basedir}/plugin/feed</source> -->
+                                <!--<source>${project.basedir}/plugin/index-more</source>-->
+                                <source>${project.basedir}/plugin/scoring-opic</source>
+                                <source>${project.basedir}/plugin/protocol-http</source>
+                                <source>${project.basedir}/plugin/creativecommons</source>
+                                <!--<source>${project.basedir}/plugin/index-metadata</source>-->
+                                <source>${project.basedir}/plugin/urlnormalizer-regex</source>
+                                <source>${project.basedir}/plugin/protocol-sftp</source>
+                                <!--<source>${project.basedir}/plugin/parse-swf</source>-->
+                                 <source>${project.basedir}/plugin/parse-html</source>
+                                <!--<source>${project.basedir}/plugin/urlfilter-automaton</source>-->
+                                <source>${project.basedir}/plugin/protocol-httpclient</source>
+                                <source>${project.basedir}/plugin/tld</source>
+                                <source>${project.basedir}/plugin/protocol-file</source>
+                                <!--<source>${project.basedir}/plugin/indexer-solr</source>-->
+                                <!--<source>${project.basedir}/plugin/microformats-reltag</source>-->
+                                <source>${project.basedir}/plugin/urlnormalizer-basic</source>
+                                <source>${project.basedir}/plugin/index-anchor</source>
+                                <source>${project.basedir}/plugin/protocol-ftp</source>
+                                <!--<source>${project.basedir}/plugin/subcollection</source>-->
+                                <!--<source>${project.basedir}/plugin/lib-nekohtml</source>-->
+                                <source>${project.basedir}/plugin/scoring-link</source>
+                                <source>${project.basedir}/plugin/urlfilter-suffix</source>
+                                <source>${project.basedir}/plugin/urlnormalizer-pass</source>
+                                <!--<source>${project.basedir}/plugin/parse-js</source>-->
+                                <source>${project.basedir}/plugin/urlfilter-domain</source>
+                                <!--<source>${project.basedir}/plugin/parse-metatags</source>-->
+                                <!--<source>${project.basedir}/plugin/parse-ext</source>-->
+                                <!--<source>${project.basedir}/plugin/lib-xml</source>-->
+                                <!--<source>${project.basedir}/plugin/nutch-extensionpoints</source>-->
+                                <source>${project.basedir}/plugin/lib-regex-filter</source>
+                                <source>${project.basedir}/plugin/indexer-elastic</source>
+                                <source>${project.basedir}/plugin/urlfilter-regex</source>
+                                <source>${project.basedir}/plugin/parse-tika</source>
+                                <!--<source>${project.basedir}/plugin/parse-zip</source>-->
+                                <source>${project.basedir}/plugin/lib-http</source>
+                                <!--<source>${project.basedir}/plugin/language-identifier</source>-->
+                                <!--<source>${project.basedir}/plugin/urlfilter-validator</source>-->
+                                <source>${project.basedir}/plugin/index-basic</source>
+                                <source>${project.basedir}/plugin/urlfilter-prefix</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <dependencies>
@@ -242,6 +223,16 @@ limitations under the License.
         </dependency>
 
         <!--OTHERS -->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>jasper</artifactId>
+            <version>6.0.32</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ccil.cowan.tagsoup</groupId>
+            <artifactId>tagsoup</artifactId>
+            <version>1.2</version>
+        </dependency>
         <dependency>
             <groupId>com.ibm.icu</groupId>
             <artifactId>icu4j</artifactId>
@@ -547,7 +538,11 @@ limitations under the License.
             <artifactId>lucene-test-framework</artifactId>
             <version>${lucene-solr.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>nekohtml</groupId>
+            <artifactId>nekohtml</artifactId>
+            <version>1.9.12</version>
+        </dependency>
     </dependencies>
 
 </project>

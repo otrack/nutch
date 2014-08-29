@@ -16,7 +16,6 @@
  */
 package org.apache.nutch.microformats.reltag;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.indexer.NutchDocument;
 import org.apache.nutch.storage.WebPage;
@@ -46,7 +45,7 @@ import static org.junit.Assert.*;
     WebPage page = WebPage.newBuilder().build();
     byte[] bytes = new byte[10];
     ByteBuffer bbuf = ByteBuffer.wrap(bytes);
-    page.getMetadata().put(new Utf8(RelTagParser.REL_TAG), bbuf);
+    page.getMetadata().put(RelTagParser.REL_TAG, bbuf);
     try {
       filter.filter(doc, "http://nutch.apache.org/", page);
     } catch (Exception e) {
@@ -57,4 +56,3 @@ import static org.junit.Assert.*;
     assertTrue("check for 'tag' field", doc.getFieldNames().contains("tag"));
   }
 }
-  

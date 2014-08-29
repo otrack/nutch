@@ -16,7 +16,6 @@
  */
 package org.apache.nutch.microformats.reltag;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.ParseException;
@@ -26,8 +25,6 @@ import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.MimeUtil;
 import org.apache.nutch.util.NutchConfiguration;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -79,14 +76,14 @@ public class TestRelTagParser {
     in.close();
 
     WebPage page = WebPage.newBuilder().build();
-    page.setBaseUrl(new Utf8(urlString));
+    page.setBaseUrl(urlString);
     page.setContent(ByteBuffer.wrap(bytes));
     MimeUtil mimeutil = new MimeUtil(conf);
     String mtype = mimeutil.getMimeType(file);
-    page.setContentType(new Utf8(mtype));
+    page.setContentType(mtype);
     parse = new ParseUtil(conf).parse(urlString, page);
     //begin assertion for tests
-    ByteBuffer bbuf = page.getMetadata().get(new Utf8("Rel-Tag"));
+    ByteBuffer bbuf = page.getMetadata().get("Rel-Tag");
     byte[] byteArray = new byte[bbuf.remaining()];
     bbuf.get(byteArray);
     String s = new String(byteArray);

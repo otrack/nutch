@@ -17,7 +17,6 @@
 
 package org.creativecommons.nutch;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.parse.ParseUtil;
 import org.apache.nutch.storage.WebPage;
@@ -69,19 +68,22 @@ public class TestCCParseFilter {
 		Configuration conf = NutchConfiguration.create();
 
 		WebPage page = WebPage.newBuilder().build();
-		page.setBaseUrl(new Utf8(url));
+		page.setBaseUrl(url);
 		page.setContent(ByteBuffer.wrap(bytes));
 		MimeUtil mimeutil = new MimeUtil(conf);
 		String mtype = mimeutil.getMimeType(file);
-		page.setContentType(new Utf8(mtype));
+		page.setContentType(mtype);
 
 		new ParseUtil(conf).parse(url, page);
 
-		ByteBuffer bb = page.getMetadata().get(new Utf8("License-Url"));
+		ByteBuffer bb = page.getMetadata().get(
+      "License-Url");
 		assertEquals(license, Bytes.toString(bb));
-		bb = page.getMetadata().get(new Utf8("License-Location"));
+		bb = page.getMetadata().get(
+      "License-Location");
 		assertEquals(location, Bytes.toString(bb));
-		bb = page.getMetadata().get(new Utf8("Work-Type"));
+		bb = page.getMetadata().get(
+      "Work-Type");
         assertEquals(type, Bytes.toString(bb));
 	}
 }

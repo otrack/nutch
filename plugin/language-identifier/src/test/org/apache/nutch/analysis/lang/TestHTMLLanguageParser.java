@@ -18,7 +18,6 @@ package org.apache.nutch.analysis.lang;
 
 // JUnit imports
 
-import org.apache.avro.util.Utf8;
 import org.apache.nutch.metadata.Metadata;
 import org.apache.nutch.parse.ParseUtil;
 import org.apache.nutch.storage.WebPage;
@@ -37,9 +36,9 @@ import static org.junit.Assert.fail;
 
 public class TestHTMLLanguageParser {
 
-  private static Utf8 URL = new Utf8("http://foo.bar/");
+  private static String URL = "http://foo.bar/";
 
-  private static Utf8 BASE = new Utf8("http://foo.bar/");
+  private static String BASE = "http://foo.bar/";
 
   String docs[] = {
       "<html lang=\"fi\"><head>document 1 title</head><body>jotain suomeksi</body></html>",
@@ -61,7 +60,7 @@ public class TestHTMLLanguageParser {
       for (int t = 0; t < docs.length; t++) {
         WebPage page = getPage(docs[t]);
         parser.parse(URL.toString(), page);
-        ByteBuffer blang = page.getMetadata().get(new Utf8(Metadata.LANGUAGE));
+        ByteBuffer blang = page.getMetadata().get((Metadata.LANGUAGE);
         String lang = Bytes.toString(blang);
         assertEquals(metalanguages[t], lang);
       }
@@ -150,9 +149,9 @@ public class TestHTMLLanguageParser {
     WebPage page = WebPage.newBuilder().build();
     page.setBaseUrl(BASE);
     page.setContent(ByteBuffer.wrap(text.getBytes()));
-    page.setContentType(new Utf8("text/html"));
+    page.setContentType("text/html");
     page
-        .getHeaders().put(EncodingDetector.CONTENT_TYPE_UTF8, new Utf8("text/html"));
+        .getHeaders().put(EncodingDetector.CONTENT_TYPE_UTF8,"text/html");
     return page;
   }
 }

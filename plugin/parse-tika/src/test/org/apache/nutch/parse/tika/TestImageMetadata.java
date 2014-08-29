@@ -16,15 +16,6 @@
  */
 package org.apache.nutch.parse.tika;
 
-import static org.junit.Assert.*;
-
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.ParseException;
@@ -34,6 +25,14 @@ import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.MimeUtil;
 import org.apache.nutch.util.NutchConfiguration;
 import org.junit.Test;
+
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestImageMetadata {
 
@@ -61,22 +60,22 @@ public class TestImageMetadata {
       in.close();
       
       WebPage page = WebPage.newBuilder().build();
-      page.setBaseUrl(new Utf8(urlString));
+      page.setBaseUrl(urlString);
       page.setContent(ByteBuffer.wrap(bytes));
       String mtype = mimeutil.getMimeType(file);
-      page.setContentType(new Utf8(mtype));
+      page.setContentType(mtype);
       
       parse = new ParseUtil(conf).parse(urlString, page);
       
       //assert width
-      ByteBuffer bbufW = page.getMetadata().get(new Utf8("width"));
+      ByteBuffer bbufW = page.getMetadata().get("width");
       byte[] byteArrayW = new byte[bbufW.remaining()];
       bbufW.get(byteArrayW);
       String width = new String(byteArrayW);
       assertEquals("121", width);
       
       //assert height
-      ByteBuffer bbufH = page.getMetadata().get(new Utf8("height"));
+      ByteBuffer bbufH = page.getMetadata().get("height");
       byte[] byteArrayH = new byte[bbufH.remaining()];
       bbufH.get(byteArrayH);
       String height = new String(byteArrayH);

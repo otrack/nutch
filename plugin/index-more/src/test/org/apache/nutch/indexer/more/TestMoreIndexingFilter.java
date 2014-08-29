@@ -16,12 +16,11 @@
  */
 package org.apache.nutch.indexer.more;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.NutchDocument;
+import org.apache.nutch.net.protocols.Response;
 import org.apache.nutch.storage.WebPage;
-import org.apache.nutch.util.EncodingDetector;
 import org.apache.nutch.util.NutchConfiguration;
 import org.junit.Test;
 
@@ -81,8 +80,8 @@ public class TestMoreIndexingFilter {
     WebPage page = WebPage.newBuilder().build();
     String url = "http://www.example.com/";
     page.setContent(ByteBuffer.wrap("text".getBytes()));
-    page.setTitle(new Utf8("title"));
-    page.getHeaders().put(EncodingDetector.CONTENT_TYPE_UTF8, new Utf8(source));
+    page.setTitle("title");
+    page.getHeaders().put(Response.CONTENT_TYPE, source);
     NutchDocument doc = filter.filter(new NutchDocument(), url, page);
     assertEquals("mime type not detected", expected, doc.getFieldValue("type"));
   }

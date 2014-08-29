@@ -17,12 +17,25 @@
 
 package org.apache.nutch.parse.html;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.html.dom.HTMLDocumentImpl;
+import org.apache.nutch.metadata.Metadata;
+import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.parse.*;
+import org.apache.nutch.storage.ParseStatus;
+import org.apache.nutch.storage.WebPage;
+import org.apache.nutch.util.Bytes;
+import org.apache.nutch.util.EncodingDetector;
+import org.apache.nutch.util.NutchConfiguration;
+import org.cyberneko.html.parsers.DOMFragmentParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.DocumentFragment;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -33,32 +46,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.avro.util.Utf8;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.html.dom.HTMLDocumentImpl;
-import org.apache.nutch.metadata.Metadata;
-import org.apache.nutch.metadata.Nutch;
-import org.apache.nutch.parse.HTMLMetaTags;
-import org.apache.nutch.parse.ParseFilters;
-import org.apache.nutch.parse.Outlink;
-import org.apache.nutch.parse.Parse;
-import org.apache.nutch.parse.ParseStatusCodes;
-import org.apache.nutch.parse.ParseStatusUtils;
-import org.apache.nutch.parse.Parser;
-import org.apache.nutch.storage.ParseStatus;
-import org.apache.nutch.storage.WebPage;
-import org.apache.nutch.util.Bytes;
-import org.apache.nutch.util.EncodingDetector;
-import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.TableUtil;
-import org.cyberneko.html.parsers.DOMFragmentParser;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.DocumentFragment;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class HtmlParser implements Parser {
   public static final Logger LOG = LoggerFactory.getLogger("org.apache.nutch.parse.html");
@@ -168,7 +155,7 @@ public class HtmlParser implements Parser {
   public Parse getParse(String url, WebPage page) {
     HTMLMetaTags metaTags = new HTMLMetaTags();
 
-    String baseUrl = TableUtil.toString(page.getBaseUrl());
+    String baseUrl = page.getBaseUrl();
     URL base;
     try {
       base = new URL(baseUrl);
@@ -192,8 +179,8 @@ public class HtmlParser implements Parser {
       detector.addClue(sniffCharacterEncoding(contentInOctets), "sniffed");
       String encoding = detector.guessEncoding(page, defaultCharEncoding);
 
-      page.getMetadata().put(new Utf8(Metadata.ORIGINAL_CHAR_ENCODING), ByteBuffer.wrap(Bytes.toBytes(encoding)));
-      page.getMetadata().put(new Utf8(Metadata.CHAR_ENCODING_FOR_CONVERSION), ByteBuffer.wrap(Bytes.toBytes(encoding)));
+      page.getMetadata().put(Metadata.ORIGINAL_CHAR_ENCODING, ByteBuffer.wrap(Bytes.toBytes(encoding)));
+      page.getMetadata().put(Metadata.CHAR_ENCODING_FOR_CONVERSION, ByteBuffer.wrap(Bytes.toBytes(encoding)));
 
       input.setEncoding(encoding);
       if (LOG.isTraceEnabled()) { LOG.trace("Parsing..."); }
@@ -244,15 +231,15 @@ public class HtmlParser implements Parser {
     status.setMajorCode((int)ParseStatusCodes.SUCCESS);
     if (metaTags.getRefresh()) {
       status.setMinorCode((int)ParseStatusCodes.SUCCESS_REDIRECT);
-      status.getArgs().add(new Utf8(metaTags.getRefreshHref().toString()));
-      status.getArgs().add(new Utf8(Integer.toString(metaTags.getRefreshTime())));
+      status.getArgs().add(metaTags.getRefreshHref().toString());
+      status.getArgs().add(Integer.toString(metaTags.getRefreshTime()));
     }
 
     Parse parse = new Parse(text, title, outlinks, status);
     parse = htmlParseFilters.filter(url, page, parse, metaTags, root);
 
     if (metaTags.getNoCache()) {             // not okay to cache
-      page.getMetadata().put(new Utf8(Nutch.CACHING_FORBIDDEN_KEY),
+      page.getMetadata().put(Nutch.CACHING_FORBIDDEN_KEY,
           ByteBuffer.wrap(Bytes.toBytes(cachingPolicy)));
     }
 
@@ -352,9 +339,9 @@ public class HtmlParser implements Parser {
     HtmlParser parser = new HtmlParser();
     parser.setConf(conf);
     WebPage page = WebPage.newBuilder().build();
-    page.setBaseUrl(new Utf8(url));
+    page.setBaseUrl(url);
     page.setContent(ByteBuffer.wrap(bytes));
-    page.setContentType(new Utf8("text/html"));
+    page.setContentType("text/html");
     Parse parse = parser.getParse(url, page);
     System.out.println("title: "+parse.getTitle());
     System.out.println("text: "+parse.getText());

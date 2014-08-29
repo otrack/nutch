@@ -26,7 +26,6 @@ import org.apache.nutch.storage.WebPage.Field;
 import org.apache.nutch.util.Bytes;
 import org.apache.nutch.util.MimeUtil;
 import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.TableUtil;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.parser.ParseContext;
@@ -72,7 +71,7 @@ public class TikaParser implements org.apache.nutch.parse.Parser {
   @Override
   public Parse getParse(String url, WebPage page) {
 
-    String baseUrl = TableUtil.toString(page.getBaseUrl());
+    String baseUrl = page.getBaseUrl();
     URL base;
     try {
       base = new URL(baseUrl);

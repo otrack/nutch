@@ -16,7 +16,6 @@
  */
 package org.apache.nutch.indexer.basic;
 
-import org.apache.avro.util.Utf8;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.indexer.NutchDocument;
 import org.apache.nutch.metadata.Nutch;
@@ -49,12 +48,12 @@ public class TestBasicIndexingFilter {
 	assertNotNull(filter);
 	NutchDocument doc = new NutchDocument();
 	WebPage page = WebPage.newBuilder().build();
-	page.getInlinks().put(new Utf8("http://nutch.apache.org/"), new Utf8("Welcome to Nutch"));
-	page.setTitle(new Utf8("Welcome to Nutch"));
-    page.setReprUrl(new Utf8("http://www.urldoesnotmatter.org"));
+	page.getInlinks().put("http://nutch.apache.org/", "Welcome to Nutch");
+	page.setTitle("Welcome to Nutch");
+    page.setReprUrl("http://www.urldoesnotmatter.org");
     byte[] bytes = new byte[10];
     ByteBuffer bbuf = ByteBuffer.wrap(bytes);
-    page.getMetadata().put(Nutch.CACHING_FORBIDDEN_KEY_UTF8, bbuf);
+    page.getMetadata().put(Nutch.CACHING_FORBIDDEN_KEY, bbuf);
     page.setFetchTime(System.currentTimeMillis());
 	try {
 	  filter.filter(doc, "http://www.apache.org/", page);
@@ -81,8 +80,8 @@ public class TestBasicIndexingFilter {
 	assertNotNull(filter);
 	NutchDocument doc = new NutchDocument();
 	WebPage page = WebPage.newBuilder().build();
-	page.getInlinks().put(new Utf8("http://exceedmaximumtitleurl.org/"), new Utf8("exceeding title site"));
-	page.setTitle(new Utf8("This title exceeds maximum characters"));
+	page.getInlinks().put("http://exceedmaximumtitleurl.org/", "exceeding title site");
+	page.setTitle("This title exceeds maximum characters");
 	try {
 	  filter.filter(doc, "http://www.apache.org/", page);
 	} catch (Exception e) {
