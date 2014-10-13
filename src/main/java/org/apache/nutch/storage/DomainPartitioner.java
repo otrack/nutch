@@ -22,13 +22,9 @@ public class DomainPartitioner extends ClusteringBasedPartitioner<String,WebPage
   /**
    * @param ensembleCaches  the caches to partition
    * @param location        cache to store the locations of the keys
-   * @param initialLocation immutable cache storing initial locations of a subset of the keys
    */
-  public DomainPartitioner(
-    List<EnsembleCache<String, WebPage>> ensembleCaches,
-    EnsembleCache<String, Coordinates> location,
-    EnsembleCache<String, Coordinates> initialLocation) {
-    super(ensembleCaches, location, initialLocation);
+  public DomainPartitioner(List<EnsembleCache<String, WebPage>> ensembleCaches, EnsembleCache<String, Coordinates> location) {
+    super(ensembleCaches, location);
   }
 
   @Override

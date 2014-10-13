@@ -101,8 +101,8 @@ public class TestGenerator extends AbstractNutchTest {
     assertEquals(NUM_RESULTS, l.size());
 
     // verify we have the highest scoring urls
-    assertEquals("http://aaa/100", (l.get(0).getUrl().toString()));
-    assertEquals("http://aaa/099", (l.get(1).getUrl().toString()));
+    assertEquals("http://aaa/100", (l.get(0).getUrl()));
+    assertEquals("http://aaa/099", (l.get(1).getUrl()));
   }
 
   private String pad(int i) {
@@ -165,7 +165,7 @@ public class TestGenerator extends AbstractNutchTest {
     fetchList = CrawlTestUtil.readContents(webPageStore, Mark.GENERATE_MARK, FIELDS);
 
     // verify we got right amount of records
-    assertEquals(3, fetchList.size()); //3 as 2 + 1 skipped (already generated)
+    assertEquals(3, fetchList.size()); // 2+1
 
     myConfiguration = new Configuration(conf);
     myConfiguration.setInt(GeneratorJob.GENERATOR_MAX_COUNT, 3);
@@ -174,7 +174,7 @@ public class TestGenerator extends AbstractNutchTest {
     fetchList = CrawlTestUtil.readContents(webPageStore, Mark.GENERATE_MARK, FIELDS);
 
     // verify we got right amount of records
-    assertEquals(3, fetchList.size()); //3 as now all have generate mark 
+    assertEquals(3, fetchList.size()); //3 as now all have generate mark
   }
 
   /**
@@ -220,7 +220,7 @@ public class TestGenerator extends AbstractNutchTest {
     fetchList = CrawlTestUtil.readContents(webPageStore, Mark.GENERATE_MARK, FIELDS);
 
     // verify we got right amount of records
-    assertEquals(3, fetchList.size()); // 2 + 1 skipped (already generated)
+    assertEquals(3, fetchList.size()); // 2+1
 
     myConfiguration = new Configuration(myConfiguration);
     myConfiguration.setInt(GeneratorJob.GENERATOR_MAX_COUNT, 3);
@@ -229,7 +229,7 @@ public class TestGenerator extends AbstractNutchTest {
     fetchList = CrawlTestUtil.readContents(webPageStore, Mark.GENERATE_MARK, FIELDS);
 
     // verify we got right amount of records
-    assertEquals(6, fetchList.size()); // 3 + 3 skipped (already generated)
+    assertEquals(6, fetchList.size()); // 3+2+1
   }
 
   /**

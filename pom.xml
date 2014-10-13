@@ -206,7 +206,7 @@ limitations under the License.
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.2.5</version>
+            <version>4.3.5</version>
             <optional>true</optional>
         </dependency>
 
@@ -452,11 +452,19 @@ limitations under the License.
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+
         <!-- Infinispan Dependencies -->
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-remote-query-server</artifactId>
             <version>${infinispan.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-ensemble</artifactId>
+            <version>${infinispan.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>

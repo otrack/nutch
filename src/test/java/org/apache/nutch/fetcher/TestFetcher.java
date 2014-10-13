@@ -94,7 +94,11 @@ public class TestFetcher extends AbstractNutchTest {
     long time = System.currentTimeMillis();
     GeneratorJob g = new GeneratorJob(conf);
     String batchId = g.generate(Long.MAX_VALUE, time, false, false);
-    assertTrue(CrawlTestUtil.readContents(webPageStore, Mark.GENERATE_MARK).size() == 6);
+
+    ArrayList<URLWebPage> l = CrawlTestUtil.readContents(webPageStore, Mark.GENERATE_MARK);
+
+    assertTrue(
+      CrawlTestUtil.readContents(webPageStore, Mark.GENERATE_MARK).size() == 6);
 
     //fetch
     time = System.currentTimeMillis();
