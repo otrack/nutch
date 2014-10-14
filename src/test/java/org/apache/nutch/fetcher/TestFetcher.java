@@ -77,12 +77,12 @@ public class TestFetcher extends AbstractNutchTest {
     //generate seedlist
     ArrayList<String> urls = new ArrayList<String>();
 
-    addUrl(urls,"index.html");
-    addUrl(urls,"pagea.html");
-    addUrl(urls,"pageb.html");
-    addUrl(urls,"dup_of_pagea.html");
-    addUrl(urls,"nested_spider_trap.html");
-    addUrl(urls,"exception.html");
+    addUrl(urls,"index.html",server);
+    addUrl(urls,"pagea.html",server);
+    addUrl(urls,"pageb.html",server);
+    addUrl(urls,"dup_of_pagea.html",server);
+    addUrl(urls,"nested_spider_trap.html",server);
+    addUrl(urls,"exception.html",server);
 
     CrawlTestUtil.generateSeedList(fs, urlPath, urls);
 
@@ -137,7 +137,7 @@ public class TestFetcher extends AbstractNutchTest {
     assertTrue(urls.containsAll(handledurls));
   }
 
-  private void addUrl(ArrayList<String> urls, String page) {
+  public static void addUrl(ArrayList<String> urls, String page, Server server) {
     urls.add("http://127.0.0.1:" + server.getConnectors()[0].getPort() + "/" + page);
   }
 

@@ -171,6 +171,15 @@ public class DbUpdaterJob extends NutchTool implements Tool {
     return updateTable(crawlId,batchId);
   }
 
+  /**
+   *
+   * @param batchId
+   * @return 0 if successful
+   */
+  public int dbUpdate(String batchId) throws Exception {
+    return updateTable(getConf().get(Nutch.CRAWL_ID_KEY),batchId);
+  }
+
   public static void main(String[] args) throws Exception {
     int res = ToolRunner.run(NutchConfiguration.create(), new DbUpdaterJob(), args);
     System.exit(res);
