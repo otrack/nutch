@@ -210,7 +210,8 @@ public class InjectorJob extends NutchTool implements Tool {
     currentJob.setMapOutputValueClass(WebPage.class);
     currentJob.setOutputFormatClass(GoraOutputFormat.class);
     
-    DataStore<String, WebPage> store = StorageUtils.createWebStore(currentJob.getConfiguration(),
+    DataStore<String, WebPage> store = StorageUtils.createStore(
+      currentJob.getConfiguration(),
       String.class, WebPage.class);
     GoraOutputFormat.setOutput(currentJob, store, true);
     

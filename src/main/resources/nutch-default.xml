@@ -1301,6 +1301,15 @@
     </property>
 
     <property>
+        <name>storage.schema.link</name>
+        <value>link</value>
+        <description>This value holds the schema name used for Nutch link db.
+            Note that Nutch ignores the value in the gora mapping files, and uses
+            this as the link schema name.
+        </description>
+    </property>
+
+    <property>
         <name>storage.crawl.id</name>
         <value></value>
         <description>This value helps differentiate between the datasets that

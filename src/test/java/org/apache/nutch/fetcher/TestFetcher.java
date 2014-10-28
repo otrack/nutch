@@ -95,10 +95,11 @@ public class TestFetcher extends AbstractNutchTest {
     GeneratorJob g = new GeneratorJob(conf);
     String batchId = g.generate(Long.MAX_VALUE, time, false, false);
 
-    ArrayList<URLWebPage> l = CrawlTestUtil.readContents(webPageStore, Mark.GENERATE_MARK);
+    ArrayList<URLWebPage> l = CrawlTestUtil.readPageDB(webPageStore,
+      Mark.GENERATE_MARK);
 
     assertTrue(
-      CrawlTestUtil.readContents(webPageStore, Mark.GENERATE_MARK).size() == 6);
+      CrawlTestUtil.readPageDB(webPageStore, Mark.GENERATE_MARK).size() == 6);
 
     //fetch
     time = System.currentTimeMillis();
@@ -113,7 +114,8 @@ public class TestFetcher extends AbstractNutchTest {
         conf.getFloat("fetcher.server.delay", 5));
     assertTrue(time > minimumTime);
 
-    List<URLWebPage> pages = CrawlTestUtil.readContents(webPageStore, Mark.FETCH_MARK);
+    List<URLWebPage> pages = CrawlTestUtil.readPageDB(webPageStore,
+      Mark.FETCH_MARK);
     assertEquals(urls.size(), pages.size());
     List<String> handledurls = new ArrayList<String>();
     for (URLWebPage up : pages) {

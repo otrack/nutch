@@ -113,7 +113,8 @@ public class TestInjector extends AbstractNutchTest {
   };
 
   private List<String> readDb() throws Exception {
-    List<URLWebPage> pages = CrawlTestUtil.readContents(webPageStore, null, fields);
+    List<URLWebPage> pages = CrawlTestUtil.readPageDB(webPageStore, null,
+      fields);
     ArrayList<String> read = new ArrayList<String>();
     for (URLWebPage up : pages) {
       WebPage page = up.getDatum();

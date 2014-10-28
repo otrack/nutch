@@ -17,11 +17,7 @@
 package org.apache.nutch.crawl;
 
 import org.apache.gora.mapreduce.GoraMapper;
-import org.apache.hadoop.util.StringUtils;
 import org.apache.nutch.metadata.Nutch;
-import org.apache.nutch.scoring.ScoreDatum;
-import org.apache.nutch.scoring.ScoringFilterException;
-import org.apache.nutch.scoring.ScoringFilters;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.TableUtil;
@@ -29,21 +25,13 @@ import org.apache.nutch.util.WebPageWritable;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class DbUpdateMapper
 extends GoraMapper<String, WebPage, UrlWithScore, NutchWritable> {
   public static final Logger LOG = DbUpdaterJob.LOG;
 
-  private ScoringFilters scoringFilters;
-
-  private final List<ScoreDatum> scoreData = new ArrayList<ScoreDatum>();
-
   private String batchId;
-  
+
   //reuse writables
   private UrlWithScore urlWithScore = new UrlWithScore();
   private NutchWritable nutchWritable = new NutchWritable();
@@ -52,53 +40,25 @@ extends GoraMapper<String, WebPage, UrlWithScore, NutchWritable> {
   @Override
   public void map(String key, WebPage page, Context context)
   throws IOException, InterruptedException {
+
    if(Mark.GENERATE_MARK.checkMark(page) == null) {
       if (LOG.isDebugEnabled()) {
         LOG.debug("Skipping " + TableUtil.unreverseUrl(key) + "; not generated yet");
       }
       return;
     }
-  
+
     String url = TableUtil.unreverseUrl(key);
-
-    scoreData.clear();
-    Map<String, String> outlinks = page.getOutlinks();
-    if (outlinks != null) {
-      for (Entry<String, String> e : outlinks.entrySet()) {
-                int depth=Integer.MAX_VALUE;
-        String depthString = page.getMarkers().get(DbUpdaterJob.DISTANCE);
-        if (depthString != null) depth=Integer.parseInt(depthString);
-        scoreData.add(new ScoreDatum(0.0f, e.getKey(),e.getValue(), depth));
-      }
-    }
-
-    // TODO: Outlink filtering (i.e. "only keep the first n outlinks")
-    try {
-      scoringFilters.distributeScoreToOutlinks(url, page, scoreData, (outlinks == null ? 0 : outlinks.size()));
-    } catch (ScoringFilterException e) {
-      LOG.warn("Distributing score failed for URL: " + key +
-          " exception:" + StringUtils.stringifyException(e));
-    }
-
     urlWithScore.setUrl(key);
     urlWithScore.setScore(Float.MAX_VALUE);
     pageWritable.setWebPage(page);
     nutchWritable.set(pageWritable);
     context.write(urlWithScore, nutchWritable);
 
-    for (ScoreDatum scoreDatum : scoreData) {
-      String reversedOut = TableUtil.reverseUrl(scoreDatum.getUrl());
-      scoreDatum.setUrl(url);
-      urlWithScore.setUrl(reversedOut);
-      urlWithScore.setScore(scoreDatum.getScore());
-      nutchWritable.set(scoreDatum);
-      context.write(urlWithScore, nutchWritable);
-    }
   }
 
   @Override
   public void setup(Context context) {
-    scoringFilters = new ScoringFilters(context.getConfiguration());
     pageWritable = new WebPageWritable(context.getConfiguration(), null);
     batchId = context.getConfiguration().get(Nutch.BATCH_NAME_KEY,Nutch.ALL_BATCH_ID_STR);
   }

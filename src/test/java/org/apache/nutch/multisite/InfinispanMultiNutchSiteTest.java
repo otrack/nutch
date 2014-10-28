@@ -4,7 +4,9 @@ import org.apache.gora.GoraTestDriver;
 import org.apache.gora.infinispan.GoraInfinispanTestDriver;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.crawl.URLWebPage;
+import org.apache.nutch.storage.Link;
 import org.apache.nutch.storage.Mark;
+import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.Bytes;
 import org.apache.nutch.util.CrawlTestUtil;
 import org.apache.nutch.util.NutchConfiguration;
@@ -28,12 +30,15 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
 
   @Override
   protected GoraTestDriver createDriver() {
-    return new GoraInfinispanTestDriver(numberOfSites());
+    List<String> cacheNames = new ArrayList<>();
+    cacheNames.add(WebPage.class.getSimpleName());
+    cacheNames.add(Link.class.getSimpleName());
+    return new GoraInfinispanTestDriver(numberOfSites(),cacheNames);
   }
 
   @Override
   protected int numberOfSites() {
-    return 3;
+    return 1;
   }
 
   @Override
@@ -69,7 +74,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
   }
 
   @Test
-  public void injectionTest() throws Exception {
+  public void inject() throws Exception {
 
     List<String> urls = new ArrayList<String>();
     for (int i = 0; i < 10; i++) {
@@ -77,12 +82,12 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     }
 
     site(0).inject(urls).get();
-    assertEquals(readContent(null).size(),10);
+    assertEquals(readPageDB(null).size(),10);
 
   }
 
   @Test
-  public void generatorTest() throws Exception {
+  public void generate() throws Exception {
     List<String> urls = new ArrayList<String>();
     for (int i = 0; i < 10; i++) {
       urls.add("http://zzz.com/" + i + ".html\tnutch.score=0");
@@ -101,11 +106,11 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     for(Future<String> future : futures)
       future.get();
 
-    assertEquals(readContent(null).size(),10);
+    assertEquals(readPageDB(null).size(),10);
   }
 
   @Test
-  public void fetchTest() throws Exception {
+  public void fetch() throws Exception {
 
     Configuration conf = NutchConfiguration.create();
 
@@ -152,7 +157,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     assertTrue((System.currentTimeMillis()-time) > minimumTime);
 
     //verify that enough pages and correct were handled
-    List<URLWebPage> pages = readContent(Mark.FETCH_MARK);
+    List<URLWebPage> pages = readPageDB(Mark.FETCH_MARK);
     assertEquals(urls.size(), pages.size());
     List<String> handledurls = new ArrayList<>();
     for (URLWebPage up : pages) {
@@ -175,15 +180,97 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
 
   }
 
+  @Test
+  public void crawl() throws Exception {
+
+    Configuration conf = NutchConfiguration.create();
+
+    // start content server
+    Server server = CrawlTestUtil.getServer(conf
+      .getInt("content.server.port",50000), "src/test/resources/fetch-test-site");
+    server.start();
+
+    // generate seed list
+    ArrayList<String> urls = new ArrayList<>();
+    addUrl(urls,"index.html",server);
+    addUrl(urls,"pagea.html",server);
+    addUrl(urls,"pageb.html",server);
+
+    // inject
+    site(0).inject(urls).get();
+
+    // generate
+    Map<NutchSite,Future<String>> batchIds =  new HashMap<>();
+    for(NutchSite site : sites)
+      batchIds.put(
+        site,
+        site.generate(Long.MAX_VALUE, System.currentTimeMillis(), false, false));
+
+    // fetch
+    List<Future<Integer>> futures = new ArrayList<>();
+    for(NutchSite site : sites) {
+      String batchId = batchIds.get(site).get();
+      futures.add(
+        site.fetch(batchId, 1, false, 1));
+    }
+    for(Future<Integer> future : futures)
+      future.get();
+
+    // parse
+    futures.clear();
+    for(NutchSite site : sites) {
+      String batchId = batchIds.get(site).get();
+      futures.add(
+        site.parse(batchId, false, false));
+    }
+    for(Future<Integer> future : futures)
+      future.get();
+
+    // verify content
+    assertEquals(5,readLinkDB().size());
+
+    // update pageDB
+    futures.clear();
+    for(NutchSite site : sites) {
+      String batchId = batchIds.get(site).get();
+      futures.add(
+        site.update(batchId));
+    }
+    for(Future<Integer> future : futures)
+      future.get();
+
+    // verify content
+    List<URLWebPage> pages = readPageDB(null);
+    assertEquals(3,pages.size());
+    for (URLWebPage urlWebPage : pages) {
+      if (urlWebPage.getUrl().contains("page"))
+        assertEquals(1,urlWebPage.getDatum().getInlinks().size());
+      if (urlWebPage.getUrl().contains("index"))
+        assertEquals(2,urlWebPage.getDatum().getInlinks().size());
+    }
+
+    server.stop();
+
+  }
+
   // Helpers
 
-  public List<URLWebPage> readContent(Mark requiredMark, String... fields)
+  public List<URLWebPage> readPageDB(Mark requiredMark, String... fields)
     throws Exception {
     List<URLWebPage> content = new ArrayList<>();
     for(NutchSite site : sites){
-      content.addAll(site.readContent(requiredMark,fields));
+      content.addAll(site.readPageDB(requiredMark, fields));
     }
     return content;
+  }
+
+  public List<Link> readLinkDB()
+    throws Exception {
+    List<Link> links = new ArrayList<>();
+    for(NutchSite site : sites){
+      links.addAll(site.readLinkDB());
+    }
+    return links;
   }
 
 }

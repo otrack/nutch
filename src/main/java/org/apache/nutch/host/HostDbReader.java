@@ -41,8 +41,8 @@ public class HostDbReader extends Configured implements Tool {
 
   private void read(String key) throws ClassNotFoundException, IOException, Exception {
 
-    DataStore<String, Host> datastore = StorageUtils.createWebStore(getConf(),
-        String.class, Host.class);
+    DataStore<String, Host> datastore = StorageUtils.createStore(getConf(),
+      String.class, Host.class);
 
     Query<String, Host> query = datastore.newQuery();
     // possibly add a contraint to the query

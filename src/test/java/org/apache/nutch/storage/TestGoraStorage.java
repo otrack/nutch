@@ -213,7 +213,7 @@ public class TestGoraStorage extends AbstractNutchTest {
 //    Configuration localConf = CrawlTestUtil.createConfiguration();
 //    localConf.set("storage.data.store.class", "org.apache.gora.memory.store.MemStore");
 //
-//    DataStore<String, WebPage> store = StorageUtils.createWebStore(localConf,
+//    DataStore<String, WebPage> store = StorageUtils.createStore(localConf,
 //        String.class, WebPage.class);
 //    readWrite("single_id", store);
 //    System.out.println("Done.");

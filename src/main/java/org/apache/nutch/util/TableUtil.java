@@ -33,14 +33,13 @@ public class TableUtil {
    * E.g. "http://bar.foo.com:8983/to/index.html?a=b" becomes
    * "com.foo.bar:8983:http/to/index.html?a=b".
    *
-   * @param url
-   *          url to be reversed
+   * @param url url to be reversed
    * @return Reversed url
    * @throws MalformedURLException
    */
-  public static String reverseUrl(String urlString)
+  public static String reverseUrl(String url)
       throws MalformedURLException {
-    return reverseUrl(new URL(urlString));
+    return reverseUrl(new URL(url));
   }
 
   /**

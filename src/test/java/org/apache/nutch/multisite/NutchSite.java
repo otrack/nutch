@@ -4,11 +4,11 @@ import org.apache.gora.store.DataStore;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.nutch.crawl.GeneratorJob;
-import org.apache.nutch.crawl.InjectorJob;
-import org.apache.nutch.crawl.URLWebPage;
+import org.apache.nutch.crawl.*;
 import org.apache.nutch.fetcher.FetcherJob;
 import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.parse.ParserJob;
+import org.apache.nutch.storage.Link;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -43,7 +44,8 @@ public class NutchSite {
   private Path testdir;
 
   private String connectionString;
-  private DataStore<String, WebPage> store;
+  private DataStore<String, WebPage> pageDB;
+  private DataStore<String, Link> linkDB;
   private boolean isPersistent;
 
   public NutchSite(Path path, String siteName, boolean isPersistent, String connectionString) throws IOException {
@@ -61,9 +63,9 @@ public class NutchSite {
       fs = FileSystem.get(conf);
       conf.set(Nutch.CRAWL_ID_KEY, siteName);
       conf.set(GORA_CONNECTION_STRING_KEY,connectionString);
-      store = StorageUtils
-        .createWebStore(conf, String.class, WebPage.class);
-      store.deleteSchema();
+      pageDB = StorageUtils.createStore(conf, String.class, WebPage.class);
+      pageDB.deleteSchema();
+      linkDB = StorageUtils.createStore(conf, String.class, Link.class);
     } catch (Exception e) {
       e.printStackTrace();
       LOG.error("Site "+siteName+" creation failed", e);
@@ -122,12 +124,37 @@ public class NutchSite {
     });
   }
 
-  // Helpers
-
-  public List<URLWebPage> readContent(Mark requiredMark, String... fields)
+  public Future<Integer> parse(final String batchId, final boolean shouldResume,
+    final boolean force)
     throws Exception {
-    return CrawlTestUtil.readContents(store, requiredMark, fields);
+    return pool.submit(new Callable<Integer>() {
+      @Override
+      public Integer call() throws Exception {
+        ParserJob parser = new ParserJob(conf);
+        return parser.parse(batchId, shouldResume, force);
+      }
+    });
   }
 
+  public Future<Integer>update(final String batchId)
+    throws Exception {
+    return pool.submit(new Callable<Integer>() {
+      @Override
+      public Integer call() throws Exception {
+        DbUpdaterJob dbUpdaterJob= new DbUpdaterJob(conf);
+        return dbUpdaterJob.update(batchId);
+      }
+    });
+  }
 
+  // Helpers
+
+  public List<URLWebPage> readPageDB(Mark requiredMark, String... fields)
+    throws Exception {
+    return CrawlTestUtil.readPageDB(pageDB, requiredMark, fields);
+  }
+
+  public Collection<? extends Link> readLinkDB() throws Exception {
+    return CrawlTestUtil.readLinkDB(linkDB);
+  }
 }

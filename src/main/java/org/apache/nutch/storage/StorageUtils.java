@@ -51,8 +51,9 @@ public class StorageUtils {
    * @throws GoraException
    */
   @SuppressWarnings("unchecked")
-  public static <K, V extends Persistent> DataStore<K, V> createWebStore(Configuration conf,
-      Class<K> keyClass, Class<V> persistentClass) throws ClassNotFoundException, GoraException {
+  public static <K, V extends Persistent> DataStore<K, V> createStore(
+    Configuration conf,
+    Class<K> keyClass, Class<V> persistentClass) throws ClassNotFoundException, GoraException {
 
     String crawlId = conf.get(Nutch.CRAWL_ID_KEY, "");
     String schemaPrefix = "";
@@ -67,12 +68,14 @@ public class StorageUtils {
     } else if (Host.class.equals(persistentClass)) {
       schema = conf.get("storage.schema.host", "host");
       conf.set("preferred.schema.name", schemaPrefix + "host");
+    } else if (Link.class.equals(persistentClass)) {
+      schema = conf.get("storage.schema.link", "link");
+      conf.set("preferred.schema.name", schemaPrefix + "link");
     } else {
       throw new UnsupportedOperationException("Unable to create store for class " + persistentClass);
     }
 
-    Class<? extends DataStore<K, V>> dataStoreClass =
-      (Class<? extends DataStore<K, V>>) getDataStoreClass(conf);
+    Class<? extends DataStore<K, V>> dataStoreClass = getDataStoreClass(conf);
     return DataStoreFactory.createDataStore(dataStoreClass,
             keyClass, persistentClass, conf, schema);
   }
@@ -129,7 +132,7 @@ public class StorageUtils {
       Filter<String, WebPage> filter, boolean reuseObjects)
       throws ClassNotFoundException, IOException {
 
-    DataStore<String, WebPage> store = createWebStore(job.getConfiguration(),
+    DataStore<String, WebPage> store = createStore(job.getConfiguration(),
       String.class, WebPage.class);
     if (store == null)
       throw new RuntimeException("Could not create datastore");
@@ -155,13 +158,29 @@ public class StorageUtils {
   }
 
   public static <K, V> void initReducerJob(Job job,
-      Class<? extends GoraReducer<K, V, String, WebPage>> reducerClass)
-  throws ClassNotFoundException, GoraException {
+    Class<? extends GoraReducer<K, V, String, WebPage>> reducerClass)
+    throws ClassNotFoundException, GoraException {
+
     Configuration conf = job.getConfiguration();
     DataStore<String, WebPage> store =
-      StorageUtils.createWebStore(conf, String.class, WebPage.class);
+      StorageUtils.createStore(conf, String.class, WebPage.class);
     GoraReducer.initReducerJob(job, store, reducerClass);
     GoraOutputFormat.setOutput(job, store, true);
+
+  }
+
+  public static <K, V extends Persistent> void initReducerJob(
+    Job job,
+    Class<K> keyClass,
+    Class<V> valueClass,
+    Class<? extends GoraReducer<K, V, K, V>> reducerClass)
+    throws ClassNotFoundException, GoraException {
+
+    Configuration conf = job.getConfiguration();
+    DataStore<K, V> store = StorageUtils.createStore(conf, keyClass, valueClass);
+    GoraReducer.initReducerJob(job, store, reducerClass);
+    GoraOutputFormat.setOutput(job, store, true);
+
   }
 
   public static String[] toStringArray(Collection<WebPage.Field> fields) {

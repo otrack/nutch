@@ -74,7 +74,7 @@ public class IndexingJob extends NutchTool implements Tool {
       batchId =  conf.get(GeneratorJob.BATCH_ID, Nutch.ALL_BATCH_ID_STR);
       indexUtil = new IndexUtil(conf);
       try {
-        store = StorageUtils.createWebStore(conf, String.class, WebPage.class);
+        store = StorageUtils.createStore(conf, String.class, WebPage.class);
       } catch (ClassNotFoundException e) {
         throw new IOException(e);
       }

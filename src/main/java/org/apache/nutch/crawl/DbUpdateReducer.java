@@ -16,7 +16,12 @@
  ******************************************************************************/
 package org.apache.nutch.crawl;
 
+import org.apache.gora.filter.FilterOp;
+import org.apache.gora.filter.SingleFieldValueFilter;
 import org.apache.gora.mapreduce.GoraReducer;
+import org.apache.gora.query.Query;
+import org.apache.gora.query.Result;
+import org.apache.gora.store.DataStore;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.util.StringUtils;
@@ -25,7 +30,9 @@ import org.apache.nutch.net.protocols.HttpDateFormat;
 import org.apache.nutch.scoring.ScoreDatum;
 import org.apache.nutch.scoring.ScoringFilterException;
 import org.apache.nutch.scoring.ScoringFilters;
+import org.apache.nutch.storage.Link;
 import org.apache.nutch.storage.Mark;
+import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.TableUtil;
 import org.apache.nutch.util.WebPageWritable;
@@ -48,8 +55,9 @@ extends GoraReducer<UrlWithScore, NutchWritable, String, WebPage> {
   private int maxInterval;
   private FetchSchedule schedule;
   private ScoringFilters scoringFilters;
-  private List<ScoreDatum> inlinkedScoreData = new ArrayList<ScoreDatum>();
+  private List<ScoreDatum> inlinkedScoreData = new ArrayList<>();
   private int maxLinks;
+  private DataStore<String,Link> linkDB;
 
   @Override
   protected void setup(Context context) throws IOException, InterruptedException {
@@ -60,28 +68,30 @@ extends GoraReducer<UrlWithScore, NutchWritable, String, WebPage> {
     schedule = FetchScheduleFactory.getFetchSchedule(conf);
     scoringFilters = new ScoringFilters(conf);
     maxLinks = conf.getInt("db.update.max.inlinks", 10000);
+    try {
+      linkDB = StorageUtils.createStore(
+          context.getConfiguration(), String.class, Link.class);
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    }
+
   }
 
   @Override
   protected void reduce(UrlWithScore key, Iterable<NutchWritable> values,
       Context context) throws IOException, InterruptedException {
-    String keyUrl = key.getUrl().toString();
 
+    String keyUrl = key.getUrl().toString();
     WebPage page = null;
-    inlinkedScoreData.clear();
-    
-    for (NutchWritable nutchWritable : values) {
+
+    for (NutchWritable nutchWritable : values) { // FIXME single one
       Writable val = nutchWritable.get();
-      if (val instanceof WebPageWritable) {
-        page = ((WebPageWritable) val).getWebPage();
-      } else {
-        inlinkedScoreData.add((ScoreDatum) val);
-        if (inlinkedScoreData.size() >= maxLinks) {
-          LOG.info("Limit reached, skipping further inlinks for " + keyUrl);
-          break;
-        }
-      }
+      page = ((WebPageWritable) val).getWebPage();
     }
+
+    if (page==null)
+      return;
+
     String url;
     try {
       url = TableUtil.unreverseUrl(keyUrl);
@@ -92,21 +102,35 @@ extends GoraReducer<UrlWithScore, NutchWritable, String, WebPage> {
       return;
     }
 
-    if (page == null) { // new row
-      if (!additionsAllowed) {
-        return;
+    // compute in links
+
+    // define filter
+    SingleFieldValueFilter<String,Link> filter = new SingleFieldValueFilter<>();
+    filter.setFieldName("out");
+    filter.setFilterOp(FilterOp.EQUALS);
+    List operand = new ArrayList<>();
+    operand.add(url);
+    filter.setOperands(operand);
+
+    // build query
+    inlinkedScoreData.clear();
+    Query<String,Link> q = linkDB.newQuery();
+    q.setFilter(filter);
+    Result<String,Link> result = q.execute();
+
+    // update scoreData
+    try {
+      while(result.next()) {
+        Link link  = result.get();
+        inlinkedScoreData.add(
+          new ScoreDatum(link.getScore(), link.getIn(), "",link.getDistance()));
       }
-      page = WebPage.newBuilder().build();
-      schedule.initializeSchedule(url, page);
-      page.setStatus((int) CrawlStatus.STATUS_UNFETCHED);
-      try {
-        scoringFilters.initialScore(url, page);
-      } catch (ScoringFilterException e) {
-        page.setScore(0.0f);
-      }
-    } else {
-      byte status = page.getStatus().byteValue();
-      switch (status) {
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    byte status = page.getStatus().byteValue();
+    switch (status) {
       case CrawlStatus.STATUS_FETCHED:         // succesful fetch
       case CrawlStatus.STATUS_REDIR_TEMP:      // successful fetch, redirected
       case CrawlStatus.STATUS_REDIR_PERM:
@@ -137,7 +161,7 @@ extends GoraReducer<UrlWithScore, NutchWritable, String, WebPage> {
           }
         }
         schedule.setFetchSchedule(url, page, prevFetchTime, prevModifiedTime,
-            fetchTime, modifiedTime, modified);
+          fetchTime, modifiedTime, modified);
         if (maxInterval < page.getFetchInterval())
           schedule.forceRefetch(url, page, false);
         break;
@@ -152,13 +176,12 @@ extends GoraReducer<UrlWithScore, NutchWritable, String, WebPage> {
       case CrawlStatus.STATUS_GONE:
         schedule.setPageGoneSchedule(url, page, 0L, page.getPrevModifiedTime(), page.getFetchTime());
         break;
-      }
     }
 
     if (page.getInlinks() != null) {
       page.getInlinks().clear();
     }
-    
+
     // Distance calculation.
     // Retrieve smallest distance from all inlinks distances
     // Calculate new distance for current page: smallest inlink distance plus 1.
@@ -172,6 +195,7 @@ extends GoraReducer<UrlWithScore, NutchWritable, String, WebPage> {
       }
       page.getInlinks().put(inlink.getUrl(), inlink.getAnchor());
     }
+
     if (smallestDist != Integer.MAX_VALUE) {
       int oldDistance=Integer.MAX_VALUE;
       String oldDistString = page.getMarkers().get(DbUpdaterJob.DISTANCE);
@@ -186,7 +210,7 @@ extends GoraReducer<UrlWithScore, NutchWritable, String, WebPage> {
       scoringFilters.updateScore(url, page, inlinkedScoreData);
     } catch (ScoringFilterException e) {
       LOG.warn("Scoring filters failed with exception " +
-                StringUtils.stringifyException(e));
+        StringUtils.stringifyException(e));
     }
 
     // clear markers

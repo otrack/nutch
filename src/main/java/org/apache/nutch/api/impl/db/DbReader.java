@@ -39,7 +39,7 @@ public class DbReader {
       conf.set(Nutch.CRAWL_ID_KEY, crawlId);
     }
     try {
-      store = StorageUtils.createWebStore(conf, String.class, WebPage.class);
+      store = StorageUtils.createStore(conf, String.class, WebPage.class);
     } catch (Exception e) {
       throw new IllegalStateException("Cannot create webstore!", e);
     }

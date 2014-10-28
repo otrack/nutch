@@ -383,7 +383,7 @@ public class DmozParser {
     Vector<String> topics = new Vector<String>();
     
     Configuration conf = NutchConfiguration.create();
-    store = StorageUtils.createWebStore(conf,String.class, WebPage.class);
+    store = StorageUtils.createStore(conf, String.class, WebPage.class);
     FileSystem fs = FileSystem.get(conf);
     try {
       for (int i = 1; i < argv.length; i++) {

@@ -224,8 +224,8 @@ public class WebTableReader extends NutchTool implements Tool {
   /** Prints out the entry to the standard out **/
   private void read(String key, boolean dumpContent, boolean dumpHeaders,
       boolean dumpLinks, boolean dumpText) throws ClassNotFoundException, IOException, Exception {
-    DataStore<String, WebPage> datastore = StorageUtils.createWebStore(getConf(),
-        String.class, WebPage.class);
+    DataStore<String, WebPage> datastore = StorageUtils.createStore(getConf(),
+      String.class, WebPage.class);
 
     Query<String, WebPage> query = datastore.newQuery();
     String reversedUrl = TableUtil.reverseUrl(key);
@@ -317,8 +317,8 @@ public class WebTableReader extends NutchTool implements Tool {
     cfg.setBoolean(WebTableRegexMapper.linksParamName, links);
     cfg.setBoolean(WebTableRegexMapper.textParamName, text);
 
-    DataStore<String, WebPage> store = StorageUtils.createWebStore(job
-        .getConfiguration(), String.class, WebPage.class);
+    DataStore<String, WebPage> store = StorageUtils.createStore(job
+      .getConfiguration(), String.class, WebPage.class);
     Query<String, WebPage> query = store.newQuery();
     //remove the __g__dirty field since it is not stored
     String[] fields = Arrays.copyOfRange(WebPage._ALL_FIELDS, 1,
@@ -521,8 +521,8 @@ public class WebTableReader extends NutchTool implements Tool {
     if (sort == null) sort = Boolean.FALSE;
     currentJob.getConfiguration().setBoolean("db.reader.stats.sort", sort);
 
-    DataStore<String, WebPage> store = StorageUtils.createWebStore(currentJob
-        .getConfiguration(), String.class, WebPage.class);
+    DataStore<String, WebPage> store = StorageUtils.createStore(currentJob
+      .getConfiguration(), String.class, WebPage.class);
     Query<String, WebPage> query = store.newQuery();
 
     //remove the __g__dirty field since it is not stored

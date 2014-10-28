@@ -19,18 +19,21 @@ package org.apache.nutch.parse;
 import org.apache.gora.filter.FilterOp;
 import org.apache.gora.filter.MapFieldValueFilter;
 import org.apache.gora.mapreduce.GoraMapper;
+import org.apache.gora.store.DataStore;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.util.StringUtils;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.nutch.crawl.DbUpdaterJob;
 import org.apache.nutch.crawl.GeneratorJob;
 import org.apache.nutch.crawl.SignatureFactory;
 import org.apache.nutch.metadata.HttpHeaders;
 import org.apache.nutch.metadata.Nutch;
-import org.apache.nutch.storage.Mark;
-import org.apache.nutch.storage.ParseStatus;
-import org.apache.nutch.storage.StorageUtils;
-import org.apache.nutch.storage.WebPage;
+import org.apache.nutch.scoring.ScoreDatum;
+import org.apache.nutch.scoring.ScoringFilterException;
+import org.apache.nutch.scoring.ScoringFilters;
+import org.apache.nutch.storage.*;
 import org.apache.nutch.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,25 +41,17 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class ParserJob extends NutchTool implements Tool {
 
+  // Class fields
   public static final Logger LOG = LoggerFactory.getLogger(ParserJob.class);
-
   private static final String RESUME_KEY = "parse.job.resume";
   private static final String FORCE_KEY = "parse.job.force";
-  
   public static final String SKIP_TRUNCATED = "parser.skip.truncated";
-  
   private static final String REPARSE = "-reparse";
-
   private static final Collection<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
-
-  private Configuration conf;
-
   static {
     FIELDS.add(WebPage.Field.STATUS);
     FIELDS.add(WebPage.Field.CONTENT);
@@ -69,19 +64,24 @@ public class ParserJob extends NutchTool implements Tool {
     FIELDS.add(WebPage.Field.HEADERS);
   }
 
+  // Object fields
+  private Configuration conf;
 
-  public static class ParserMapper 
+  public static class ParserMapper
       extends GoraMapper<String, WebPage, String, WebPage> {
+
     private ParseUtil parseUtil;
-
     private boolean shouldResume;
-
     private boolean force;
-
     private String batchId;
-
     private boolean skipTruncated;
-    
+    private Link.Builder linkBuilder;
+    private WebPage.Builder pageBuilder;
+    private DataStore<String,Link> linkDB;
+    private DataStore<String,WebPage> pageDB;
+    private ScoringFilters scoringFilters;
+    private List<ScoreDatum> scoreData;
+
     @Override
     public void setup(Context context) throws IOException {
       Configuration conf = context.getConfiguration();
@@ -90,14 +90,27 @@ public class ParserJob extends NutchTool implements Tool {
       force = conf.getBoolean(FORCE_KEY, false);
       batchId = conf.get(GeneratorJob.BATCH_ID, Nutch.ALL_BATCH_ID_STR);
       skipTruncated=conf.getBoolean(SKIP_TRUNCATED, true);
+      try {
+        linkDB = StorageUtils.createStore(
+          context.getConfiguration(),String.class, Link.class);
+        pageDB = StorageUtils.createStore(
+          context.getConfiguration(),String.class, WebPage.class);
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }
+      linkBuilder = Link.newBuilder();
+      pageBuilder = WebPage.newBuilder();
+      scoreData = new ArrayList<>();
+      scoringFilters = new ScoringFilters(context.getConfiguration());
     }
 
     @Override
     public void map(String key, WebPage page, Context context)
         throws IOException, InterruptedException {
-      String unreverseKey = TableUtil.unreverseUrl(key);
+
+      String url = TableUtil.unreverseUrl(key);
       if (batchId.equals(REPARSE)) {
-        LOG.debug("Reparsing " + unreverseKey);
+        LOG.debug("Reparsing " + url);
       } else {
         if (Mark.FETCH_MARK.checkMark(page) == null) {
           if (LOG.isDebugEnabled()) {
@@ -108,20 +121,19 @@ public class ParserJob extends NutchTool implements Tool {
         }
         if (shouldResume && Mark.PARSE_MARK.checkMark(page) != null) {
           if (force) {
-            LOG.info("Forced parsing " + unreverseKey + "; already parsed");
+            LOG.info("Forced parsing " + url + "; already parsed");
           } else {
-            LOG.info("Skipping " + unreverseKey + "; already parsed");
+            LOG.info("Skipping " + url + "; already parsed");
             return;
           }
         } else {
-          LOG.info("Parsing " + unreverseKey);
+          LOG.info("Parsing " + url);
         }
       }
 
-      if (skipTruncated && isTruncated(unreverseKey, page)) {
+      if (skipTruncated && isTruncated(url, page)) {
         return;
       }
-      
 
       parseUtil.process(key, page);
       ParseStatus pstatus = page.getParseStatus();
@@ -130,8 +142,43 @@ public class ParserJob extends NutchTool implements Tool {
             ParseStatusCodes.majorCodes[pstatus.getMajorCode()]).increment(1);
       }
 
+      // Update linkDB
+      // TODO: Outlink filtering (i.e. "only keep the first n outlinks")
+
+      scoreData.clear();
+      Map<String, String> outlinks = page.getOutlinks();
+      if (outlinks != null) {
+        for (Map.Entry<String, String> e : outlinks.entrySet()) {
+          int depth=Integer.MAX_VALUE;
+          String depthString = page.getMarkers().get(DbUpdaterJob.DISTANCE);
+          if (depthString != null) depth=Integer.parseInt(depthString);
+          scoreData.add(
+            new ScoreDatum(0.0f, e.getKey(),e.getValue(), depth));
+        }
+      }
+
+      try {
+        scoringFilters.distributeScoreToOutlinks(
+          url, page, scoreData, (outlinks == null ? 0 : outlinks.size()));
+      } catch (ScoringFilterException e) {
+        LOG.warn("Distributing score failed for URL: " + key +
+          " exception:" + StringUtils.stringifyException(e));
+      }
+
+      for (ScoreDatum scoreDatum: scoreData){
+        Link link = linkBuilder.build();
+        link.setKey(UUID.randomUUID().toString());
+        link.setIn(url);
+        link.setOut(scoreDatum.getUrl());
+        link.setDistance(scoreDatum.getDistance());
+        link.setScore(page.getScore());
+        linkDB.put(link.getKey(), link);
+        pageDB.putIfAbsent(link.getKey(),pageBuilder.build());
+      }
+
       context.write(key, page);
-    }    
+    }
+
   }
   
   public ParserJob() {
@@ -243,7 +290,7 @@ public class ParserJob extends NutchTool implements Tool {
     MapFieldValueFilter<String, WebPage> batchIdFilter = getBatchIdFilter(batchId);
 	StorageUtils.initMapperJob(currentJob, fields, String.class, WebPage.class,
         ParserMapper.class, batchIdFilter);
-    StorageUtils.initReducerJob(currentJob, IdentityPageReducer.class);
+    StorageUtils.initReducerJob(currentJob, IdentityWebPageReducer.class);
     currentJob.setNumReduceTasks(0);
 
     currentJob.waitForCompletion(true);

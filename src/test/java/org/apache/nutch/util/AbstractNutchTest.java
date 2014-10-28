@@ -54,7 +54,7 @@ public class AbstractNutchTest {
     try {
       conf = NutchConfiguration.create();
       fs = FileSystem.get(conf);
-      webPageStore = StorageUtils.createWebStore(conf, String.class, WebPage.class);
+      webPageStore = StorageUtils.createStore(conf, String.class, WebPage.class);
       if (!persistentDataStore)
         webPageStore.deleteSchema();
     } catch (Exception e) {

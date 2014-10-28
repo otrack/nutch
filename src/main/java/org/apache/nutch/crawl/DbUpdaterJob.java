@@ -176,7 +176,7 @@ public class DbUpdaterJob extends NutchTool implements Tool {
    * @param batchId
    * @return 0 if successful
    */
-  public int dbUpdate(String batchId) throws Exception {
+  public int update(String batchId) throws Exception {
     return updateTable(getConf().get(Nutch.CRAWL_ID_KEY),batchId);
   }
 

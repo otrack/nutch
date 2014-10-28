@@ -66,7 +66,7 @@ public class HostDb implements Closeable {
 
   public HostDb(Configuration conf) throws GoraException {
     try {
-      hostStore = StorageUtils.createWebStore(conf, String.class, Host.class);
+      hostStore = StorageUtils.createStore(conf, String.class, Host.class);
     } catch (ClassNotFoundException e) {
       throw new RuntimeException(e);
     }

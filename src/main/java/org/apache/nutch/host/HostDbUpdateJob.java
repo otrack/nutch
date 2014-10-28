@@ -97,8 +97,8 @@ public class HostDbUpdateJob implements Tool {
     NutchJob job = new NutchJob(getConf(), "hostdb-update");
 
     // === Map ===
-    DataStore<String, WebPage> pageStore = StorageUtils.createWebStore(
-        job.getConfiguration(), String.class, WebPage.class);
+    DataStore<String, WebPage> pageStore = StorageUtils.createStore(
+      job.getConfiguration(), String.class, WebPage.class);
     Query<String, WebPage> query = pageStore.newQuery();
     query.setFields(StorageUtils.toStringArray(FIELDS)); // Note: pages without
                                                          // these fields are
@@ -107,8 +107,8 @@ public class HostDbUpdateJob implements Tool {
         HostDbUpdateJob.Mapper.class, null, true);
 
     // === Reduce ===
-    DataStore<String, Host> hostStore = StorageUtils.createWebStore(
-        job.getConfiguration(), String.class, Host.class);
+    DataStore<String, Host> hostStore = StorageUtils.createStore(
+      job.getConfiguration(), String.class, Host.class);
     GoraReducer.initReducerJob(job, hostStore, HostDbUpdateReducer.class);
 
     job.waitForCompletion(true);

@@ -24,6 +24,7 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.nutch.crawl.URLWebPage;
+import org.apache.nutch.storage.Link;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.WebPage;
 import org.mortbay.jetty.Handler;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -99,9 +101,10 @@ public class CrawlTestUtil {
    * @return list of matching {@link URLWebPage} objects
    * @throws Exception
    */
-  public static ArrayList<URLWebPage> readContents(DataStore<String,WebPage> store,
-      Mark requiredMark, String... fields) throws Exception {
-    ArrayList<URLWebPage> l = new ArrayList<URLWebPage>();
+  public static ArrayList<URLWebPage> readPageDB(
+    DataStore<String, WebPage> store,
+    Mark requiredMark, String... fields) throws Exception {
+    ArrayList<URLWebPage> l = new ArrayList<>();
 
     Query<String, WebPage> query = store.newQuery();
     if (fields != null) {
@@ -128,6 +131,31 @@ public class CrawlTestUtil {
     return l;
   }
 
+  public static Collection<? extends Link> readLinkDB(
+    DataStore<String, Link> linkDB)
+    throws Exception {
+
+    ArrayList<Link> l = new ArrayList<>();
+    Query<String, Link> query = linkDB.newQuery();
+    Result<String, Link> results = linkDB.execute(query);
+
+    while (results.next()) {
+      try {
+        Link link = results.get();
+
+        if (link == null)
+          continue;
+
+        l.add(link);
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    return l;
+  }
+
+
 
   /**
    * Creates a new JettyServer with one static root context
@@ -148,4 +176,5 @@ public class CrawlTestUtil {
     webServer.setHandler(handlers);
     return webServer;
   }
+
 }
