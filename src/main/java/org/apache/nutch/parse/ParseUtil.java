@@ -256,8 +256,10 @@ public class ParseUtil extends Configured {
             toUrl = normalizers.normalize(toUrl, URLNormalizers.SCOPE_OUTLINK);
             toUrl = filters.filter(toUrl);
           } catch (MalformedURLException e2) {
+            LOG.info("Malformed URL: "+toUrl);
             continue;
           } catch (URLFilterException e) {
+            LOG.info("Filtered out URL "+toUrl);
             continue;
           }
           if (toUrl == null) {

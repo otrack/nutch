@@ -199,6 +199,8 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     // inject
     site(0).inject(urls).get();
 
+    assertEquals(3,readPageDB(null).size());
+
     // generate
     Map<NutchSite,Future<String>> batchIds =  new HashMap<>();
     for(NutchSite site : sites)
@@ -216,6 +218,8 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     for(Future<Integer> future : futures)
       future.get();
 
+    assertEquals(3,readPageDB(null).size());
+
     // parse
     futures.clear();
     for(NutchSite site : sites) {
@@ -228,6 +232,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
 
     // verify content
     assertEquals(5,readLinkDB().size());
+    assertEquals(4,readPageDB(null).size());
 
     // update pageDB
     futures.clear();
@@ -241,11 +246,13 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
 
     // verify content
     List<URLWebPage> pages = readPageDB(null);
-    assertEquals(3,pages.size());
+    assertEquals(4,pages.size());
     for (URLWebPage urlWebPage : pages) {
-      if (urlWebPage.getUrl().contains("page"))
+      if (urlWebPage.getUrl().contains("dup"))
+        assertEquals(0,urlWebPage.getDatum().getInlinks().size());
+      else if (urlWebPage.getUrl().contains("page"))
         assertEquals(1,urlWebPage.getDatum().getInlinks().size());
-      if (urlWebPage.getUrl().contains("index"))
+      else // index
         assertEquals(2,urlWebPage.getDatum().getInlinks().size());
     }
 

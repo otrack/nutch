@@ -30,6 +30,7 @@ import org.apache.nutch.crawl.GeneratorJob;
 import org.apache.nutch.crawl.SignatureFactory;
 import org.apache.nutch.metadata.HttpHeaders;
 import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.net.URLNormalizers;
 import org.apache.nutch.scoring.ScoreDatum;
 import org.apache.nutch.scoring.ScoringFilterException;
 import org.apache.nutch.scoring.ScoringFilters;
@@ -52,6 +53,9 @@ public class ParserJob extends NutchTool implements Tool {
   public static final String SKIP_TRUNCATED = "parser.skip.truncated";
   private static final String REPARSE = "-reparse";
   private static final Collection<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
+  private static enum probes{
+    NEW_PAGES
+  }
   static {
     FIELDS.add(WebPage.Field.STATUS);
     FIELDS.add(WebPage.Field.CONTENT);
@@ -75,11 +79,15 @@ public class ParserJob extends NutchTool implements Tool {
     private boolean force;
     private String batchId;
     private boolean skipTruncated;
+
     private Link.Builder linkBuilder;
     private WebPage.Builder pageBuilder;
     private DataStore<String,Link> linkDB;
     private DataStore<String,WebPage> pageDB;
+
     private ScoringFilters scoringFilters;
+    private URLNormalizers normalizers;
+
     private List<ScoreDatum> scoreData;
 
     @Override
@@ -102,6 +110,8 @@ public class ParserJob extends NutchTool implements Tool {
       pageBuilder = WebPage.newBuilder();
       scoreData = new ArrayList<>();
       scoringFilters = new ScoringFilters(context.getConfiguration());
+      normalizers = new URLNormalizers(conf, URLNormalizers.SCOPE_CRAWLDB);
+
     }
 
     @Override
@@ -166,6 +176,8 @@ public class ParserJob extends NutchTool implements Tool {
       }
 
       for (ScoreDatum scoreDatum: scoreData){
+
+        // create link
         Link link = linkBuilder.build();
         link.setKey(UUID.randomUUID().toString());
         link.setIn(url);
@@ -173,7 +185,15 @@ public class ParserJob extends NutchTool implements Tool {
         link.setDistance(scoreDatum.getDistance());
         link.setScore(page.getScore());
         linkDB.put(link.getKey(), link);
-        pageDB.putIfAbsent(link.getKey(),pageBuilder.build());
+
+        // insert in pageDB
+        WebPage outPage = pageBuilder.build();
+        String outURL = normalizers.normalize(link.getOut(),URLNormalizers.SCOPE_CRAWLDB);
+        outPage.setKey(TableUtil.reverseUrl(outURL));
+        pageDB.putIfAbsent(outPage.getKey(), outPage);
+
+        context.getCounter(probes.NEW_PAGES).increment(1);
+
       }
 
       context.write(key, page);
