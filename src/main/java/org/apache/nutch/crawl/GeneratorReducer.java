@@ -101,9 +101,11 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
     if (totalLimit == 0) {
       limit = 0;
     } else {
-      limit = Math.min(totalLimit / context.getNumReduceTasks(),1);
+      limit = Math.max(totalLimit / context.getNumReduceTasks(),1);
+      GeneratorJob.LOG.info("Limit:"+limit);
     }
     maxCount = conf.getLong(GENERATOR_MAX_COUNT, 0);
+    GeneratorJob.LOG.info("Maxcount:"+maxCount);
     batchId = conf.get(BATCH_ID);
     String countMode = conf.get(GENERATOR_COUNT_MODE, GENERATOR_COUNT_VALUE_HOST);
     if (countMode.equals(GENERATOR_COUNT_VALUE_DOMAIN)) {

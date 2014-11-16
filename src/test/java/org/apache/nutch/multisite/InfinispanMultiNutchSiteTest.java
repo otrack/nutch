@@ -110,13 +110,15 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     List<Future<String>> futures = new ArrayList<>();
     for(NutchSite site : sites)
       futures.add(site
-        .generate(0, System.currentTimeMillis(), false, false));
+        .generate(3, System.currentTimeMillis(), false, false));
 
     // check result
     for(Future<String> future : futures)
       future.get();
 
-    assertEquals(readPageDB(Mark.GENERATE_MARK).size(),10);
+    assertEquals(
+      Math.min(3*numberOfSites(),10),
+      readPageDB(Mark.GENERATE_MARK).size());
   }
 
   @Test
@@ -166,7 +168,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
       conf.getFloat("fetcher.server.delay", 5));
     assertTrue((System.currentTimeMillis()-time) > minimumTime);
 
-    //verify that enough pages were handled
+    // verify that enough pages were handled
     List<URLWebPage> pages = readPageDB(Mark.FETCH_MARK);
     assertEquals(urls.size(), pages.size());
     List<String> handledurls = new ArrayList<>();

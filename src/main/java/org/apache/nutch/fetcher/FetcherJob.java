@@ -185,9 +185,12 @@ public class FetcherJob extends NutchTool implements Tool {
     
     Collection<WebPage.Field> fields = getFields(currentJob);
     MapFieldValueFilter<String, WebPage> batchIdFilter = getBatchIdFilter(batchId);
-    StorageUtils.initMapperJob(currentJob, fields, IntWritable.class,
-        FetchEntry.class, FetcherMapper.class, FetchEntryPartitioner.class,
-        batchIdFilter, false);
+    long topN = getConf().getLong(GeneratorJob.GENERATOR_TOP_N, 0);
+    StorageUtils.initMapperJob(
+      currentJob, fields, IntWritable.class,
+      FetchEntry.class, FetcherMapper.class, FetchEntryPartitioner.class,
+      batchIdFilter,
+      topN,null,false, true);
     StorageUtils.initReducerJob(currentJob, FetcherReducer.class);
 
     if (numTasks == null || numTasks < 1) {
