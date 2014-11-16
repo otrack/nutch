@@ -255,15 +255,19 @@ extends GoraReducer<IntWritable, FetchEntry, String, WebPage> {
     public static final String QUEUE_MODE_IP = "byIP";
 
     public FetchItemQueues(Configuration conf) throws IOException {
+
       this.conf = conf;
       this.maxThreads = conf.getInt("fetcher.threads.per.queue", 1);
       queueMode = conf.get("fetcher.queue.mode", QUEUE_MODE_HOST);
+
       // check that the mode is known
       if (!queueMode.equals(QUEUE_MODE_IP) && !queueMode.equals(QUEUE_MODE_DOMAIN)
           && !queueMode.equals(QUEUE_MODE_HOST)) {
         LOG.error("Unknown partition mode : " + queueMode + " - forcing to byHost");
         queueMode = QUEUE_MODE_HOST;
       }
+
+      LOG.info("Fetcher reducer: threads per queue: " + this.maxThreads);
       LOG.info("Using queue mode : "+queueMode);
       
       // Optionally enable host specific queue behavior 

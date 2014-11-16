@@ -62,6 +62,7 @@ extends GoraMapper<String, WebPage, SelectorEntry, WebPage> {
       if (distanceString != null) {
         int distance=Integer.parseInt(distanceString);
         if (distance > maxDistance) {
+          GeneratorJob.LOG.debug("Skipping " + url + "; too far");
           return;
         }
       }

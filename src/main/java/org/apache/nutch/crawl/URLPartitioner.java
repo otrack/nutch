@@ -47,6 +47,7 @@ public class URLPartitioner implements Configurable {
   public static final String PARTITION_MODE_HOST = "byHost";
   public static final String PARTITION_MODE_DOMAIN = "byDomain";
   public static final String PARTITION_MODE_IP = "byIP";
+  public static final String PARTITION_MODE_URL = "byURL";
   
   public static final String PARTITION_URL_SEED = "partition.url.seed";
 
@@ -63,8 +64,8 @@ public class URLPartitioner implements Configurable {
 
   @Override
   public void setConf(Configuration conf) {
+    seed = conf.getInt(PARTITION_URL_SEED, 1);
     this.conf = conf;
-    seed = conf.getInt(PARTITION_URL_SEED, 0);
     mode = conf.get(PARTITION_MODE_KEY, PARTITION_MODE_HOST);
     // check that the mode is known
     if (!mode.equals(PARTITION_MODE_IP) && !mode.equals(PARTITION_MODE_DOMAIN)
@@ -91,12 +92,14 @@ public class URLPartitioner implements Configurable {
       LOG.warn("Malformed URL: '" + urlString + "'");
       hashCode = urlString.hashCode();
     }
-    
+
     if (url != null) {
       if (mode.equals(PARTITION_MODE_HOST)) {
         hashCode = url.getHost().hashCode();
       } else if (mode.equals(PARTITION_MODE_DOMAIN)) {
         hashCode = URLUtil.getDomainName(url).hashCode();
+      } else if (mode.equals(PARTITION_MODE_URL)) {
+        hashCode = urlString.hashCode();
       } else { // MODE IP
         try {
           InetAddress address = InetAddress.getByName(url.getHost());

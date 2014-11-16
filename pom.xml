@@ -38,8 +38,8 @@ limitations under the License.
         <jackson.version>1.8.8</jackson.version>
         <hadoop.version>2.2.0</hadoop.version>
         <gora.version>0.5-SNAPSHOT</gora.version>
-        <infinispan.version>7.0.0-SNAPSHOT</infinispan.version>
-        <lucene-solr.version>4.8.1</lucene-solr.version>
+        <infinispan.version>7.0.1-SNAPSHOT</infinispan.version>
+        <lucene-solr.version>4.10.2</lucene-solr.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <scm>

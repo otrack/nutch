@@ -26,6 +26,7 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.URLPartitioner.SelectorEntryPartitioner;
 import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.*;
@@ -190,8 +191,13 @@ public class GeneratorJob extends NutchTool implements Tool {
     currentJobNum = 0;
     currentJob = new NutchJob(getConf(), "generate: " + getConf().get(BATCH_ID));
     Collection<WebPage.Field> fields = getFields(currentJob);
-    StorageUtils.initMapperJob(currentJob, fields, SelectorEntry.class,
-        WebPage.class, GeneratorMapper.class, SelectorEntryPartitioner.class, true);
+    StorageUtils.initMapperJob(
+      currentJob,
+      fields,
+      SelectorEntry.class,WebPage.class, GeneratorMapper.class,
+      SelectorEntryPartitioner.class,
+      FilterUtils.getExcludeAnyBatchIdFilter(Mark.GENERATE_MARK),
+      topN,"score",false, true);
     StorageUtils.initReducerJob(currentJob, GeneratorReducer.class);
     currentJob.waitForCompletion(true);
     ToolUtil.recordJobStatus(null, currentJob, results);
@@ -232,13 +238,13 @@ public class GeneratorJob extends NutchTool implements Tool {
         Nutch.ARG_NORMALIZE, norm));
     long finish = System.currentTimeMillis();
     LOG.info("GeneratorJob: finished at " + sdf.format(finish) + ", time elapsed: " + TimingUtil.elapsedTime(start, finish));
-    LOG.info("GeneratorJob: generated batch id: " + batchId + " containing " + GeneratorReducer.count + " URLs");
+    LOG.info("GeneratorJob: generated batch id: " + batchId);
     return batchId;
   }
 
   public int run(String[] args) throws Exception {
     if (args.length <= 0) {
-      System.out.println("Usage: GeneratorJob [-topN N] [-crawlId id] [-noFilter] [-noNorm] [-adddays numDays]");
+      System.out.println("Usage: GeneratorJob [-topN N] [-crawlId id] [-noFilter] [-noNorm] [-adddays numDays] [-batchId <batchid>]");
       System.out.println("    -topN <N>      - number of top URLs to be selected, default is Long.MAX_VALUE ");
       System.out.println("    -crawlId <id>  - the id to prefix the schemas to operate on, \n \t \t    (default: storage.crawl.id)\");");
       System.out.println("    -noFilter      - do not activate the filter plugin to filter the url, default is true ");
@@ -251,7 +257,8 @@ public class GeneratorJob extends NutchTool implements Tool {
       return -1;
     }
 
-    long curTime = System.currentTimeMillis(), topN = Long.MAX_VALUE;
+    long curTime = System.currentTimeMillis();
+    long topN = 0; // 0 stands for no limit
     boolean filter = true, norm = true;
 
     for (int i = 0; i < args.length; i++) {

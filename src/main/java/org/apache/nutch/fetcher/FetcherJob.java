@@ -42,6 +42,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import static org.apache.nutch.crawl.URLPartitioner.PARTITION_MODE_KEY;
+import static org.apache.nutch.crawl.URLPartitioner.PARTITION_MODE_HOST;
 
 /**
  * Multi-threaded fetcher.
@@ -164,8 +166,9 @@ public class FetcherJob extends NutchTool implements Tool {
     LOG.info("FetcherJob: threads: " + getConf().getInt(THREADS_KEY, 10));
     LOG.info("FetcherJob: parsing: " + getConf().getBoolean(PARSE_KEY, false));
     LOG.info("FetcherJob: resuming: " + getConf().getBoolean(RESUME_KEY, false));
+    LOG.info("FetcherJob: partitioning: " + getConf().get(PARTITION_MODE_KEY, PARTITION_MODE_HOST));
 
-    // set the actual time for the timelimit relative
+      // set the actual time for the timelimit relative
     // to the beginning of the whole job and not of a specific task
     // otherwise it keeps trying again if a task fails
     long timelimit = getConf().getLong("fetcher.timelimit.mins", -1);
@@ -186,14 +189,17 @@ public class FetcherJob extends NutchTool implements Tool {
         FetchEntry.class, FetcherMapper.class, FetchEntryPartitioner.class,
         batchIdFilter, false);
     StorageUtils.initReducerJob(currentJob, FetcherReducer.class);
+
     if (numTasks == null || numTasks < 1) {
       currentJob.setNumReduceTasks(currentJob.getConfiguration().getInt("mapred.map.tasks",
           currentJob.getNumReduceTasks()));
     } else {
       currentJob.setNumReduceTasks(numTasks);
     }
+
     currentJob.waitForCompletion(true);
     ToolUtil.recordJobStatus(null, currentJob, results);
+
     return results;
   }
 

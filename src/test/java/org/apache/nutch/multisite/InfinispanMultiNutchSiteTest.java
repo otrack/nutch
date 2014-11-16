@@ -33,11 +33,21 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     List<String> cacheNames = new ArrayList<>();
     cacheNames.add(WebPage.class.getSimpleName());
     cacheNames.add(Link.class.getSimpleName());
-    return new GoraInfinispanTestDriver(numberOfSites(),cacheNames);
+    return new GoraInfinispanTestDriver(numberOfSites(),numberOfNodes(),cacheNames);
   }
 
   @Override
   protected int numberOfSites() {
+    return 1;
+  }
+
+  @Override
+  protected int numberOfNodes() {
+    return 3;
+  }
+
+  @Override
+  protected int partitionSize() {
     return 1;
   }
 
@@ -100,13 +110,13 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     List<Future<String>> futures = new ArrayList<>();
     for(NutchSite site : sites)
       futures.add(site
-        .generate(Long.MAX_VALUE, System.currentTimeMillis(), false, false));
+        .generate(0, System.currentTimeMillis(), false, false));
 
     // check result
     for(Future<String> future : futures)
       future.get();
 
-    assertEquals(readPageDB(null).size(),10);
+    assertEquals(readPageDB(Mark.GENERATE_MARK).size(),10);
   }
 
   @Test
@@ -136,7 +146,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     for(NutchSite site : sites)
       batchIds.put(
         site,
-        site.generate(Long.MAX_VALUE, System.currentTimeMillis(), false, false));
+        site.generate(0, System.currentTimeMillis(), false, false));
 
     // fetch
     long time = System.currentTimeMillis();
@@ -144,7 +154,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     for(NutchSite site : sites) {
       String batchId = batchIds.get(site).get();
       futures.add(
-        site.fetch(batchId, 1, false, 1));
+        site.fetch(batchId, 4, false, 0));
     }
 
     // check results
@@ -156,7 +166,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
       conf.getFloat("fetcher.server.delay", 5));
     assertTrue((System.currentTimeMillis()-time) > minimumTime);
 
-    //verify that enough pages and correct were handled
+    //verify that enough pages were handled
     List<URLWebPage> pages = readPageDB(Mark.FETCH_MARK);
     assertEquals(urls.size(), pages.size());
     List<String> handledurls = new ArrayList<>();
@@ -206,19 +216,19 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     for(NutchSite site : sites)
       batchIds.put(
         site,
-        site.generate(Long.MAX_VALUE, System.currentTimeMillis(), false, false));
+        site.generate(0, System.currentTimeMillis(), false, false));
 
     // fetch
     List<Future<Integer>> futures = new ArrayList<>();
     for(NutchSite site : sites) {
       String batchId = batchIds.get(site).get();
       futures.add(
-        site.fetch(batchId, 1, false, 1));
+        site.fetch(batchId, 4, false, 0));
     }
     for(Future<Integer> future : futures)
       future.get();
 
-    assertEquals(3,readPageDB(null).size());
+    assertEquals(3,readPageDB(Mark.FETCH_MARK).size());
 
     // parse
     futures.clear();

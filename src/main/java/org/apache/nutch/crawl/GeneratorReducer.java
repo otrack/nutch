@@ -32,6 +32,7 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.nutch.crawl.GeneratorJob.*;
 
 /** Reduce class for generate
  *
@@ -55,7 +56,8 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
   protected void reduce(SelectorEntry key, Iterable<WebPage> values,
       Context context) throws IOException, InterruptedException {
     for (WebPage page : values) {
-      if (count >= limit) {
+      if (limit!=0 && count >= limit) {
+        GeneratorJob.LOG.debug("Skipping " + page.getKey()+ "; too many generated urls");
         return;
       }
       if (maxCount > 0) {
@@ -95,17 +97,16 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
   protected void setup(Context context)
       throws IOException, InterruptedException {
     Configuration conf = context.getConfiguration();
-    long totalLimit = conf.getLong(GeneratorJob.GENERATOR_TOP_N, Long.MAX_VALUE);
-    if (totalLimit == Long.MAX_VALUE) {
-      limit = Long.MAX_VALUE;
+    long totalLimit = conf.getLong(GeneratorJob.GENERATOR_TOP_N, 0);
+    if (totalLimit == 0) {
+      limit = 0;
     } else {
-      limit = totalLimit / context.getNumReduceTasks();
+      limit = Math.min(totalLimit / context.getNumReduceTasks(),1);
     }
-    maxCount = conf.getLong(GeneratorJob.GENERATOR_MAX_COUNT, -2);
-    batchId = new String(conf.get(GeneratorJob.BATCH_ID));
-    String countMode =
-      conf.get(GeneratorJob.GENERATOR_COUNT_MODE, GeneratorJob.GENERATOR_COUNT_VALUE_HOST);
-    if (countMode.equals(GeneratorJob.GENERATOR_COUNT_VALUE_DOMAIN)) {
+    maxCount = conf.getLong(GENERATOR_MAX_COUNT, 0);
+    batchId = conf.get(BATCH_ID);
+    String countMode = conf.get(GENERATOR_COUNT_MODE, GENERATOR_COUNT_VALUE_HOST);
+    if (countMode.equals(GENERATOR_COUNT_VALUE_DOMAIN)) {
       byDomain = true;
     }
 

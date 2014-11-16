@@ -20,8 +20,9 @@ public abstract class AbstractMultiNutchSiteTest {
     driver.setUpClass();
     sites = new ArrayList<>();
     for(int i=0; i<numberOfSites(); i++) {
-      Path path = new Path("build/test/working"+i);
-      NutchSite site = new NutchSite(path,Integer.toString(i),isPersistent,connectionString(i));
+      Path path = new Path("build/test/working/site"+i);
+      NutchSite site = new NutchSite(
+        path,Integer.toString(i),isPersistent,connectionString(i),Integer.toString(partitionSize()));
       site.setUpClass();
       sites.add(site);
     }
@@ -35,13 +36,14 @@ public abstract class AbstractMultiNutchSiteTest {
 
   protected abstract GoraTestDriver createDriver();
   protected abstract int numberOfSites();
+  protected abstract int numberOfNodes();
   protected abstract String connectionString(int i);
+  protected abstract int partitionSize();
 
   // Helpers
 
   protected NutchSite site(int i){
     return sites.get(i);
   }
-
 
 }
