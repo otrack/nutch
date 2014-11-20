@@ -16,6 +16,7 @@
  ******************************************************************************/
 package org.apache.nutch.crawl;
 
+import org.apache.gora.store.DataStore;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
@@ -187,18 +188,32 @@ public class GeneratorJob extends NutchTool implements Tool {
       getConf().set(GENERATOR_COUNT_MODE, GENERATOR_COUNT_VALUE_HOST);
       getConf().set(URLPartitioner.PARTITION_MODE_KEY, URLPartitioner.PARTITION_MODE_HOST);
     }
+
     numJobs = 1;
     currentJobNum = 0;
     currentJob = new NutchJob(getConf(), "generate: " + getConf().get(BATCH_ID));
     Collection<WebPage.Field> fields = getFields(currentJob);
+
+    Class<? extends DataStore<String, WebPage>> dataStoreClass =
+      StorageUtils.getDataStoreClass(currentJob.getConfiguration());
+
     StorageUtils.initMapperJob(
       currentJob,
       fields,
-      SelectorEntry.class,WebPage.class, GeneratorMapper.class,
+      SelectorEntry.class,
+      WebPage.class,
+      GeneratorMapper.class,
       SelectorEntryPartitioner.class,
       FilterUtils.getExcludeAnyBatchIdFilter(Mark.GENERATE_MARK),
-      topN,"score",false, true);
-    StorageUtils.initReducerJob(currentJob, GeneratorReducer.class);
+      topN,"score",false, false);
+
+    StorageUtils.initReducerJob(
+      currentJob,
+      String.class,
+      WebPage.class,
+      GeneratorReducer.class,
+      false);
+
     currentJob.waitForCompletion(true);
     ToolUtil.recordJobStatus(null, currentJob, results);
     results.put(BATCH_ID, getConf().get(BATCH_ID));

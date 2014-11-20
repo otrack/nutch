@@ -43,12 +43,12 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
 
   @Override
   protected int numberOfNodes() {
-    return 3;
+    return 1;
   }
 
   @Override
   protected int partitionSize() {
-    return 1;
+    return 10000;
   }
 
   @Override
@@ -87,19 +87,19 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
   public void inject() throws Exception {
 
     List<String> urls = new ArrayList<String>();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 100; i++) {
       urls.add("http://zzz.com/" + i + ".html\tnutch.score=0");
     }
 
     site(0).inject(urls).get();
-    assertEquals(readPageDB(null).size(),10);
+    assertEquals(100,readPageDB(null).size());
 
   }
 
   @Test
   public void generate() throws Exception {
     List<String> urls = new ArrayList<String>();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 100; i++) {
       urls.add("http://zzz.com/" + i + ".html\tnutch.score=0");
     }
 
@@ -110,15 +110,15 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     List<Future<String>> futures = new ArrayList<>();
     for(NutchSite site : sites)
       futures.add(site
-        .generate(3, System.currentTimeMillis(), false, false));
+        .generate(0, System.currentTimeMillis(), false, false));
 
     // check result
     for(Future<String> future : futures)
       future.get();
 
     assertEquals(
-      Math.min(3*numberOfSites(),10),
-      readPageDB(Mark.GENERATE_MARK).size());
+     100,
+     readPageDB(null).size());
   }
 
   @Test

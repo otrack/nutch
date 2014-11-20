@@ -192,16 +192,22 @@ public class ParserJob extends NutchTool implements Tool {
         WebPage outPage = pageBuilder.build();
         String outURL = normalizers.normalize(link.getOut(),URLNormalizers.SCOPE_CRAWLDB);
         outPage.setKey(TableUtil.reverseUrl(outURL));
-        if (!pageDB.containsKey(outPage.getKey()))
+        if (!pageDB.containsKey(outPage.getKey())) {
           pageDB.put(outPage.getKey(), outPage);
-
-        context.getCounter(probes.NEW_PAGES).increment(1);
+          context.getCounter(probes.NEW_PAGES).increment(1);
+        }
 
       }
 
       page.setContent(null);
 
       context.write(key, page);
+    }
+
+    @Override
+    protected void cleanup(Context context) throws IOException, InterruptedException {
+      linkDB.close();
+      pageDB.close();
     }
 
   }

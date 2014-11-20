@@ -73,6 +73,7 @@ public class NutchSite {
       pageDB = StorageUtils.createStore(conf, String.class, WebPage.class);
       pageDB.deleteSchema();
       linkDB = StorageUtils.createStore(conf, String.class, Link.class);
+      linkDB.deleteSchema();
     } catch (Exception e) {
       e.printStackTrace();
       LOG.error("Site "+siteName+" creation failed", e);

@@ -150,8 +150,10 @@ public class StorageUtils {
 
     DataStore<String, WebPage> store = createStore(job.getConfiguration(),
       String.class, WebPage.class);
+
     if (store == null)
       throw new RuntimeException("Could not create datastore");
+
     Query<String, WebPage> query = store.newQuery();
     query.setFields(toStringArray(fields));
     if (limit>0)
@@ -161,8 +163,17 @@ public class StorageUtils {
     if (sortingField!=null)
       query.setSortingField(sortingField);
     query.setSortingOrder(isOrderAscendant);
-    GoraMapper.initMapperJob(job, query, store, outKeyClass, outValueClass,
-      mapperClass, partitionerClass, reuseObjects);
+
+    GoraMapper.initMapperJob(
+      job,
+      query,
+      store,
+      outKeyClass,
+      outValueClass,
+      mapperClass,
+      partitionerClass,
+      reuseObjects);
+
     GoraOutputFormat.setOutput(job, store, true);
 
   }
@@ -189,17 +200,33 @@ public class StorageUtils {
 
   }
 
-  public static <K, V extends Persistent> void initReducerJob(
+  public static <K1, V1, K2, V2 extends Persistent> void initReducerJob(
     Job job,
-    Class<K> keyClass,
-    Class<V> valueClass,
-    Class<? extends GoraReducer<K, V, K, V>> reducerClass)
+    Class<K2> outKeyClass,
+    Class<V2> outValueClass,
+    Class<? extends GoraReducer<K1, V1, K2, V2>> reducerClass,
+    boolean reuseObjects)
     throws ClassNotFoundException, GoraException {
 
     Configuration conf = job.getConfiguration();
-    DataStore<K, V> store = StorageUtils.createStore(conf, keyClass, valueClass);
-    GoraReducer.initReducerJob(job, store, reducerClass);
-    GoraOutputFormat.setOutput(job, store, true);
+
+    Class<? extends DataStore<K2, V2>> dataStoreClass =
+      StorageUtils.getDataStoreClass(job.getConfiguration());
+
+    GoraReducer.initReducerJob(
+      job,
+      dataStoreClass,
+      outKeyClass,
+      outValueClass,
+      reducerClass,
+      reuseObjects);
+
+    GoraOutputFormat.setOutput(
+      job,
+      dataStoreClass,
+      outKeyClass,
+      outValueClass,
+      reuseObjects);
 
   }
 

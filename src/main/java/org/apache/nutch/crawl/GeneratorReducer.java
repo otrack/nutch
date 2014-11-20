@@ -88,7 +88,7 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
         continue;
       }
       context.getCounter("Generator", "GENERATE_MARK").increment(1);
-      LOG.info("GeneratedUrl",key.getKey());
+      LOG.debug("GeneratedUrl : ",key.getKey());
       count++;
     }
   }

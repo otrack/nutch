@@ -179,7 +179,7 @@ public class InjectorJob extends NutchTool implements Tool {
       row.getMarkers().put(DbUpdaterJob.DISTANCE, String.valueOf(0));
       row.setKey(reversedUrl);
       Mark.INJECT_MARK.putMark(row, YES_STRING);
-      LOG.info("InjectedUrl",url);
+      LOG.debug("InjectedUrl: "+url);
       context.write(reversedUrl,row);
     }
     }
@@ -209,17 +209,17 @@ public class InjectorJob extends NutchTool implements Tool {
     currentJob.setMapOutputKeyClass(String.class);
     currentJob.setMapOutputValueClass(WebPage.class);
     currentJob.setOutputFormatClass(GoraOutputFormat.class);
-    
-    DataStore<String, WebPage> store = StorageUtils.createStore(
-      currentJob.getConfiguration(),
-      String.class, WebPage.class);
-    GoraOutputFormat.setOutput(currentJob, store, true);
-    
+
     // NUTCH-1471 Make explicit which datastore class we use
-    Class<? extends DataStore<Object, Persistent>> dataStoreClass = 
+    Class<? extends DataStore<Object, Persistent>> dataStoreClass =
       StorageUtils.getDataStoreClass(currentJob.getConfiguration());
     LOG.info("InjectorJob: Using " + dataStoreClass + " as the Gora storage class.");
-    
+
+    GoraOutputFormat.setOutput(
+      currentJob,
+      dataStoreClass, String.class, WebPage.class,
+      false);
+
     currentJob.setReducerClass(Reducer.class);
     currentJob.setNumReduceTasks(0);
     
