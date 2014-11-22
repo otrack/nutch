@@ -41,6 +41,7 @@ limitations under the License.
         <infinispan.version>7.0.1-SNAPSHOT</infinispan.version>
         <lucene-solr.version>4.10.1</lucene-solr.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jbossjta.version>4.17.13.Final</jbossjta.version>
     </properties>
     <scm>
         <url>http://svn.apache.org/viewvc/nutch</url>
@@ -500,6 +501,12 @@ limitations under the License.
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+            <version>${infinispan.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
             <artifactId>infinispan-client-hotrod</artifactId>
             <version>${infinispan.version}</version>
             <type>test-jar</type>
@@ -523,6 +530,12 @@ limitations under the License.
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-server-hotrod</artifactId>
             <version>${infinispan.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts.jta</groupId>
+            <artifactId>narayana-jta</artifactId>
+            <version>${jbossjta.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- lucene -->
