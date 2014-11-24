@@ -341,25 +341,25 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     File tmpDir = Files.createTempDir();
     List<String> pages = createPages(NPAGES, DEGREE,
       tmpDir.getAbsolutePath());
-
+	LOG.info("tmpDir abs path:"+tmpDir.getAbsolutePath());
     Server server = CrawlTestUtil.getServer(
       conf.getInt("content.server.port", 50000),
       tmpDir.getAbsolutePath());
     server.start();
-
+	
     try {
-
+    
       ArrayList<String> urls = new ArrayList<>();
       for (String page : pages) {
         if (urls.size()==INJECT) break;
         addUrl(urls, page, server);
       }
-
+    
       sites.get(0).inject(urls).get();
       for (NutchSite site : sites) {
         site.crawl(WIDTH, DEPTH);
       }
-
+    
       List<URLWebPage> resultPages = readPageDB(Mark.UPDATEDB_MARK, "key");
       List<Link> resultLinks = readLinkDB();
       LOG.info("Pages: " + resultPages.size());
@@ -372,12 +372,15 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
           System.out.println(link.getKey());
         }
       }
-
+    
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
       server.stop();
+      long t0 = System.currentTimeMillis();
       FileUtils.deleteDirectory(tmpDir);
+      long deleteTime = System.currentTimeMillis() - t0;
+      LOG.info("Time to delete tmpDir: "+  deleteTime+"ms");
     }
 
   }
