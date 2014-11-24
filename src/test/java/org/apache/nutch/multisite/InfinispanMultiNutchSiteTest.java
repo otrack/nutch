@@ -1,5 +1,7 @@
 package org.apache.nutch.multisite;
 
+import com.google.common.io.Files;
+import org.apache.commons.io.FileUtils;
 import org.apache.gora.GoraTestDriver;
 import org.apache.gora.infinispan.GoraInfinispanTestDriver;
 import org.apache.hadoop.conf.Configuration;
@@ -14,12 +16,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mortbay.jetty.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.Future;
 
 import static org.apache.nutch.fetcher.TestFetcher.addUrl;
+import static org.apache.nutch.util.ServerTestUtils.createPages;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -27,6 +33,9 @@ import static org.junit.Assert.assertTrue;
  * @author PIerre Sutra
  */
 public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
+
+  public static final Logger LOG
+    = LoggerFactory.getLogger(InfinispanMultiNutchSiteTest.class);
 
   @Override
   protected GoraTestDriver createDriver() {
@@ -43,12 +52,12 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
 
   @Override
   protected int numberOfNodes() {
-    return 1;
+    return 3;
   }
 
   @Override
   protected int partitionSize() {
-    return 10000;
+    return 10;
   }
 
   @Override
@@ -87,7 +96,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
   public void inject() throws Exception {
 
     List<String> urls = new ArrayList<String>();
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < nbGeneratedPages(); i++) {
       urls.add("http://zzz.com/" + i + ".html\tnutch.score=0");
     }
 
@@ -99,7 +108,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
   @Test
   public void generate() throws Exception {
     List<String> urls = new ArrayList<String>();
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < nbGeneratedPages(); i++) {
       urls.add("http://zzz.com/" + i + ".html\tnutch.score=0");
     }
 
@@ -117,8 +126,42 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
       future.get();
 
     assertEquals(
-     100,
+      nbGeneratedPages(),
      readPageDB(null).size());
+  }
+
+  @Test
+  public void frontier() throws Exception {
+
+    String batchId = "0";
+    Link.Builder linkBuilder = Link.newBuilder();
+    for( int i=0; i<nbGeneratedLinks(); i++) {
+      Link link = linkBuilder.build();
+      link.setIn("http://foo.org");
+      link.setOut("http://bar.org/" + i);
+      link.setBatchId(batchId);
+      link.setKey(link.getOut()+"--"+link.getIn());
+      site(0).getLinkDB().put(link.getKey(), link);
+    }
+    site(0).getLinkDB().flush();
+
+    List<Link> links = readLinkDB();
+    assertEquals(nbGeneratedLinks(),links.size());
+
+    // frontier
+    List<Future<Integer>> futures = new ArrayList<>();
+    for(NutchSite site : sites)
+      futures.add(
+        site.frontier(batchId));
+
+    // check result
+    for(Future<Integer> future : futures)
+      future.get();
+
+    assertEquals(
+      nbGeneratedLinks(),
+      readPageDB(null).size());
+
   }
 
   @Test
@@ -178,7 +221,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
         continue;
       }
       String content = Bytes.toString(bb);
-      if (content.indexOf("Nutch fetcher test page")!=-1) {
+      if (content.contains("Nutch fetcher test page")) {
         handledurls.add(up.getUrl());
       }
     }
@@ -193,7 +236,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
   }
 
   @Test
-  public void crawl() throws Exception {
+  public void shortCrawl() throws Exception {
 
     Configuration conf = NutchConfiguration.create();
 
@@ -244,7 +287,6 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
 
     // verify content
     assertEquals(5,readLinkDB().size());
-    assertEquals(4,readPageDB(null).size());
 
     // update pageDB
     futures.clear();
@@ -256,13 +298,27 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     for(Future<Integer> future : futures)
       future.get();
 
+    assertEquals(3,readPageDB(Mark.UPDATEDB_MARK).size());
+
+    // update Frontier
+    futures.clear();
+    for(NutchSite site : sites) {
+      String batchId = batchIds.get(site).get();
+      futures.add(
+        site.frontier(batchId));
+    }
+    for(Future<Integer> future : futures)
+      future.get();
+
     // verify content
     List<URLWebPage> pages = readPageDB(null);
+    List<Link> links = readLinkDB();
+    assertEquals(5,links.size());
     assertEquals(4,pages.size());
     for (URLWebPage urlWebPage : pages) {
       if (urlWebPage.getUrl().contains("dup"))
         assertEquals(0,urlWebPage.getDatum().getInlinks().size());
-      else if (urlWebPage.getUrl().contains("page"))
+      else if (urlWebPage.getUrl().contains("page")) // pagea and pageb
         assertEquals(1,urlWebPage.getDatum().getInlinks().size());
       else // index
         assertEquals(2,urlWebPage.getDatum().getInlinks().size());
@@ -272,7 +328,69 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
 
   }
 
+  @Test
+  public void longCrawl() throws  Exception{
+
+    final int NPAGES = 1000;
+    final int INJECT = 100;
+    final int DEGREE = 10;
+    final int DEPTH = 3;
+    final int WIDTH = 100;
+
+    Configuration conf = NutchConfiguration.create();
+    File tmpDir = Files.createTempDir();
+    List<String> pages = createPages(NPAGES, DEGREE,
+      tmpDir.getAbsolutePath());
+
+    Server server = CrawlTestUtil.getServer(
+      conf.getInt("content.server.port", 50000),
+      tmpDir.getAbsolutePath());
+    server.start();
+
+    try {
+
+      ArrayList<String> urls = new ArrayList<>();
+      for (String page : pages) {
+        if (urls.size()==INJECT) break;
+        addUrl(urls, page, server);
+      }
+
+      sites.get(0).inject(urls).get();
+      for (NutchSite site : sites) {
+        site.crawl(WIDTH, DEPTH);
+      }
+
+      List<URLWebPage> resultPages = readPageDB(Mark.UPDATEDB_MARK, "key");
+      List<Link> resultLinks = readLinkDB();
+      LOG.info("Pages: " + resultPages.size());
+      LOG.info("Links: " + resultLinks.size());
+      if (LOG.isDebugEnabled()) {
+        for (URLWebPage urlWebPage : resultPages) {
+          System.out.println(urlWebPage.getDatum().getKey());
+        }
+        for (Link link: resultLinks) {
+          System.out.println(link.getKey());
+        }
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      server.stop();
+      FileUtils.deleteDirectory(tmpDir);
+    }
+
+  }
+
   // Helpers
+
+  public int nbGeneratedPages(){
+    return 100;
+  }
+
+  public int nbGeneratedLinks(){
+    return 1000;
+  }
 
   public List<URLWebPage> readPageDB(Mark requiredMark, String... fields)
     throws Exception {

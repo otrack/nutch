@@ -174,7 +174,20 @@ public class StorageUtils {
       partitionerClass,
       reuseObjects);
 
-    GoraOutputFormat.setOutput(job, store, true);
+    if (Persistent.class.isAssignableFrom(outValueClass)) {
+      Class<Persistent> persistentClass = (Class<Persistent>) outValueClass;
+      GoraOutputFormat.setOutput(
+        job,
+        getDataStoreClass(job.getConfiguration()),
+        outKeyClass,
+        persistentClass,
+        true);
+    } else {
+      GoraOutputFormat.setOutput(
+        job,
+        store,
+        true);
+    }
 
   }
 

@@ -6,32 +6,32 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/plugin/parse-metatags/src/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/scoring-opic" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/protocol-http" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/creativecommons" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/urlnormalizer-regex" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/protocol-sftp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/parse-html" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/protocol-httpclient" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/tld" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/protocol-file" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/urlnormalizer-basic" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/index-anchor" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/protocol-ftp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/scoring-link" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/urlfilter-suffix" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/urlnormalizer-pass" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/urlfilter-domain" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/lib-regex-filter" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/indexer-elastic" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/urlfilter-regex" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/parse-tika" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/lib-http" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/index-basic" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/plugin/urlfilter-prefix" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/creativecommons/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/index-anchor/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/index-basic/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/indexer-elastic/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/lib-http/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/lib-regex-filter/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/parse-html/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/parse-tika/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/protocol-file/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/protocol-ftp/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/protocol-http/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/protocol-httpclient/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/protocol-sftp/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/scoring-link/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/scoring-opic/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/tld/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/urlfilter-domain/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/urlfilter-prefix/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/urlfilter-regex/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/urlfilter-suffix/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/urlnormalizer-basic/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/urlnormalizer-pass/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/plugin/urlnormalizer-regex/src/java" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -200,11 +200,11 @@
     <orderEntry type="library" name="Maven: org.apache.gora:gora-infinispan:0.5-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.infinispan:infinispan-remote-query-server:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.infinispan:infinispan-query:7.0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.infinispan:infinispan-core:7.0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-core:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.infinispan:infinispan-commons:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.logging:jboss-logging:3.1.2.GA" level="project" />
-    <orderEntry type="library" name="Maven: org.jgroups:jgroups:3.6.0.Final" level="project" />
-    <orderEntry type="library" name="Maven: org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec:1.0.1.Final" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jgroups:jgroups:3.6.0.Final" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec:1.0.1.Final" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.marshalling:jboss-marshalling-osgi:1.4.4.Final" level="project" />
     <orderEntry type="library" name="Maven: org.infinispan:infinispan-query-dsl:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.infinispan:infinispan-objectfilter:7.0.1-SNAPSHOT" level="project" />
@@ -283,6 +283,14 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-server-core:test-jar:tests:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-server-hotrod:test-jar:tests:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-server-hotrod:7.0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jboss.jbossts.jta:narayana-jta:4.17.13.Final" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jboss.byteman:byteman:2.1.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jboss.byteman:byteman-submit:2.1.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hornetq:hornetq-journal:2.3.0.CR1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jboss.logmanager:jboss-logmanager:1.2.2.GA" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hornetq:hornetq-commons:2.3.0.CR1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: jfree:jfreechart:1.0.9" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: jfree:jcommon:1.0.12" level="project" />
     <orderEntry type="library" name="Maven: org.apache.solr:solr-core:4.10.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-analyzers-kuromoji:4.10.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-analyzers-phonetic:4.10.1" level="project" />

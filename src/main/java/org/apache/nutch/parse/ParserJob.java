@@ -18,9 +18,9 @@ package org.apache.nutch.parse;
 
 import org.apache.gora.filter.MapFieldValueFilter;
 import org.apache.gora.mapreduce.GoraMapper;
-import org.apache.gora.store.DataStore;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -43,6 +43,7 @@ import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.apache.nutch.net.URLNormalizers.SCOPE_CRAWLDB;
 import static org.apache.nutch.util.FilterUtils.getBatchIdFilter;
 
 public class ParserJob extends NutchTool implements Tool {
@@ -52,11 +53,11 @@ public class ParserJob extends NutchTool implements Tool {
   public static final String RESUME_KEY = "parse.job.resume";
   public static final String FORCE_KEY = "parse.job.force";
   public static final String SKIP_TRUNCATED = "parser.skip.truncated";
-  public static final String REPARSE = "-reparse";
 
   private static final Collection<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
   private static enum probes{
-    NEW_PAGES
+    NEW_PAGES,
+    NEW_URLS
   }
   static {
     FIELDS.add(WebPage.Field.STATUS);
@@ -74,7 +75,7 @@ public class ParserJob extends NutchTool implements Tool {
   private Configuration conf;
 
   public static class ParserMapper
-      extends GoraMapper<String, WebPage, String, WebPage> {
+      extends GoraMapper<String, WebPage, String, Link> {
 
     private ParseUtil parseUtil;
     private boolean shouldResume;
@@ -83,10 +84,6 @@ public class ParserJob extends NutchTool implements Tool {
     private boolean skipTruncated;
 
     private Link.Builder linkBuilder;
-    private WebPage.Builder pageBuilder;
-    private DataStore<String,Link> linkDB;
-    private DataStore<String,WebPage> pageDB;
-
     private ScoringFilters scoringFilters;
     private URLNormalizers normalizers;
 
@@ -100,19 +97,10 @@ public class ParserJob extends NutchTool implements Tool {
       force = conf.getBoolean(FORCE_KEY, false);
       batchId = conf.get(GeneratorJob.BATCH_ID, Nutch.ALL_BATCH_ID_STR);
       skipTruncated=conf.getBoolean(SKIP_TRUNCATED, true);
-      try {
-        linkDB = StorageUtils.createStore(
-          context.getConfiguration(),String.class, Link.class);
-        pageDB = StorageUtils.createStore(
-          context.getConfiguration(),String.class, WebPage.class);
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-      }
       linkBuilder = Link.newBuilder();
-      pageBuilder = WebPage.newBuilder();
       scoreData = new ArrayList<>();
       scoringFilters = new ScoringFilters(context.getConfiguration());
-      normalizers = new URLNormalizers(conf, URLNormalizers.SCOPE_CRAWLDB);
+      normalizers = new URLNormalizers(conf, SCOPE_CRAWLDB);
 
     }
 
@@ -121,13 +109,9 @@ public class ParserJob extends NutchTool implements Tool {
         throws IOException, InterruptedException {
 
       String url = TableUtil.unreverseUrl(key);
-      if (batchId.equals(REPARSE)) {
-        LOG.debug("Reparsing " + url);
-      } else {
         if (Mark.FETCH_MARK.checkMark(page) == null) {
           if (LOG.isDebugEnabled()) {
-            LOG.debug("Skipping " + TableUtil.unreverseUrl(key)
-                + "; not fetched yet");
+            LOG.warn("Skipping " + TableUtil.unreverseUrl(key) + "; not fetched yet !");
           }
           return;
         }
@@ -141,7 +125,6 @@ public class ParserJob extends NutchTool implements Tool {
         } else {
           LOG.info("Parsing " + url);
         }
-      }
 
       if (skipTruncated && isTruncated(url, page)) {
         return;
@@ -154,9 +137,7 @@ public class ParserJob extends NutchTool implements Tool {
             ParseStatusCodes.majorCodes[pstatus.getMajorCode()]).increment(1);
       }
 
-      // Update linkDB
       // TODO: Outlink filtering (i.e. "only keep the first n outlinks")
-
       scoreData.clear();
       Map<String, String> outlinks = page.getOutlinks();
       if (outlinks != null) {
@@ -165,7 +146,11 @@ public class ParserJob extends NutchTool implements Tool {
           String depthString = page.getMarkers().get(DbUpdaterJob.DISTANCE);
           if (depthString != null) depth=Integer.parseInt(depthString);
           scoreData.add(
-            new ScoreDatum(0.0f, e.getKey(),e.getValue(), depth));
+            new ScoreDatum(
+              0.0f,
+              normalizers.normalize(e.getKey(), SCOPE_CRAWLDB),
+              e.getValue(),
+              depth));
         }
       }
 
@@ -178,43 +163,23 @@ public class ParserJob extends NutchTool implements Tool {
       }
 
       for (ScoreDatum scoreDatum: scoreData){
-
-        // create link
         Link link = linkBuilder.build();
-        link.setIn(url);
-        link.setOut(scoreDatum.getUrl());
-        link.setKey(link.getIn()+"->"+link.getOut());
+        link.setIn(TableUtil.reverseUrl(url));
+        link.setOut(TableUtil.reverseUrl(scoreDatum.getUrl()));
+        link.setKey(link.getOut()+"--"+link.getIn()); // to put it at the site holding the page to which it points.
         link.setDistance(scoreDatum.getDistance());
+        link.setBatchId(batchId);
         link.setScore(page.getScore());
-        linkDB.put(link.getKey(), link);
-
-        // insert in pageDB
-        WebPage outPage = pageBuilder.build();
-        String outURL = normalizers.normalize(link.getOut(),URLNormalizers.SCOPE_CRAWLDB);
-        outPage.setKey(TableUtil.reverseUrl(outURL));
-        if (!pageDB.containsKey(outPage.getKey())) {
-          pageDB.put(outPage.getKey(), outPage);
-          context.getCounter(probes.NEW_PAGES).increment(1);
-        }
+        context.write(link.getKey(), link);
+        context.getCounter(probes.NEW_URLS).increment(1);
 
       }
 
-      page.setContent(null);
-
-      context.write(key, page);
-    }
-
-    @Override
-    protected void cleanup(Context context) throws IOException, InterruptedException {
-      linkDB.close();
-      pageDB.close();
     }
 
   }
   
-  public ParserJob() {
-
-  }
+  public ParserJob() {}
 
   public ParserJob(Configuration conf) {
     setConf(conf);
@@ -309,7 +274,7 @@ public class ParserJob extends NutchTool implements Tool {
       getConf().setBoolean(FORCE_KEY, force);
     }
     LOG.info("ParserJob: resuming:\t" + getConf().getBoolean(RESUME_KEY, false));
-    LOG.info("ParserJob: forced reparse:\t" + getConf().getBoolean(FORCE_KEY, false));
+    LOG.info("ParserJob: forced re-parse:\t" + getConf().getBoolean(FORCE_KEY, false));
     if (batchId == null || batchId.equals(Nutch.ALL_BATCH_ID_STR)) {
       LOG.info("ParserJob: parsing all");
     } else {
@@ -319,9 +284,15 @@ public class ParserJob extends NutchTool implements Tool {
     
     Collection<WebPage.Field> fields = getFields(currentJob);
     MapFieldValueFilter<String, WebPage> batchIdFilter = getBatchIdFilter(batchId, Mark.FETCH_MARK);
-    StorageUtils.initMapperJob(currentJob, fields, String.class, WebPage.class,
-        ParserMapper.class, batchIdFilter);
-    StorageUtils.initReducerJob(currentJob, IdentityWebPageReducer.class);
+    StorageUtils.initMapperJob(
+      currentJob,
+      fields,
+      String.class,
+      Link.class,
+      ParserMapper.class,
+      batchIdFilter);
+
+    currentJob.setReducerClass(Reducer.class);
     currentJob.setNumReduceTasks(0);
 
     currentJob.waitForCompletion(true);
@@ -378,7 +349,7 @@ public class ParserJob extends NutchTool implements Tool {
       }
     }
     if (batchId == null) {
-      System.err.println("BatchId not set (or -all/-reparse not specified)!");
+      System.err.println("BatchId not set (or -all not specified)!");
       return -1;
     }
     return parse(batchId, shouldResume, force);

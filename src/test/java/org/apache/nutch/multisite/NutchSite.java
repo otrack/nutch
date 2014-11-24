@@ -5,10 +5,7 @@ import org.apache.gora.store.DataStore;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.nutch.crawl.DbUpdaterJob;
-import org.apache.nutch.crawl.GeneratorJob;
-import org.apache.nutch.crawl.InjectorJob;
-import org.apache.nutch.crawl.URLWebPage;
+import org.apache.nutch.crawl.*;
 import org.apache.nutch.fetcher.FetcherJob;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.parse.ParserJob;
@@ -92,6 +89,7 @@ public class NutchSite {
   }
 
   public Future<Void> inject(final List<String> urls) throws Exception {
+    LOG.info("Inject");
     return pool.submit(new Callable<Void>() {
       @Override
       public Void call() throws Exception {
@@ -107,6 +105,7 @@ public class NutchSite {
   public Future<String> generate(
     final long topN, final long curTime, final boolean useFiltering, final boolean normURL)
     throws Exception {
+    LOG.info("Generate");
     return pool.submit(new Callable<String>() {
       @Override
       public String call() throws Exception {
@@ -123,6 +122,7 @@ public class NutchSite {
   public Future<Integer> fetch(
     final String batchId, final int numThreads, final boolean shouldResume, final int numTasks)
     throws Exception {
+    LOG.info("Fetch");
     return pool.submit(new Callable<Integer>() {
       @Override
       public Integer call() throws Exception {
@@ -135,6 +135,7 @@ public class NutchSite {
   public Future<Integer> parse(final String batchId, final boolean shouldResume,
     final boolean force)
     throws Exception {
+    LOG.info("Parse");
     return pool.submit(new Callable<Integer>() {
       @Override
       public Integer call() throws Exception {
@@ -146,6 +147,7 @@ public class NutchSite {
 
   public Future<Integer>update(final String batchId)
     throws Exception {
+    LOG.info("Update");
     return pool.submit(new Callable<Integer>() {
       @Override
       public Integer call() throws Exception {
@@ -153,6 +155,34 @@ public class NutchSite {
         return dbUpdaterJob.update(batchId);
       }
     });
+  }
+
+  public Future<Integer>frontier(final String batchId)
+    throws Exception {
+    LOG.info("Frontier");
+    return pool.submit(new Callable<Integer>() {
+      @Override
+      public Integer call() throws Exception {
+        FrontierJob frontierJob= new FrontierJob(conf);
+        return frontierJob.frontier(batchId);
+      }
+    });
+  }
+
+  public void crawl(int width, int depth)
+    throws Exception {
+      int round = 1;
+      while (round <= depth) {
+        LOG.info("Starting round #"+round);
+        conf.set(GeneratorJob.BATCH_ID,Integer.toString(round));
+        conf.set(GeneratorJob.GENERATOR_MAX_COUNT,Integer.toString(width));
+        String batchId = generate(0, System.currentTimeMillis(), false, false).get();
+        fetch(batchId,4,false,4).get();
+        parse(batchId,false,false).get();
+        update(batchId).get();
+        frontier(batchId).get();
+        round++;
+      }
   }
 
   // Helpers
@@ -165,4 +195,13 @@ public class NutchSite {
   public Collection<? extends Link> readLinkDB() throws Exception {
     return CrawlTestUtil.readLinkDB(linkDB);
   }
+
+  public DataStore<String,WebPage> getPageDB(){
+    return pageDB;
+  }
+
+  public DataStore<String,Link> getLinkDB(){
+    return linkDB;
+  }
+
 }

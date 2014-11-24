@@ -222,7 +222,6 @@ public class InjectorJob extends NutchTool implements Tool {
 
     currentJob.setReducerClass(Reducer.class);
     currentJob.setNumReduceTasks(0);
-    
     currentJob.waitForCompletion(true);
     ToolUtil.recordJobStatus(null, currentJob, results);
 

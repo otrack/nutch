@@ -58,6 +58,7 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
     for (WebPage page : values) {
       if (limit!=0 && count >= limit) {
         GeneratorJob.LOG.debug("Skipping " + page.getKey()+ "; too many generated urls");
+        context.getCounter("Generator", "LIMIT").increment(1);
         return;
       }
       if (maxCount > 0) {
@@ -74,6 +75,7 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
           hostCount = 0;
         }
         if (hostCount >= maxCount) {
+          context.getCounter("Generator", "HOST_LIMIT").increment(1);
           return;
         }
         hostCountMap.put(hostordomain, hostCount + 1);

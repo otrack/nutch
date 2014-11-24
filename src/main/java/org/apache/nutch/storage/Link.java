@@ -6,15 +6,16 @@
 package org.apache.nutch.storage;  
 @SuppressWarnings("all")
 public class Link extends org.apache.gora.persistency.impl.PersistentBase implements org.apache.avro.specific.SpecificRecord, org.apache.gora.persistency.Persistent {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Link\",\"namespace\":\"org.apache.nutch.storage\",\"fields\":[{\"name\":\"key\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"score\",\"type\":\"float\",\"default\":0},{\"name\":\"distance\",\"type\":\"int\",\"default\":0},{\"name\":\"in\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"out\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Link\",\"namespace\":\"org.apache.nutch.storage\",\"fields\":[{\"name\":\"key\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"score\",\"type\":\"float\",\"default\":0},{\"name\":\"distance\",\"type\":\"int\",\"default\":0},{\"name\":\"batchId\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"in\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"out\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null}]}");
 
   /** Enum containing all data bean's fields. */
   public static enum Field {
     KEY(0, "key"),
     SCORE(1, "score"),
     DISTANCE(2, "distance"),
-    IN(3, "in"),
-    OUT(4, "out"),
+    BATCH_ID(3, "batchId"),
+    IN(4, "in"),
+    OUT(5, "out"),
     ;
     /**
      * Field's index.
@@ -56,6 +57,7 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
   "key",
   "score",
   "distance",
+  "batchId",
   "in",
   "out",
   };
@@ -71,6 +73,7 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
   private java.lang.String key;
   private float score;
   private int distance;
+  private java.lang.String batchId;
   private java.lang.String in;
   private java.lang.String out;
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -80,8 +83,9 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
     case 0: return key;
     case 1: return score;
     case 2: return distance;
-    case 3: return in;
-    case 4: return out;
+    case 3: return batchId;
+    case 4: return in;
+    case 5: return out;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -93,8 +97,9 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
     case 0: key = (java.lang.String)(value); break;
     case 1: score = (java.lang.Float)(value); break;
     case 2: distance = (java.lang.Integer)(value); break;
-    case 3: in = (java.lang.String)(value); break;
-    case 4: out = (java.lang.String)(value); break;
+    case 3: batchId = (java.lang.String)(value); break;
+    case 4: in = (java.lang.String)(value); break;
+    case 5: out = (java.lang.String)(value); break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -172,6 +177,30 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
   }
 
   /**
+   * Gets the value of the 'batchId' field.
+   */
+  public java.lang.String getBatchId() {
+    return batchId;
+  }
+
+  /**
+   * Sets the value of the 'batchId' field.
+   * @param value the value to set.
+   */
+  public void setBatchId(java.lang.String value) {
+    this.batchId = value;
+    setDirty(3);
+  }
+  
+  /**
+   * Checks the dirty status of the 'batchId' field. A field is dirty if it represents a change that has not yet been written to the database.
+   * @param value the value to set.
+   */
+  public boolean isBatchIdDirty(java.lang.String value) {
+    return isDirty(3);
+  }
+
+  /**
    * Gets the value of the 'in' field.
    */
   public java.lang.String getIn() {
@@ -184,7 +213,7 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
    */
   public void setIn(java.lang.String value) {
     this.in = value;
-    setDirty(3);
+    setDirty(4);
   }
   
   /**
@@ -192,7 +221,7 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
    * @param value the value to set.
    */
   public boolean isInDirty(java.lang.String value) {
-    return isDirty(3);
+    return isDirty(4);
   }
 
   /**
@@ -208,7 +237,7 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
    */
   public void setOut(java.lang.String value) {
     this.out = value;
-    setDirty(4);
+    setDirty(5);
   }
   
   /**
@@ -216,7 +245,7 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
    * @param value the value to set.
    */
   public boolean isOutDirty(java.lang.String value) {
-    return isDirty(4);
+    return isDirty(5);
   }
 
   /** Creates a new Link RecordBuilder */
@@ -266,6 +295,7 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
     private java.lang.String key;
     private float score;
     private int distance;
+    private java.lang.String batchId;
     private java.lang.String in;
     private java.lang.String out;
 
@@ -294,13 +324,17 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
         this.distance = (java.lang.Integer) data().deepCopy(fields()[2].schema(), other.distance);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.in)) {
-        this.in = (java.lang.String) data().deepCopy(fields()[3].schema(), other.in);
+      if (isValidValue(fields()[3], other.batchId)) {
+        this.batchId = (java.lang.String) data().deepCopy(fields()[3].schema(), other.batchId);
         fieldSetFlags()[3] = true;
       }
-      if (isValidValue(fields()[4], other.out)) {
-        this.out = (java.lang.String) data().deepCopy(fields()[4].schema(), other.out);
+      if (isValidValue(fields()[4], other.in)) {
+        this.in = (java.lang.String) data().deepCopy(fields()[4].schema(), other.in);
         fieldSetFlags()[4] = true;
+      }
+      if (isValidValue(fields()[5], other.out)) {
+        this.out = (java.lang.String) data().deepCopy(fields()[5].schema(), other.out);
+        fieldSetFlags()[5] = true;
       }
     }
 
@@ -377,6 +411,31 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
       return this;
     }
     
+    /** Gets the value of the 'batchId' field */
+    public java.lang.String getBatchId() {
+      return batchId;
+    }
+    
+    /** Sets the value of the 'batchId' field */
+    public org.apache.nutch.storage.Link.Builder setBatchId(java.lang.String value) {
+      validate(fields()[3], value);
+      this.batchId = value;
+      fieldSetFlags()[3] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'batchId' field has been set */
+    public boolean hasBatchId() {
+      return fieldSetFlags()[3];
+    }
+    
+    /** Clears the value of the 'batchId' field */
+    public org.apache.nutch.storage.Link.Builder clearBatchId() {
+      batchId = null;
+      fieldSetFlags()[3] = false;
+      return this;
+    }
+    
     /** Gets the value of the 'in' field */
     public java.lang.String getIn() {
       return in;
@@ -384,21 +443,21 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
     
     /** Sets the value of the 'in' field */
     public org.apache.nutch.storage.Link.Builder setIn(java.lang.String value) {
-      validate(fields()[3], value);
+      validate(fields()[4], value);
       this.in = value;
-      fieldSetFlags()[3] = true;
+      fieldSetFlags()[4] = true;
       return this; 
     }
     
     /** Checks whether the 'in' field has been set */
     public boolean hasIn() {
-      return fieldSetFlags()[3];
+      return fieldSetFlags()[4];
     }
     
     /** Clears the value of the 'in' field */
     public org.apache.nutch.storage.Link.Builder clearIn() {
       in = null;
-      fieldSetFlags()[3] = false;
+      fieldSetFlags()[4] = false;
       return this;
     }
     
@@ -409,21 +468,21 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
     
     /** Sets the value of the 'out' field */
     public org.apache.nutch.storage.Link.Builder setOut(java.lang.String value) {
-      validate(fields()[4], value);
+      validate(fields()[5], value);
       this.out = value;
-      fieldSetFlags()[4] = true;
+      fieldSetFlags()[5] = true;
       return this; 
     }
     
     /** Checks whether the 'out' field has been set */
     public boolean hasOut() {
-      return fieldSetFlags()[4];
+      return fieldSetFlags()[5];
     }
     
     /** Clears the value of the 'out' field */
     public org.apache.nutch.storage.Link.Builder clearOut() {
       out = null;
-      fieldSetFlags()[4] = false;
+      fieldSetFlags()[5] = false;
       return this;
     }
     
@@ -434,8 +493,9 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
         record.key = fieldSetFlags()[0] ? this.key : (java.lang.String) defaultValue(fields()[0]);
         record.score = fieldSetFlags()[1] ? this.score : (java.lang.Float) defaultValue(fields()[1]);
         record.distance = fieldSetFlags()[2] ? this.distance : (java.lang.Integer) defaultValue(fields()[2]);
-        record.in = fieldSetFlags()[3] ? this.in : (java.lang.String) defaultValue(fields()[3]);
-        record.out = fieldSetFlags()[4] ? this.out : (java.lang.String) defaultValue(fields()[4]);
+        record.batchId = fieldSetFlags()[3] ? this.batchId : (java.lang.String) defaultValue(fields()[3]);
+        record.in = fieldSetFlags()[4] ? this.in : (java.lang.String) defaultValue(fields()[4]);
+        record.out = fieldSetFlags()[5] ? this.out : (java.lang.String) defaultValue(fields()[5]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
@@ -523,6 +583,29 @@ public class Link extends org.apache.gora.persistency.impl.PersistentBase implem
 		   * @param value the value to set.
 	   */
 	  public boolean isDistanceDirty(java.lang.Integer value) {
+	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
+	  }
+	
+				  /**
+	   * Gets the value of the 'batchId' field.
+		   */
+	  public java.lang.String getBatchId() {
+	    throw new java.lang.UnsupportedOperationException("Get is not supported on tombstones");
+	  }
+	
+	  /**
+	   * Sets the value of the 'batchId' field.
+		   * @param value the value to set.
+	   */
+	  public void setBatchId(java.lang.String value) {
+	    throw new java.lang.UnsupportedOperationException("Set is not supported on tombstones");
+	  }
+	  
+	  /**
+	   * Checks the dirty status of the 'batchId' field. A field is dirty if it represents a change that has not yet been written to the database.
+		   * @param value the value to set.
+	   */
+	  public boolean isBatchIdDirty(java.lang.String value) {
 	    throw new java.lang.UnsupportedOperationException("IsDirty is not supported on tombstones");
 	  }
 	

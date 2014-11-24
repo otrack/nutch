@@ -19,6 +19,7 @@ package org.apache.nutch.crawl;
 import org.apache.gora.filter.FilterOp;
 import org.apache.gora.filter.MapFieldValueFilter;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.UrlWithScore.UrlOnlyPartitioner;
@@ -102,16 +103,24 @@ public class DbUpdaterJob extends NutchTool implements Tool {
     currentJob.setGroupingComparatorClass(UrlOnlyComparator.class);
     
     MapFieldValueFilter<String, WebPage> batchIdFilter = getBatchIdFilter(batchId);
-    StorageUtils.initMapperJob(currentJob, fields, UrlWithScore.class,
-        NutchWritable.class, DbUpdateMapper.class, batchIdFilter);
-    StorageUtils.initReducerJob(currentJob, DbUpdateReducer.class);
+    StorageUtils.initMapperJob(
+      currentJob,
+      fields,
+      String.class,
+      WebPage.class,
+      DbUpdateMapper.class,
+      batchIdFilter);
+
+    currentJob.setReducerClass(Reducer.class);
+    currentJob.setNumReduceTasks(0);
+
     currentJob.waitForCompletion(true);
     ToolUtil.recordJobStatus(null, currentJob, results);
     return results;
   }
 
   private MapFieldValueFilter<String, WebPage> getBatchIdFilter(String batchId) {
-    if (batchId.equals(Nutch.ALL_CRAWL_ID.toString())) {
+    if (batchId.equals(Nutch.ALL_CRAWL_ID)) {
       return null;
     }
     MapFieldValueFilter<String, WebPage> filter = new MapFieldValueFilter<String, WebPage>();
@@ -129,11 +138,8 @@ public class DbUpdaterJob extends NutchTool implements Tool {
     long start = System.currentTimeMillis();
     LOG.info("DbUpdaterJob: starting at " + sdf.format(start));
     
-    if (batchId.equals(Nutch.ALL_BATCH_ID_STR)) {
-      LOG.info("DbUpdaterJob: updatinging all");
-    } else {
-      LOG.info("DbUpdaterJob: batchId: " + batchId);
-    }
+    LOG.info("DbUpdaterJob: batchId: " + batchId);
+
     run(ToolUtil.toArgMap(Nutch.ARG_CRAWL, crawlId,
             Nutch.ARG_BATCH, batchId));
     

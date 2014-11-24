@@ -2,11 +2,12 @@ package org.apache.nutch.util;
 
 import org.apache.gora.filter.FilterOp;
 import org.apache.gora.filter.MapFieldValueFilter;
+import org.apache.gora.filter.SingleFieldValueFilter;
+import org.apache.nutch.storage.Link;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.WebPage;
 
 import static org.apache.nutch.metadata.Nutch.ALL_CRAWL_ID;
-import static org.apache.nutch.parse.ParserJob.REPARSE;
 
 /**
  *
@@ -16,8 +17,7 @@ public class FilterUtils {
 
   public static MapFieldValueFilter<String, WebPage> getBatchIdFilter(
     String batchId, Mark mark) {
-    if (batchId.equals(REPARSE)
-      || batchId.equals(ALL_CRAWL_ID)) {
+    if ( batchId.equals(ALL_CRAWL_ID)) {
       return null;
     }
     MapFieldValueFilter<String, WebPage> filter = new MapFieldValueFilter<>();
@@ -39,5 +39,14 @@ public class FilterUtils {
     filter.getOperands().add("*");
     return filter;
   }
+
+  public static SingleFieldValueFilter<String, Link> getBatchIdLinkFilter(String batchId) {
+    SingleFieldValueFilter<String, Link> filter = new SingleFieldValueFilter<>();
+    filter.setFieldName("batchId");
+    filter.setFilterOp(FilterOp.EQUALS);
+    filter.getOperands().add(batchId);
+    return filter;
+  }
+
 
 }
