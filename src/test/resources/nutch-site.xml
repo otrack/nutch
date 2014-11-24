@@ -90,7 +90,7 @@
 
     <property>
         <name>plugin.folders</name>
-        <value>/home/otrack/Implementation/nutch/plugin</value>
+        <value>plugin</value>
     </property>
 
     <property>
