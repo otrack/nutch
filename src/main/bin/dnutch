@@ -20,38 +20,41 @@ if [ "${injected}" == "0" ]; then exit -1; fi
 set it=0
 while true; 
 do
-	it=$((it+1))
 
-	hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.crawl.GeneratorJob -batchId ${it} -topN 1000 &> tmp
-	if (($? != 0)); then cat tmp; exit -1; fi
-	generated=`grep GENERATE tmp | awk -F "=" '{print $2}'`
-	elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'` 
-	echo "GENERATE ${elapsed} ${generated}"
-	if [ "${generated}" == "" ]; then exit 0; fi
-       	    
-	hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.fetcher.FetcherJob ${it} -threads 100 -numTasks 10 &> tmp
-	if (($? != 0)); then cat tmp; exit -1; fi
-	success=`grep SUCCESS tmp | awk -F "=" '{print $2}'`
-	notfound=`grep NOTFOUND tmp | awk -F "=" '{print $2}'`
-	temp_moved=`grep TEMP_MOVED tmp | awk -F "=" '{print $2}'`
-	elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'` 
-	echo "FETCH ${elapsed} ${success} ${notfound} ${temp_moved}"
+    it=$((it+1))
+    echo "======== Round #${it} ========"
 
-	hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.parse.ParserJob ${it} &> tmp
-	if (($? != 0)); then cat tmp; exit -1; fi
-	newpages=`grep NEW_PAGES tmp | awk -F "=" '{print $2}'`
-	newurls=`grep NEW_URLS tmp | awk -F "=" '{print $2}'`
-	elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'` 
-	echo "PARSE ${elapsed} ${newpages} ${newurls}"
+    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.crawl.GeneratorJob -batchId ${it} -topN 1000 &> tmp
+    if (($? != 0)); then cat tmp; exit -1; fi
+    generated=`grep GENERATE tmp | awk -F "=" '{print $2}'`
+    limit=`grep LIMIT tmp | awk -F "=" '{print $2}'`
+    elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'` 
+    echo "GENERATE ${elapsed} ${generated} ${limit}"
+    if [ "${generated}" == "" ]; then exit 0; fi
+    
+    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.fetcher.FetcherJob ${it} -threads 100 -numTasks 10 &> tmp
+    if (($? != 0)); then cat tmp; exit -1; fi
+    success=`grep SUCCESS tmp | awk -F "=" '{print $2}'`
+    notfound=`grep NOTFOUND tmp | awk -F "=" '{print $2}'`
+    temp_moved=`grep TEMP_MOVED tmp | awk -F "=" '{print $2}'`
+    elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'` 
+    echo "FETCH ${elapsed} ${success} ${notfound} ${temp_moved}"
 
-	hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.crawl.DbUpdaterJob ${it} &> tmp
-	if (($? != 0)); then cat tmp; exit -1; fi
-	elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'` 
-	echo "DBUPDATE ${elapsed}"
+    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.parse.ParserJob ${it} &> tmp
+    if (($? != 0)); then cat tmp; exit -1; fi
+    newurls=`grep NEW_URLS tmp | awk -F "=" '{print $2}'`
+    elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'` 
+    echo "PARSE ${elapsed} ${newurls}"
 
-	hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.crawl.FrontierJob ${it} &> tmp
-	if (($? != 0)); then cat tmp; exit -1; fi
-	elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'` 
-	echo "FRONTIER ${elapsed}"
-	
+    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.crawl.DbUpdaterJob -all &> tmp
+    if (($? != 0)); then cat tmp; exit -1; fi
+    elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'` 
+    echo "DBUPDATE ${elapsed}"
+
+    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.crawl.FrontierJob ${it} &> tmp
+    if (($? != 0)); then cat tmp; exit -1; fi
+    elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'` 
+    newpages=`grep NEW_PAGES tmp | awk -F "=" '{print $2}'`
+    echo "FRONTIER ${elapsed} ${newpages}"
+    
 done

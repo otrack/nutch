@@ -52,12 +52,12 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
 
   @Override
   protected int numberOfNodes() {
-    return 3;
+    return 1;
   }
 
   @Override
   protected int partitionSize() {
-    return 10;
+    return 1000;
   }
 
   @Override
@@ -332,10 +332,11 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
   public void longCrawl() throws  Exception{
 
     final int NPAGES = 1000;
+    final int DEGREE = 20;
+
     final int INJECT = 100;
-    final int DEGREE = 10;
     final int DEPTH = 3;
-    final int WIDTH = 100;
+    final int WIDTH = 1000;
 
     Configuration conf = NutchConfiguration.create();
     File tmpDir = Files.createTempDir();
@@ -354,11 +355,14 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
         if (urls.size()==INJECT) break;
         addUrl(urls, page, server);
       }
-
       sites.get(0).inject(urls).get();
+
+      List<Future<Integer>> futures = new ArrayList<>();
       for (NutchSite site : sites) {
-        site.crawl(WIDTH, DEPTH);
+        futures.add(site.crawl(WIDTH, DEPTH));
       }
+      for(Future<Integer> future : futures)
+        future.get();
 
       List<URLWebPage> resultPages = readPageDB(Mark.UPDATEDB_MARK, "key");
       List<Link> resultLinks = readLinkDB();

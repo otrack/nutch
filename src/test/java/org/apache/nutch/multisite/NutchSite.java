@@ -169,20 +169,29 @@ public class NutchSite {
     });
   }
 
-  public void crawl(int width, int depth)
+  public Future<Integer> crawl(final int width, final int depth)
     throws Exception {
-      int round = 1;
-      while (round <= depth) {
-        LOG.info("Starting round #"+round);
-        conf.set(GeneratorJob.BATCH_ID,Integer.toString(round));
-        conf.set(GeneratorJob.GENERATOR_MAX_COUNT,Integer.toString(width));
-        String batchId = generate(0, System.currentTimeMillis(), false, false).get();
-        fetch(batchId,4,false,4).get();
-        parse(batchId,false,false).get();
-        update(batchId).get();
-        frontier(batchId).get();
-        round++;
+
+    return pool.submit(new Callable<Integer>() {
+      @Override
+      public Integer call() throws Exception {
+        int round = 1;
+        while (round <= depth) {
+          LOG.info("Starting round #" + round + " @" + siteName);
+          conf.set(GeneratorJob.BATCH_ID, Integer.toString(round));
+          conf.set(GeneratorJob.GENERATOR_MAX_COUNT, Integer.toString(width));
+          String batchId = generate(0, System.currentTimeMillis(), false, false)
+            .get();
+          fetch(batchId, 4, false, 4).get();
+          parse(batchId, false, false).get();
+          update(batchId).get();
+          frontier(batchId).get();
+          round++;
+        }
+        return 0;
       }
+    });
+
   }
 
   // Helpers

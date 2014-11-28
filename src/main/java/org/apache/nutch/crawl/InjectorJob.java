@@ -83,6 +83,7 @@ public class InjectorJob extends NutchTool implements Tool {
     private URLFilters filters;
     private ScoringFilters scfilters;
     private long curTime;
+    private WebPage.Builder builder;
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
@@ -96,6 +97,7 @@ public class InjectorJob extends NutchTool implements Tool {
         1.0f);
       curTime = context.getConfiguration().getLong("injector.current.time",
         System.currentTimeMillis());
+      builder = WebPage.newBuilder();
     }
 
     protected void map(LongWritable key, Text value, Context context)
@@ -150,7 +152,7 @@ public class InjectorJob extends NutchTool implements Tool {
         return;
       } else {                                         // if it passes
       String reversedUrl = TableUtil.reverseUrl(url);  // collect it
-      WebPage row = WebPage.newBuilder().build();
+      WebPage row = builder.build();
       row.setFetchTime(curTime);
       row.setFetchInterval(customInterval);
 
