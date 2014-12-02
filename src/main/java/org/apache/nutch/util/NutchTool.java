@@ -18,6 +18,7 @@ package org.apache.nutch.util;
 
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.util.Tool;
 import org.apache.nutch.metadata.Nutch;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class NutchTool extends Configured {
+public abstract class NutchTool extends Configured implements Tool{
   
   protected HashMap<String,Object> results = new HashMap<String,Object>();
   protected Map<String,Object> status =

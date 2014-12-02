@@ -6,7 +6,6 @@ import org.apache.gora.query.Query;
 import org.apache.gora.store.DataStore;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.storage.Link;
@@ -28,7 +27,7 @@ import static org.apache.nutch.util.FilterUtils.getBatchIdLinkFilter;
 /**
  * @author Pierre Sutra
  */
-public class FrontierJob extends NutchTool implements Tool {
+public class FrontierJob extends NutchTool {
 
   // Class fields
   public static final Logger LOG = LoggerFactory.getLogger(FrontierJob.class);
@@ -64,6 +63,7 @@ public class FrontierJob extends NutchTool implements Tool {
       throws IOException, InterruptedException {
 
       WebPage outPage = pageBuilder.build();
+      assert link.getOut()!=null;
       outPage.setKey(link.getOut());
       if (!pageDB.containsKey(link.getOut())){
         pageDB.put(link.getOut(), outPage);
@@ -147,12 +147,11 @@ public class FrontierJob extends NutchTool implements Tool {
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     long start = System.currentTimeMillis();
-    LOG.info("FrontierJob: starting at " + sdf.format(start));
+    LOG.debug("FrontierJob: starting at " + sdf.format(start));
 
     run(ToolUtil.toArgMap(
       Nutch.ARG_BATCH, batchId
     ));
-    LOG.info("FrontierJob: success");
 
     long finish = System.currentTimeMillis();
     LOG.info("FrontierJob: finished at " + sdf.format(finish) + ", time elapsed: " + TimingUtil.elapsedTime(start, finish));

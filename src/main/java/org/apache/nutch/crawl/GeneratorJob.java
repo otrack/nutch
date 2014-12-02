@@ -23,7 +23,6 @@ import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.util.StringUtils;
-import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.URLPartitioner.SelectorEntryPartitioner;
 import org.apache.nutch.metadata.Nutch;
@@ -40,7 +39,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class GeneratorJob extends NutchTool implements Tool {
+public class GeneratorJob extends NutchTool {
   public static final String GENERATE_UPDATE_CRAWLDB = "generate.update.crawldb";
   public static final String GENERATOR_MIN_SCORE = "generate.min.score";
   public static final String GENERATOR_FILTER = "generate.filter";
@@ -159,6 +158,7 @@ public class GeneratorJob extends NutchTool implements Tool {
     return fields;
   }
 
+  @Override
   public Map<String,Object> run(Map<String,Object> args) throws Exception {
     // map to inverted subset due for fetch, sort by score
     Long topN = (Long)args.get(Nutch.ARG_TOPN);
@@ -238,9 +238,7 @@ public class GeneratorJob extends NutchTool implements Tool {
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     long start = System.currentTimeMillis();
-    LOG.info("GeneratorJob: starting at " + sdf.format(start));
-    LOG.info("GeneratorJob: Selecting best-scoring urls due for fetch.");
-    LOG.info("GeneratorJob: starting");
+    LOG.debug("GeneratorJob: starting at " + sdf.format(start));
     LOG.info("GeneratorJob: filtering: " + filter);
     LOG.info("GeneratorJob: normalizing: " + norm);
     if (topN != Long.MAX_VALUE) {

@@ -60,7 +60,6 @@ public class NutchSite {
 
 
   public void setUpClass() {
-    LOG.info("Setting up site "+siteName);
     try {
       conf = NutchConfiguration.create();
       fs = FileSystem.get(conf);
@@ -81,6 +80,7 @@ public class NutchSite {
       }
       throw new RuntimeException();
     }
+    LOG.info("Site "+siteName+" set-up succeed");
   }
 
   public void tearDownClass() throws IOException {
@@ -180,7 +180,7 @@ public class NutchSite {
           LOG.info("Starting round #" + round + " @" + siteName);
           conf.set(GeneratorJob.BATCH_ID, Integer.toString(round));
           conf.set(GeneratorJob.GENERATOR_MAX_COUNT, Integer.toString(width));
-          String batchId = generate(0, System.currentTimeMillis(), false, false)
+          String batchId = generate(width, System.currentTimeMillis(), false, false)
             .get();
           fetch(batchId, 4, false, 4).get();
           parse(batchId, false, false).get();

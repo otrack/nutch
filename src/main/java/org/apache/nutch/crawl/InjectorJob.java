@@ -27,7 +27,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.StringUtils;
-import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.net.URLFilters;
@@ -55,7 +54,7 @@ import java.util.*;
  * - <i>nutch.fetchInterval</i> : allows to set a custom fetch interval for a specific URL <br>
  * e.g. http://www.nutch.org/ \t nutch.score=10 \t nutch.fetchInterval=2592000 \t userType=open_source
  **/
-public class InjectorJob extends NutchTool implements Tool {
+public class InjectorJob extends NutchTool {
 
   public static final Logger LOG = LoggerFactory.getLogger(InjectorJob.class);
 
@@ -215,7 +214,7 @@ public class InjectorJob extends NutchTool implements Tool {
     // NUTCH-1471 Make explicit which datastore class we use
     Class<? extends DataStore<Object, Persistent>> dataStoreClass =
       StorageUtils.getDataStoreClass(currentJob.getConfiguration());
-    LOG.info("InjectorJob: Using " + dataStoreClass + " as the Gora storage class.");
+    LOG.debug("InjectorJob: Using " + dataStoreClass + " as the Gora storage class.");
 
     GoraOutputFormat.setOutput(
       currentJob,
@@ -224,6 +223,8 @@ public class InjectorJob extends NutchTool implements Tool {
 
     currentJob.setReducerClass(Reducer.class);
     currentJob.setNumReduceTasks(0);
+    currentJob.setJarByClass(InjectorJob.class);
+
     currentJob.waitForCompletion(true);
     ToolUtil.recordJobStatus(null, currentJob, results);
 
@@ -240,7 +241,7 @@ public class InjectorJob extends NutchTool implements Tool {
   public void inject(Path urlDir) throws Exception {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     long start = System.currentTimeMillis();
-    LOG.info("InjectorJob: starting at " + sdf.format(start));
+    LOG.debug("InjectorJob: starting at " + sdf.format(start));
     LOG.info("InjectorJob: Injecting urlDir: " + urlDir); 
     run(ToolUtil.toArgMap(Nutch.ARG_SEEDDIR, urlDir));
     long end = System.currentTimeMillis();

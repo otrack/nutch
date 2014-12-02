@@ -22,7 +22,6 @@ import org.apache.gora.mapreduce.GoraMapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.GeneratorJob;
 import org.apache.nutch.crawl.URLPartitioner.FetchEntryPartitioner;
@@ -42,14 +41,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
-import static org.apache.nutch.crawl.URLPartitioner.PARTITION_MODE_KEY;
+
 import static org.apache.nutch.crawl.URLPartitioner.PARTITION_MODE_HOST;
+import static org.apache.nutch.crawl.URLPartitioner.PARTITION_MODE_KEY;
 
 /**
  * Multi-threaded fetcher.
  *
  */
-public class FetcherJob extends NutchTool implements Tool {
+public class FetcherJob extends NutchTool {
 
   public static final String PROTOCOL_REDIR = "protocol";
 
@@ -176,7 +176,7 @@ public class FetcherJob extends NutchTool implements Tool {
       timelimit = System.currentTimeMillis() + (timelimit * 60 * 1000);
       getConf().setLong("fetcher.timelimit", timelimit);
     }
-    LOG.info("FetcherJob : timelimit set for : " + getConf().getLong("fetcher.timelimit", -1));
+    LOG.info("FetcherJob: timelimit set for : " + getConf().getLong("fetcher.timelimit", -1));
     numJobs = 1;
     currentJob = new NutchJob(getConf(), "fetch");
     
@@ -197,6 +197,7 @@ public class FetcherJob extends NutchTool implements Tool {
     } else {
       currentJob.setNumReduceTasks(numTasks);
     }
+    LOG.info("FetcherJob: tasks: " +numTasks);
 
     currentJob.waitForCompletion(true);
     ToolUtil.recordJobStatus(null, currentJob, results);
@@ -232,7 +233,7 @@ public class FetcherJob extends NutchTool implements Tool {
     
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     long start = System.currentTimeMillis();
-    LOG.info("FetcherJob: starting at " + sdf.format(start));
+    LOG.debug("FetcherJob: starting at " + sdf.format(start));
 
     if (batchId.equals(Nutch.ALL_BATCH_ID_STR)) {
       LOG.info("FetcherJob: fetching all");

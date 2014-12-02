@@ -52,7 +52,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
 
   @Override
   protected int numberOfNodes() {
-    return 1;
+    return 3;
   }
 
   @Override
@@ -115,19 +115,32 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     // inject
     site(0).inject(urls).get();
 
-    // generate
     List<Future<String>> futures = new ArrayList<>();
+
+    // generate round #1
     for(NutchSite site : sites)
       futures.add(site
-        .generate(0, System.currentTimeMillis(), false, false));
-
-    // check result
+        .generate(nbGeneratedPages()/2, System.currentTimeMillis(), false, false));
     for(Future<String> future : futures)
       future.get();
 
+    // check result
+    assertEquals(
+      nbGeneratedPages()/2,
+      readPageDB(Mark.GENERATE_MARK).size());
+
+    // generate round #2
+    futures.clear();
+    for(NutchSite site : sites)
+      futures.add(site
+        .generate(nbGeneratedPages()/2+1, System.currentTimeMillis(), false, false));
+    for(Future<String> future : futures)
+      future.get();
+
+    // check result
     assertEquals(
       nbGeneratedPages(),
-     readPageDB(null).size());
+     readPageDB(Mark.GENERATE_MARK).size());
   }
 
   @Test
@@ -331,18 +344,18 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
   @Test
   public void longCrawl() throws  Exception{
 
-    final int NPAGES = 1000;
+    final int NPAGES = 10000;
     final int DEGREE = 20;
 
-    final int INJECT = 100;
-    final int DEPTH = 3;
+    final int INJECT = 1000;
+    final int DEPTH = 5;
     final int WIDTH = 1000;
 
     Configuration conf = NutchConfiguration.create();
     File tmpDir = Files.createTempDir();
     List<String> pages = createPages(NPAGES, DEGREE,
       tmpDir.getAbsolutePath());
-	LOG.info("tmpDir abs path:"+tmpDir.getAbsolutePath());
+    LOG.info("tmpDir abs path:"+tmpDir.getAbsolutePath());
     Server server = CrawlTestUtil.getServer(
       conf.getInt("content.server.port", 50000),
       tmpDir.getAbsolutePath());

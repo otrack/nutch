@@ -2,7 +2,7 @@
 <!--
 Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with
-this work for additional information regarding copyright ownership.
+>this work for additional information regarding copyright ownership.
 The ASF licenses this file to You under the Apache License, Version 2.0
 (the "License"); you may not use this file except in compliance with
 the License.  You may obtain a copy of the License at
@@ -175,43 +175,10 @@ limitations under the License.
 
     <dependencies>
         <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>0.19.4</version>
-            <optional>true</optional>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>jasper</artifactId>
+            <version>6.0.32</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-solrj</artifactId>
-            <version>4.6.0</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.4</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2.1</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.3.5</version>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- HADOOP !-->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
@@ -221,13 +188,6 @@ limitations under the License.
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-mapreduce-client-core</artifactId>
             <version>${hadoop.version}</version>
-        </dependency>
-
-        <!--OTHERS -->
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>jasper</artifactId>
-            <version>6.0.32</version>
         </dependency>
         <dependency>
             <groupId>org.ccil.cowan.tagsoup</groupId>
@@ -380,6 +340,52 @@ limitations under the License.
             <artifactId>jackson-mapper-asl</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>nekohtml</groupId>
+            <artifactId>nekohtml</artifactId>
+            <version>1.9.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>0.19.4</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>4.6.0</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.1</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.5</version>
+            <optional>true</optional>
+        </dependency>
 
         <!--TESTING -->
         <dependency>
@@ -399,11 +405,6 @@ limitations under the License.
             <artifactId>hadoop-mapreduce-client-hs-plugins</artifactId>
             <version>${hadoop.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
-            <version>${hadoop.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -453,12 +454,12 @@ limitations under the License.
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-
         <!-- Infinispan Dependencies -->
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-remote-query-server</artifactId>
             <version>${infinispan.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
@@ -471,26 +472,31 @@ limitations under the License.
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-versioning</artifactId>
             <version>${infinispan.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-query-dsl</artifactId>
             <version>${infinispan.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-query</artifactId>
             <version>${infinispan.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-client-hotrod</artifactId>
             <version>${infinispan.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-remote-query-client</artifactId>
             <version>${infinispan.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
@@ -543,26 +549,25 @@ limitations under the License.
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-core</artifactId>
             <version>${lucene-solr.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
             <version>${lucene-solr.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-test-framework</artifactId>
             <version>${lucene-solr.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-test-framework</artifactId>
             <version>${lucene-solr.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>nekohtml</groupId>
-            <artifactId>nekohtml</artifactId>
-            <version>1.9.12</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

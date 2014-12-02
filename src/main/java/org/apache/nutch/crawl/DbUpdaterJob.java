@@ -20,7 +20,6 @@ import org.apache.gora.filter.FilterOp;
 import org.apache.gora.filter.MapFieldValueFilter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.UrlWithScore.UrlOnlyPartitioner;
 import org.apache.nutch.crawl.UrlWithScore.UrlScoreComparator;
@@ -39,7 +38,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
-public class DbUpdaterJob extends NutchTool implements Tool {
+public class DbUpdaterJob extends NutchTool {
 
   public static final Logger LOG = LoggerFactory.getLogger(DbUpdaterJob.class);
 
@@ -136,7 +135,7 @@ public class DbUpdaterJob extends NutchTool implements Tool {
     
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     long start = System.currentTimeMillis();
-    LOG.info("DbUpdaterJob: starting at " + sdf.format(start));
+    LOG.debug("DbUpdaterJob: starting at " + sdf.format(start));
     
     LOG.info("DbUpdaterJob: batchId: " + batchId);
 

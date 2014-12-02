@@ -45,9 +45,9 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
 
   public static final Logger LOG = LoggerFactory.getLogger(GeneratorJob.class);
 
+  protected long count = 0;
   private long limit;
   private long maxCount;
-  protected static long count = 0;
   private boolean byDomain = false;
   private Map<String, Integer> hostCountMap = new HashMap<String, Integer>();
   private String batchId;

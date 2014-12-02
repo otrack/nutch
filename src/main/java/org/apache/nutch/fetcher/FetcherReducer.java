@@ -470,7 +470,7 @@ extends GoraReducer<IntWritable, FetchEntry, String, WebPage> {
             reprUrl = fit.page.getReprUrl();
           }
           try {
-            LOG.info("fetching " + fit.url + " (queue crawl delay=" + 
+            LOG.debug("fetching " + fit.url + " (queue crawl delay=" +
                       fetchQueues.getFetchItemQueue(fit.queueID).crawlDelay + "ms)"); 
 
             // fetch the page
@@ -579,7 +579,7 @@ extends GoraReducer<IntWritable, FetchEntry, String, WebPage> {
       } finally {
         if (fit != null) fetchQueues.finishFetchItem(fit);
         activeThreads.decrementAndGet(); // count threads
-        LOG.info("-finishing thread " + getName() + ", activeThreads=" + activeThreads);
+        LOG.debug("-finishing thread " + getName() + ", activeThreads=" + activeThreads);
       }
     }
 

@@ -22,13 +22,14 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.util.StringUtils;
-import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.DbUpdaterJob;
 import org.apache.nutch.crawl.GeneratorJob;
 import org.apache.nutch.crawl.SignatureFactory;
 import org.apache.nutch.metadata.HttpHeaders;
 import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.net.URLFilterException;
+import org.apache.nutch.net.URLFilters;
 import org.apache.nutch.net.URLNormalizers;
 import org.apache.nutch.scoring.ScoreDatum;
 import org.apache.nutch.scoring.ScoringFilterException;
@@ -39,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -46,7 +48,7 @@ import java.util.*;
 import static org.apache.nutch.net.URLNormalizers.SCOPE_CRAWLDB;
 import static org.apache.nutch.util.FilterUtils.getBatchIdFilter;
 
-public class ParserJob extends NutchTool implements Tool {
+public class ParserJob extends NutchTool {
 
   // Class fields
   public static final Logger LOG = LoggerFactory.getLogger(ParserJob.class);
@@ -74,6 +76,8 @@ public class ParserJob extends NutchTool implements Tool {
   // Object fields
   private Configuration conf;
 
+
+  // TODO if filter, normalize booleans
   public static class ParserMapper
       extends GoraMapper<String, WebPage, String, Link> {
 
@@ -86,6 +90,7 @@ public class ParserJob extends NutchTool implements Tool {
     private Link.Builder linkBuilder;
     private ScoringFilters scoringFilters;
     private URLNormalizers normalizers;
+    private URLFilters filters;
 
     private List<ScoreDatum> scoreData;
 
@@ -101,7 +106,7 @@ public class ParserJob extends NutchTool implements Tool {
       scoreData = new ArrayList<>();
       scoringFilters = new ScoringFilters(context.getConfiguration());
       normalizers = new URLNormalizers(conf, SCOPE_CRAWLDB);
-
+      filters = new URLFilters(conf);
     }
 
     @Override
@@ -117,13 +122,13 @@ public class ParserJob extends NutchTool implements Tool {
         }
         if (shouldResume && Mark.PARSE_MARK.checkMark(page) != null) {
           if (force) {
-            LOG.info("Forced parsing " + url + "; already parsed");
+            LOG.warn("Forced parsing " + url + "; already parsed");
           } else {
-            LOG.info("Skipping " + url + "; already parsed");
+            LOG.warn("Skipping " + url + "; already parsed");
             return;
           }
         } else {
-          LOG.info("Parsing " + url);
+          LOG.debug("Parsing " + url);
         }
 
       if (skipTruncated && isTruncated(url, page)) {
@@ -142,15 +147,33 @@ public class ParserJob extends NutchTool implements Tool {
       Map<String, String> outlinks = page.getOutlinks();
       if (outlinks != null) {
         for (Map.Entry<String, String> e : outlinks.entrySet()) {
-          int depth=Integer.MAX_VALUE;
+          int depth = Integer.MAX_VALUE;
           String depthString = page.getMarkers().get(DbUpdaterJob.DISTANCE);
-          if (depthString != null) depth=Integer.parseInt(depthString);
-          scoreData.add(
-            new ScoreDatum(
-              0.0f,
-              normalizers.normalize(e.getKey(), SCOPE_CRAWLDB),
-              e.getValue(),
-              depth));
+          if (depthString != null)
+            depth = Integer.parseInt(depthString);
+          try {
+            String out = normalizers.normalize(e.getKey(), SCOPE_CRAWLDB);
+            if (filters.filter(out) == null)
+              return;
+            scoreData.add(
+              new ScoreDatum(
+                0.0f,
+                out,
+                e.getValue(),
+                depth));
+          } catch (URLFilterException e1) {
+            if (GeneratorJob.LOG.isWarnEnabled()) {
+              GeneratorJob.LOG.warn(
+                "Couldn't filter url: " + url + " (" + e1.getMessage() + ")");
+              return;
+            }
+          } catch (MalformedURLException e2) {
+            if (GeneratorJob.LOG.isWarnEnabled()) {
+              GeneratorJob.LOG.warn(
+                "Couldn't normalize url: " + url + " (" + e2.getMessage() + ")");
+              return;
+            }
+          }
         }
       }
 
@@ -170,6 +193,9 @@ public class ParserJob extends NutchTool implements Tool {
         link.setDistance(scoreDatum.getDistance());
         link.setBatchId(batchId);
         link.setScore(page.getScore());
+
+        assert link.getOut()!=null;
+
         context.write(link.getKey(), link);
         context.getCounter(probes.NEW_URLS).increment(1);
 
@@ -304,14 +330,13 @@ public class ParserJob extends NutchTool implements Tool {
     
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     long start = System.currentTimeMillis();
-    LOG.info("ParserJob: starting at " + sdf.format(start));
+    LOG.debug("ParserJob: starting at " + sdf.format(start));
 
     run(ToolUtil.toArgMap(
         Nutch.ARG_BATCH, batchId,
         Nutch.ARG_RESUME, shouldResume,
         Nutch.ARG_FORCE, force));
-    LOG.info("ParserJob: success");
-    
+
     long finish = System.currentTimeMillis();
     LOG.info("ParserJob: finished at " + sdf.format(finish) + ", time elapsed: " + TimingUtil.elapsedTime(start, finish));
     return 0;

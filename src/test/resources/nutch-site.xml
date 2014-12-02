@@ -10,11 +10,6 @@
      </property>
 
     <property>
-        <name>partition.url.mode</name>
-        <value>byURL</value>
-    </property>
-
-    <property>
         <name>parser.skip.truncated</name>
         <value>false</value>
         <description>Boolean value for whether we should skip parsing for
@@ -53,7 +48,7 @@
 
     <property>
         <name>fetcher.server.delay</name>
-        <value>0.2</value>
+        <value>0.1</value>
         <description>The number of seconds the fetcher will delay between
             successive requests to the same server.</description>
     </property>
