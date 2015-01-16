@@ -142,7 +142,7 @@ public class URLPartitioner implements Configurable {
       extends Partitioner<IntWritable, FetchEntry> implements Configurable {
     private URLPartitioner partitioner = new URLPartitioner();
     private Configuration conf;
-    
+
     @Override
     public int getPartition(IntWritable intWritable, FetchEntry fetchEntry, int numReduces) {
       String key = fetchEntry.getKey();

@@ -16,7 +16,6 @@
  ******************************************************************************/
 package org.apache.nutch.crawl;
 
-import org.apache.gora.store.DataStore;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
@@ -38,6 +37,8 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import static org.apache.nutch.crawl.URLPartitioner.PARTITION_MODE_HOST;
+import static org.apache.nutch.crawl.URLPartitioner.PARTITION_MODE_KEY;
 
 public class GeneratorJob extends NutchTool {
   public static final String GENERATE_UPDATE_CRAWLDB = "generate.update.crawldb";
@@ -194,9 +195,6 @@ public class GeneratorJob extends NutchTool {
     currentJob = new NutchJob(getConf(), "generate: " + getConf().get(BATCH_ID));
     Collection<WebPage.Field> fields = getFields(currentJob);
 
-    Class<? extends DataStore<String, WebPage>> dataStoreClass =
-      StorageUtils.getDataStoreClass(currentJob.getConfiguration());
-
     StorageUtils.initMapperJob(
       currentJob,
       fields,
@@ -213,7 +211,7 @@ public class GeneratorJob extends NutchTool {
       WebPage.class,
       GeneratorReducer.class,
       false);
-
+    
     currentJob.waitForCompletion(true);
     ToolUtil.recordJobStatus(null, currentJob, results);
     results.put(BATCH_ID, getConf().get(BATCH_ID));
@@ -241,6 +239,7 @@ public class GeneratorJob extends NutchTool {
     LOG.debug("GeneratorJob: starting at " + sdf.format(start));
     LOG.info("GeneratorJob: filtering: " + filter);
     LOG.info("GeneratorJob: normalizing: " + norm);
+    LOG.info("Generator: partitioning: " + getConf().get(PARTITION_MODE_KEY, PARTITION_MODE_HOST));
     if (topN != Long.MAX_VALUE) {
       LOG.info("GeneratorJob: topN: " + topN);
     }

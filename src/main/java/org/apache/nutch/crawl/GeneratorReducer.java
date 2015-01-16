@@ -103,7 +103,7 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
     if (totalLimit == 0) {
       limit = 0;
     } else {
-      limit = Math.max(totalLimit / context.getNumReduceTasks(),1);
+      limit = Math.max(totalLimit, 1);
       GeneratorJob.LOG.info("Limit:"+limit);
     }
     maxCount = conf.getLong(GENERATOR_MAX_COUNT, 0);

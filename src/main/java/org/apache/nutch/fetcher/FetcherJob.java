@@ -22,6 +22,7 @@ import org.apache.gora.mapreduce.GoraMapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.GeneratorJob;
 import org.apache.nutch.crawl.URLPartitioner.FetchEntryPartitioner;
@@ -118,7 +119,9 @@ public class FetcherJob extends NutchTool {
         }
         return;
       }
-      context.write(new IntWritable(random.nextInt(65536)), new FetchEntry(context.getConfiguration(), key.toString(), page));
+      context.write(
+        new IntWritable(random.nextInt(65536)),
+        new FetchEntry(context.getConfiguration(),key, page));
     }
   }
 
@@ -168,7 +171,7 @@ public class FetcherJob extends NutchTool {
     LOG.info("FetcherJob: resuming: " + getConf().getBoolean(RESUME_KEY, false));
     LOG.info("FetcherJob: partitioning: " + getConf().get(PARTITION_MODE_KEY, PARTITION_MODE_HOST));
 
-      // set the actual time for the timelimit relative
+    // set the actual time for the timelimit relative
     // to the beginning of the whole job and not of a specific task
     // otherwise it keeps trying again if a task fails
     long timelimit = getConf().getLong("fetcher.timelimit.mins", -1);
@@ -183,6 +186,16 @@ public class FetcherJob extends NutchTool {
     // for politeness, don't permit parallel execution of a single task
     currentJob.setReduceSpeculativeExecution(false);
     
+    if (numTasks == null || numTasks < 1) {
+      currentJob.setNumReduceTasks(
+        currentJob.getConfiguration().getInt(
+          MRJobConfig.NUM_REDUCES,
+          currentJob.getNumReduceTasks()));
+    } else {
+      currentJob.setNumReduceTasks(numTasks);
+    }
+    LOG.info("FetcherJob: tasks: " +numTasks);
+
     Collection<WebPage.Field> fields = getFields(currentJob);
     MapFieldValueFilter<String, WebPage> batchIdFilter = getBatchIdFilter(batchId);
     StorageUtils.initMapperJob(
@@ -190,14 +203,6 @@ public class FetcherJob extends NutchTool {
       FetchEntry.class, FetcherMapper.class, FetchEntryPartitioner.class,
       batchIdFilter, true);
     StorageUtils.initReducerJob(currentJob, FetcherReducer.class);
-
-    if (numTasks == null || numTasks < 1) {
-      currentJob.setNumReduceTasks(currentJob.getConfiguration().getInt("mapred.map.tasks",
-          currentJob.getNumReduceTasks()));
-    } else {
-      currentJob.setNumReduceTasks(numTasks);
-    }
-    LOG.info("FetcherJob: tasks: " +numTasks);
 
     currentJob.waitForCompletion(true);
     ToolUtil.recordJobStatus(null, currentJob, results);

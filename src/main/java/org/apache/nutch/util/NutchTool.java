@@ -33,7 +33,7 @@ public abstract class NutchTool extends Configured implements Tool{
     Collections.synchronizedMap(new HashMap<String,Object>());
   protected Job currentJob;
   protected int numJobs;
-    protected int currentJobNum;
+  protected int currentJobNum;
   
   /** Runs the tool, using a map of arguments.
    * May return results, or null.

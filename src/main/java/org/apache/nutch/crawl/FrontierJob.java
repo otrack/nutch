@@ -101,9 +101,10 @@ public class FrontierJob extends NutchTool {
   public Map<String,Object> run(Map<String,Object> args) throws Exception {
 
     String batchId = (String) args.get(Nutch.ARG_BATCH);
-    if (batchId != null) {
-      getConf().set(GeneratorJob.BATCH_ID, batchId);
-    }
+    getConf().set(GeneratorJob.BATCH_ID, batchId);
+    assert  batchId != null;
+
+    LOG.info("FrontierJob: batchId:\t" + batchId);
 
     currentJob = new NutchJob(getConf(), "frontier");
 
@@ -115,7 +116,8 @@ public class FrontierJob extends NutchTool {
       throw new RuntimeException("Could not create datastore");
 
     Query<String, Link> query = store.newQuery();
-    query.setFilter(getBatchIdLinkFilter(batchId));
+    if (!batchId.equals("-all"))
+      query.setFilter(getBatchIdLinkFilter(batchId));
     query.setSortingOrder(true);
 
     GoraMapper.initMapperJob(
@@ -139,6 +141,7 @@ public class FrontierJob extends NutchTool {
     currentJob.setNumReduceTasks(0);
 
     currentJob.waitForCompletion(true);
+    LOG.info("FrontierJob: new page(s): "+ currentJob.getCounters().findCounter(probes.NEW_PAGES).getValue());
     ToolUtil.recordJobStatus(null, currentJob, results);
     return results;
   }
@@ -165,7 +168,7 @@ public class FrontierJob extends NutchTool {
 
     if (args.length < 1) {
       System.err.println("Usage: FrontierJob <batchId> [-crawlId <id>]");
-      System.err.println("    <batchId>     - symbolic batch ID created by Generator");
+      System.err.println("    <batchId>     - symbolic batch ID created by Generator or -all");
       System.err.println("    -crawlId <id> - the id to prefix the schemas to operate on, \n \t \t    (default: storage.crawl.id)");
       return -1;
     }

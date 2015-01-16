@@ -58,8 +58,8 @@ public class ParserJob extends NutchTool {
 
   private static final Collection<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
   private static enum probes{
-    NEW_PAGES,
-    NEW_URLS
+    FILTERED_OUT,
+    NEW_LINKS
   }
   static {
     FIELDS.add(WebPage.Field.STATUS);
@@ -118,6 +118,7 @@ public class ParserJob extends NutchTool {
           if (LOG.isDebugEnabled()) {
             LOG.warn("Skipping " + TableUtil.unreverseUrl(key) + "; not fetched yet !");
           }
+          context.getCounter(probes.FILTERED_OUT).increment(1);
           return;
         }
         if (shouldResume && Mark.PARSE_MARK.checkMark(page) != null) {
@@ -125,6 +126,7 @@ public class ParserJob extends NutchTool {
             LOG.warn("Forced parsing " + url + "; already parsed");
           } else {
             LOG.warn("Skipping " + url + "; already parsed");
+            context.getCounter(probes.FILTERED_OUT).increment(1);
             return;
           }
         } else {
@@ -132,6 +134,7 @@ public class ParserJob extends NutchTool {
         }
 
       if (skipTruncated && isTruncated(url, page)) {
+        context.getCounter(probes.FILTERED_OUT).increment(1);
         return;
       }
 
@@ -153,8 +156,10 @@ public class ParserJob extends NutchTool {
             depth = Integer.parseInt(depthString);
           try {
             String out = normalizers.normalize(e.getKey(), SCOPE_CRAWLDB);
-            if (filters.filter(out) == null)
+            if (filters.filter(out) == null) {
+              context.getCounter(probes.FILTERED_OUT).increment(1);
               return;
+            }
             scoreData.add(
               new ScoreDatum(
                 0.0f,
@@ -165,12 +170,14 @@ public class ParserJob extends NutchTool {
             if (GeneratorJob.LOG.isWarnEnabled()) {
               GeneratorJob.LOG.warn(
                 "Couldn't filter url: " + url + " (" + e1.getMessage() + ")");
+              context.getCounter(probes.FILTERED_OUT).increment(1);
               return;
             }
           } catch (MalformedURLException e2) {
             if (GeneratorJob.LOG.isWarnEnabled()) {
               GeneratorJob.LOG.warn(
                 "Couldn't normalize url: " + url + " (" + e2.getMessage() + ")");
+              context.getCounter(probes.FILTERED_OUT).increment(1);
               return;
             }
           }
@@ -197,7 +204,7 @@ public class ParserJob extends NutchTool {
         assert link.getOut()!=null;
 
         context.write(link.getKey(), link);
-        context.getCounter(probes.NEW_URLS).increment(1);
+        context.getCounter(probes.NEW_LINKS).increment(1);
 
       }
 
@@ -323,6 +330,10 @@ public class ParserJob extends NutchTool {
 
     currentJob.waitForCompletion(true);
     ToolUtil.recordJobStatus(null, currentJob, results);
+
+    LOG.info("ParserJob: new link(s): "+ currentJob.getCounters().findCounter(probes.NEW_LINKS).getValue());
+    LOG.info("ParserJob: filtered-out link(s): "+ currentJob.getCounters().findCounter(probes.FILTERED_OUT).getValue());
+
     return results;
   }
 
