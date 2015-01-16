@@ -65,10 +65,8 @@ public class FrontierJob extends NutchTool {
       WebPage outPage = pageBuilder.build();
       assert link.getOut()!=null;
       outPage.setKey(link.getOut());
-      if (!pageDB.containsKey(link.getOut())){
-        pageDB.put(link.getOut(), outPage);
-        context.getCounter(probes.NEW_PAGES).increment(1);
-      }
+      pageDB.putIfAbsent(link.getOut(), outPage);
+      context.getCounter(probes.NEW_PAGES).increment(1);
 
     }
 

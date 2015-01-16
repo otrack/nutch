@@ -52,7 +52,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
 
   @Override
   protected int numberOfNodes() {
-    return 1;
+    return 3;
   }
 
   @Override
@@ -147,11 +147,13 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
   public void frontier() throws Exception {
 
     String batchId = "0";
+    Random random = new Random(System.currentTimeMillis());
+    int modulo = random.nextInt(nbGeneratedLinks());
     Link.Builder linkBuilder = Link.newBuilder();
     for( int i=0; i<nbGeneratedLinks(); i++) {
       Link link = linkBuilder.build();
-      link.setIn("http://foo.org");
-      link.setOut("http://bar.org/" + i);
+      link.setIn("http://foo.org/"+i);
+      link.setOut("http://bar.org/" + i%modulo);
       link.setBatchId(batchId);
       link.setKey(link.getOut()+"--"+link.getIn());
       site(0).getLinkDB().put(link.getKey(), link);
@@ -172,7 +174,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
       future.get();
 
     assertEquals(
-      nbGeneratedLinks(),
+      modulo,
       readPageDB(null).size());
 
   }
