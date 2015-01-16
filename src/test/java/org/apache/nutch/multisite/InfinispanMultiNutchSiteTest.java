@@ -52,7 +52,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
 
   @Override
   protected int numberOfNodes() {
-    return 3;
+    return 1;
   }
 
   @Override
@@ -212,7 +212,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
     for(NutchSite site : sites) {
       String batchId = batchIds.get(site).get();
       futures.add(
-        site.fetch(batchId, 4, false, 0));
+        site.fetch(batchId, 4, false, 4));
     }
 
     // check results
@@ -344,11 +344,11 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
   @Test
   public void longCrawl() throws  Exception{
 
-    final int NPAGES = 10000;
-    final int DEGREE = 20;
+    final int NPAGES = 1000;
+    final int DEGREE = 100;
 
     final int INJECT = 1000;
-    final int DEPTH = 5;
+    final int DEPTH = 1;
     final int WIDTH = 1000;
 
     Configuration conf = NutchConfiguration.create();

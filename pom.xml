@@ -36,7 +36,7 @@ limitations under the License.
     <properties>
         <avro.version>1.7.6</avro.version>
         <jackson.version>1.8.8</jackson.version>
-        <hadoop.version>2.2.0</hadoop.version>
+        <hadoop.version>2.5.2</hadoop.version>
         <gora.version>0.5-SNAPSHOT</gora.version>
         <infinispan.version>7.0.1-SNAPSHOT</infinispan.version>
         <lucene-solr.version>4.10.1</lucene-solr.version>
@@ -104,13 +104,18 @@ limitations under the License.
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
