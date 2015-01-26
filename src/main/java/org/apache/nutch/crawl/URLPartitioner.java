@@ -69,10 +69,11 @@ public class URLPartitioner implements Configurable {
     mode = conf.get(PARTITION_MODE_KEY, PARTITION_MODE_HOST);
     // check that the mode is known
     if (!mode.equals(PARTITION_MODE_IP) && !mode.equals(PARTITION_MODE_DOMAIN)
-        && !mode.equals(PARTITION_MODE_HOST)) {
+        && !mode.equals(PARTITION_MODE_HOST) && !mode.equals(PARTITION_MODE_URL) ) {
       LOG.error("Unknown partition mode : " + mode + " - forcing to byHost");
       mode = PARTITION_MODE_HOST;
     }
+    LOG.info("Using mode : " + mode);
     normalizers = new URLNormalizers(conf, URLNormalizers.SCOPE_PARTITION);
   }
 

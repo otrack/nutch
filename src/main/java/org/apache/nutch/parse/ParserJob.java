@@ -21,31 +21,26 @@ import org.apache.gora.mapreduce.GoraMapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.util.StringUtils;
 import org.apache.hadoop.util.ToolRunner;
-import org.apache.nutch.crawl.DbUpdaterJob;
 import org.apache.nutch.crawl.GeneratorJob;
 import org.apache.nutch.crawl.SignatureFactory;
 import org.apache.nutch.metadata.HttpHeaders;
 import org.apache.nutch.metadata.Nutch;
-import org.apache.nutch.net.URLFilterException;
-import org.apache.nutch.net.URLFilters;
-import org.apache.nutch.net.URLNormalizers;
-import org.apache.nutch.scoring.ScoreDatum;
-import org.apache.nutch.scoring.ScoringFilterException;
-import org.apache.nutch.scoring.ScoringFilters;
-import org.apache.nutch.storage.*;
+import org.apache.nutch.storage.Mark;
+import org.apache.nutch.storage.ParseStatus;
+import org.apache.nutch.storage.StorageUtils;
+import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
 
-import static org.apache.nutch.net.URLNormalizers.SCOPE_CRAWLDB;
 import static org.apache.nutch.util.FilterUtils.getBatchIdFilter;
 
 public class ParserJob extends NutchTool {
@@ -76,23 +71,18 @@ public class ParserJob extends NutchTool {
   // Object fields
   private Configuration conf;
 
-
-  // TODO if filter, normalize booleans
-  public static class ParserMapper
-      extends GoraMapper<String, WebPage, String, Link> {
+  public static class ParserMapper 
+    extends GoraMapper<String, WebPage, String, WebPage> {
 
     private ParseUtil parseUtil;
+
     private boolean shouldResume;
+
     private boolean force;
+
     private String batchId;
+
     private boolean skipTruncated;
-
-    private Link.Builder linkBuilder;
-    private ScoringFilters scoringFilters;
-    private URLNormalizers normalizers;
-    private URLFilters filters;
-
-    private List<ScoreDatum> scoreData;
 
     @Override
     public void setup(Context context) throws IOException {
@@ -101,116 +91,50 @@ public class ParserJob extends NutchTool {
       shouldResume = conf.getBoolean(RESUME_KEY, false);
       force = conf.getBoolean(FORCE_KEY, false);
       batchId = conf.get(GeneratorJob.BATCH_ID, Nutch.ALL_BATCH_ID_STR);
-      skipTruncated=conf.getBoolean(SKIP_TRUNCATED, true);
-      linkBuilder = Link.newBuilder();
-      scoreData = new ArrayList<>();
-      scoringFilters = new ScoringFilters(context.getConfiguration());
-      normalizers = new URLNormalizers(conf, SCOPE_CRAWLDB);
-      filters = new URLFilters(conf);
+      skipTruncated = conf.getBoolean(SKIP_TRUNCATED, true);
     }
 
     @Override
     public void map(String key, WebPage page, Context context)
-        throws IOException, InterruptedException {
+      throws IOException, InterruptedException {
 
       String url = TableUtil.unreverseUrl(key);
-        if (Mark.FETCH_MARK.checkMark(page) == null) {
-          if (LOG.isDebugEnabled()) {
-            LOG.warn("Skipping " + TableUtil.unreverseUrl(key) + "; not fetched yet !");
-          }
+      if (Mark.FETCH_MARK.checkMark(page) == null) {
+        if (LOG.isDebugEnabled()) {
+          LOG.warn("Skipping " + TableUtil.unreverseUrl(key) + "; not fetched yet !");
+        }
+        context.getCounter(probes.FILTERED_OUT).increment(1);
+        return;
+      }
+      if (shouldResume && Mark.PARSE_MARK.checkMark(page) != null) {
+        if (force) {
+          LOG.warn("Forced parsing " + url + "; already parsed");
+        } else {
+          LOG.warn("Skipping " + url + "; already parsed");
           context.getCounter(probes.FILTERED_OUT).increment(1);
           return;
         }
-        if (shouldResume && Mark.PARSE_MARK.checkMark(page) != null) {
-          if (force) {
-            LOG.warn("Forced parsing " + url + "; already parsed");
-          } else {
-            LOG.warn("Skipping " + url + "; already parsed");
-            context.getCounter(probes.FILTERED_OUT).increment(1);
-            return;
-          }
-        } else {
-          LOG.debug("Parsing " + url);
-        }
+      } else {
+        LOG.debug("Parsing " + url);
+      }
 
       if (skipTruncated && isTruncated(url, page)) {
-        context.getCounter(probes.FILTERED_OUT).increment(1);
         return;
       }
 
       parseUtil.process(key, page);
       ParseStatus pstatus = page.getParseStatus();
+      context.getCounter(probes.NEW_LINKS).increment(page.getOutlinks().size());
       if (pstatus != null) {
         context.getCounter("ParserStatus",
-            ParseStatusCodes.majorCodes[pstatus.getMajorCode()]).increment(1);
+          ParseStatusCodes.majorCodes[pstatus.getMajorCode()]).increment(1);
       }
 
-      // TODO: Outlink filtering (i.e. "only keep the first n outlinks")
-      scoreData.clear();
-      Map<String, String> outlinks = page.getOutlinks();
-      if (outlinks != null) {
-        for (Map.Entry<String, String> e : outlinks.entrySet()) {
-          int depth = Integer.MAX_VALUE;
-          String depthString = page.getMarkers().get(DbUpdaterJob.DISTANCE);
-          if (depthString != null)
-            depth = Integer.parseInt(depthString);
-          try {
-            String out = normalizers.normalize(e.getKey(), SCOPE_CRAWLDB);
-            if (filters.filter(out) == null) {
-              context.getCounter(probes.FILTERED_OUT).increment(1);
-              return;
-            }
-            scoreData.add(
-              new ScoreDatum(
-                0.0f,
-                out,
-                e.getValue(),
-                depth));
-          } catch (URLFilterException e1) {
-            if (GeneratorJob.LOG.isWarnEnabled()) {
-              GeneratorJob.LOG.warn(
-                "Couldn't filter url: " + url + " (" + e1.getMessage() + ")");
-              context.getCounter(probes.FILTERED_OUT).increment(1);
-              return;
-            }
-          } catch (MalformedURLException e2) {
-            if (GeneratorJob.LOG.isWarnEnabled()) {
-              GeneratorJob.LOG.warn(
-                "Couldn't normalize url: " + url + " (" + e2.getMessage() + ")");
-              context.getCounter(probes.FILTERED_OUT).increment(1);
-              return;
-            }
-          }
-        }
-      }
-
-      try {
-        scoringFilters.distributeScoreToOutlinks(
-          url, page, scoreData, (outlinks == null ? 0 : outlinks.size()));
-      } catch (ScoringFilterException e) {
-        LOG.warn("Distributing score failed for URL: " + key +
-          " exception:" + StringUtils.stringifyException(e));
-      }
-
-      for (ScoreDatum scoreDatum: scoreData){
-        Link link = linkBuilder.build();
-        link.setIn(TableUtil.reverseUrl(url));
-        link.setOut(TableUtil.reverseUrl(scoreDatum.getUrl()));
-        link.setKey(link.getOut()+"--"+link.getIn()); // to put it at the site holding the page to which it points.
-        link.setDistance(scoreDatum.getDistance());
-        link.setBatchId(batchId);
-        link.setScore(page.getScore());
-
-        assert link.getOut()!=null;
-
-        context.write(link.getKey(), link);
-        context.getCounter(probes.NEW_LINKS).increment(1);
-
-      }
-
+      context.write(key, page);
     }
-
   }
+
+  
   
   public ParserJob() {}
 
@@ -321,7 +245,7 @@ public class ParserJob extends NutchTool {
       currentJob,
       fields,
       String.class,
-      Link.class,
+      WebPage.class,
       ParserMapper.class,
       batchIdFilter);
 
@@ -332,7 +256,6 @@ public class ParserJob extends NutchTool {
     ToolUtil.recordJobStatus(null, currentJob, results);
 
     LOG.info("ParserJob: new link(s): "+ currentJob.getCounters().findCounter(probes.NEW_LINKS).getValue());
-    LOG.info("ParserJob: filtered-out link(s): "+ currentJob.getCounters().findCounter(probes.FILTERED_OUT).getValue());
 
     return results;
   }

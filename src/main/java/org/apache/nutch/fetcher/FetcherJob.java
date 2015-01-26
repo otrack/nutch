@@ -16,7 +16,6 @@
  ******************************************************************************/
 package org.apache.nutch.fetcher;
 
-import org.apache.gora.filter.FilterOp;
 import org.apache.gora.filter.MapFieldValueFilter;
 import org.apache.gora.mapreduce.GoraMapper;
 import org.apache.hadoop.conf.Configuration;
@@ -43,8 +42,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 
-import static org.apache.nutch.crawl.URLPartitioner.PARTITION_MODE_HOST;
 import static org.apache.nutch.crawl.URLPartitioner.PARTITION_MODE_KEY;
+import static org.apache.nutch.crawl.URLPartitioner.PARTITION_MODE_URL;
+import static org.apache.nutch.util.FilterUtils.getBatchIdFilter;
 
 /**
  * Multi-threaded fetcher.
@@ -169,7 +169,7 @@ public class FetcherJob extends NutchTool {
     LOG.info("FetcherJob: threads: " + getConf().getInt(THREADS_KEY, 10));
     LOG.info("FetcherJob: parsing: " + getConf().getBoolean(PARSE_KEY, false));
     LOG.info("FetcherJob: resuming: " + getConf().getBoolean(RESUME_KEY, false));
-    LOG.info("FetcherJob: partitioning: " + getConf().get(PARTITION_MODE_KEY, PARTITION_MODE_HOST));
+    LOG.info("FetcherJob: partitioning: " + getConf().get(PARTITION_MODE_KEY, PARTITION_MODE_URL));
 
     // set the actual time for the timelimit relative
     // to the beginning of the whole job and not of a specific task
@@ -197,7 +197,7 @@ public class FetcherJob extends NutchTool {
     LOG.info("FetcherJob: tasks: " +numTasks);
 
     Collection<WebPage.Field> fields = getFields(currentJob);
-    MapFieldValueFilter<String, WebPage> batchIdFilter = getBatchIdFilter(batchId);
+    MapFieldValueFilter<String, WebPage> batchIdFilter = getBatchIdFilter(batchId, Mark.GENERATE_MARK);
     StorageUtils.initMapperJob(
       currentJob, fields, IntWritable.class,
       FetchEntry.class, FetcherMapper.class, FetchEntryPartitioner.class,
@@ -208,19 +208,6 @@ public class FetcherJob extends NutchTool {
     ToolUtil.recordJobStatus(null, currentJob, results);
 
     return results;
-  }
-
-  private MapFieldValueFilter<String, WebPage> getBatchIdFilter(String batchId) {
-    if (batchId.equals(Nutch.ALL_CRAWL_ID)) {
-      return null;
-    }
-    MapFieldValueFilter<String, WebPage> filter = new MapFieldValueFilter<>();
-    filter.setFieldName(WebPage.Field.MARKERS.toString());
-    filter.setFilterOp(FilterOp.EQUALS);
-    filter.setFilterIfMissing(true);
-    filter.setMapKey(Mark.GENERATE_MARK.getName());
-    filter.getOperands().add(batchId);
-    return filter;
   }
 
     /**

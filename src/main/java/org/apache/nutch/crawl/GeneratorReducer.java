@@ -18,7 +18,7 @@ package org.apache.nutch.crawl;
 
 import org.apache.gora.mapreduce.GoraReducer;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.nutch.crawl.GeneratorJob.SelectorEntry;
+import org.apache.nutch.crawl.GeneratorJob.*;
 import org.apache.nutch.fetcher.FetcherJob.FetcherMapper;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.WebPage;
@@ -57,7 +57,7 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
       Context context) throws IOException, InterruptedException {
     for (WebPage page : values) {
       if (limit!=0 && count >= limit) {
-        GeneratorJob.LOG.debug("Skipping " + page.getKey()+ "; too many generated urls");
+        GeneratorJob.LOG.trace("Skipping " + page.getKey()+ "; too many generated urls");
         context.getCounter("Generator", "LIMIT").increment(1);
         return;
       }
@@ -90,7 +90,7 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
         continue;
       }
       context.getCounter("Generator", "GENERATE_MARK").increment(1);
-      LOG.debug("GeneratedUrl : ",key.getKey());
+      LOG.trace("GeneratedUrl : "+key.getKey());
       count++;
     }
   }

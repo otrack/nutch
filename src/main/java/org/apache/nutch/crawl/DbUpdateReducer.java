@@ -16,7 +16,6 @@
  ******************************************************************************/
 package org.apache.nutch.crawl;
 
-import org.apache.avro.util.Utf8;
 import org.apache.gora.mapreduce.GoraReducer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Writable;
@@ -49,12 +48,12 @@ public class DbUpdateReducer extends
   private int maxInterval;
   private FetchSchedule schedule;
   private ScoringFilters scoringFilters;
-  private List<ScoreDatum> inlinkedScoreData = new ArrayList<ScoreDatum>();
+  private List<ScoreDatum> inlinkedScoreData = new ArrayList<>();
   private int maxLinks;
 
   @Override
-  protected void setup(Context context) throws IOException,
-      InterruptedException {
+  protected void setup(Context context) throws IOException, 
+    InterruptedException {
     Configuration conf = context.getConfiguration();
     retryMax = conf.getInt("db.fetch.retry.max", 3);
     additionsAllowed = conf.getBoolean(CRAWLDB_ADDITIONS_ALLOWED, true);
@@ -67,8 +66,8 @@ public class DbUpdateReducer extends
   @Override
   protected void reduce(UrlWithScore key, Iterable<NutchWritable> values,
       Context context) throws IOException, InterruptedException {
+    
     String keyUrl = key.getUrl().toString();
-
     WebPage page = null;
     inlinkedScoreData.clear();
 
@@ -90,11 +89,10 @@ public class DbUpdateReducer extends
     } catch (Exception e) {
       // this can happen because a newly discovered malformed link
       // may slip by url filters
-      // TODO: Find a better solution
       return;
     }
 
-    if (page == null) { // new row
+    if (page == null) { // new webpage
       if (!additionsAllowed) {
         return;
       }
@@ -130,8 +128,7 @@ public class DbUpdateReducer extends
         long prevFetchTime = page.getPrevFetchTime();
         long modifiedTime = page.getModifiedTime();
         long prevModifiedTime = page.getPrevModifiedTime();
-        CharSequence lastModified = page.getHeaders().get(
-            new Utf8("Last-Modified"));
+        String lastModified = page.getHeaders().get("Last-Modified");
         if (lastModified != null) {
           try {
             modifiedTime = HttpDateFormat.toLong(lastModified.toString());
@@ -182,9 +179,9 @@ public class DbUpdateReducer extends
     }
     if (smallestDist != Integer.MAX_VALUE) {
       int oldDistance = Integer.MAX_VALUE;
-      CharSequence oldDistUtf8 = page.getMarkers().get(DbUpdaterJob.DISTANCE);
-      if (oldDistUtf8 != null)
-        oldDistance = Integer.parseInt(oldDistUtf8.toString());
+      String oldDistString= page.getMarkers().get(DbUpdaterJob.DISTANCE);
+      if (oldDistString!= null)
+        oldDistance = Integer.parseInt(oldDistString);
       int newDistance = smallestDist + 1;
       if (newDistance < oldDistance) {
         page.getMarkers().put(
@@ -200,20 +197,18 @@ public class DbUpdateReducer extends
           + StringUtils.stringifyException(e));
     }
 
-    // clear markers
-    // But only delete when they exist. This is much faster for the underlying
-    // store. The markers are on the input anyway.
     if (page.getMetadata().get(FetcherJob.REDIRECT_DISCOVERED) != null) {
       page.getMetadata().put(FetcherJob.REDIRECT_DISCOVERED, null);
     }
-    Mark.GENERATE_MARK.removeMarkIfExist(page);
-    Mark.FETCH_MARK.removeMarkIfExist(page);
-    String parse_mark = Mark.PARSE_MARK.checkMark(page);
-    if (parse_mark!= null) {
-      Mark.UPDATEDB_MARK.putMark(page, parse_mark);
-      Mark.PARSE_MARK.removeMark(page);
-    }
 
+    String parse_mark = Mark.PARSE_MARK.checkMark(page);
+    if (parse_mark != null) {
+      Mark.UPDATEDB_MARK.putMark(page, parse_mark);
+      context.getCounter(DbUpdaterJob.probes.UPDATED_PAGES).increment(1);
+    } else {
+      context.getCounter(DbUpdaterJob.probes.NEW_PAGES).increment(1);
+    }
+    
     context.write(keyUrl, page);
   }
 

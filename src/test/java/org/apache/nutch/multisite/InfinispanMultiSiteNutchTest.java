@@ -52,12 +52,12 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
 
   @Override
   protected int numberOfNodes() {
-    return 1;
+    return 3;
   }
 
   @Override
   protected int partitionSize() {
-    return 1000;
+    return 1;
   }
 
   @Override
@@ -96,19 +96,19 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
   public void inject() throws Exception {
 
     List<String> urls = new ArrayList<String>();
-    for (int i = 0; i < nbGeneratedPages(); i++) {
+    for (int i = 0; i < nbPages(); i++) {
       urls.add("http://zzz.com/" + i + ".html\tnutch.score=0");
     }
 
     site(0).inject(urls).get();
-    assertEquals(100,readPageDB(null).size());
+    assertEquals(nbPages(),readPageDB(null).size());
 
   }
 
   @Test
   public void generate() throws Exception {
     List<String> urls = new ArrayList<String>();
-    for (int i = 0; i < nbGeneratedPages(); i++) {
+    for (int i = 0; i < nbPages(); i++) {
       urls.add("http://zzz.com/" + i + ".html\tnutch.score=0");
     }
 
@@ -117,65 +117,15 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
 
     List<Future<String>> futures = new ArrayList<>();
 
-    // generate round #1
+    // generate
     for(NutchSite site : sites)
       futures.add(site
-        .generate(nbGeneratedPages()/2, System.currentTimeMillis(), false, false));
+        .generate(nbPages(), System.currentTimeMillis(), false, false));
     for(Future<String> future : futures)
       future.get();
 
     // check result
-    assertEquals(
-      nbGeneratedPages()/2,
-      readPageDB(Mark.GENERATE_MARK).size());
-
-    // generate round #2
-    futures.clear();
-    for(NutchSite site : sites)
-      futures.add(site
-        .generate(nbGeneratedPages()/2+1, System.currentTimeMillis(), false, false));
-    for(Future<String> future : futures)
-      future.get();
-
-    // check result
-    assertEquals(
-      nbGeneratedPages(),
-     readPageDB(Mark.GENERATE_MARK).size());
-  }
-
-  @Test
-  public void frontier() throws Exception {
-
-    String batchId = "0";
-    Random random = new Random(System.currentTimeMillis());
-    int modulo = random.nextInt(nbGeneratedLinks());
-    Link.Builder linkBuilder = Link.newBuilder();
-    for( int i=0; i<nbGeneratedLinks(); i++) {
-      Link link = linkBuilder.build();
-      link.setIn("http://foo.org/"+i);
-      link.setOut("http://bar.org/" + i%modulo);
-      link.setBatchId(batchId);
-      link.setKey(link.getOut()+"--"+link.getIn());
-      site(0).getLinkDB().put(link.getKey(), link);
-    }
-    site(0).getLinkDB().flush();
-
-    List<Link> links = readLinkDB();
-    assertEquals(nbGeneratedLinks(),links.size());
-
-    // frontier
-    List<Future<Integer>> futures = new ArrayList<>();
-    for(NutchSite site : sites)
-      futures.add(
-        site.frontier(batchId));
-
-    // check result
-    for(Future<Integer> future : futures)
-      future.get();
-
-    assertEquals(
-      modulo,
-      readPageDB(null).size());
+    assertEquals(nbPages(),readPageDB(Mark.GENERATE_MARK).size());
 
   }
 
@@ -300,9 +250,6 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
     for(Future<Integer> future : futures)
       future.get();
 
-    // verify content
-    assertEquals(5,readLinkDB().size());
-
     // update pageDB
     futures.clear();
     for(NutchSite site : sites) {
@@ -315,28 +262,16 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
 
     assertEquals(3,readPageDB(Mark.UPDATEDB_MARK).size());
 
-    // update Frontier
-    futures.clear();
-    for(NutchSite site : sites) {
-      String batchId = batchIds.get(site).get();
-      futures.add(
-        site.frontier(batchId));
-    }
-    for(Future<Integer> future : futures)
-      future.get();
-
     // verify content
     List<URLWebPage> pages = readPageDB(null);
-    List<Link> links = readLinkDB();
-    assertEquals(5,links.size());
     assertEquals(4,pages.size());
     for (URLWebPage urlWebPage : pages) {
-      if (urlWebPage.getUrl().contains("dup"))
-        assertEquals(0,urlWebPage.getDatum().getInlinks().size());
+      if (urlWebPage.getUrl().contains("index"))
+        assertEquals(2,urlWebPage.getDatum().getInlinks().size());
       else if (urlWebPage.getUrl().contains("page")) // pagea and pageb
         assertEquals(1,urlWebPage.getDatum().getInlinks().size());
       else // index
-        assertEquals(2,urlWebPage.getDatum().getInlinks().size());
+        assertEquals(1,urlWebPage.getDatum().getInlinks().size());
     }
 
     server.stop();
@@ -347,11 +282,10 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
   public void longCrawl() throws  Exception{
 
     final int NPAGES = 1000;
-    final int DEGREE = 100;
+    final int DEGREE = 30;
 
-    final int INJECT = 1000;
-    final int DEPTH = 1;
-    final int WIDTH = 1000;
+    final int DEPTH = 3;
+    final int WIDTH = 100;
 
     Configuration conf = NutchConfiguration.create();
     File tmpDir = Files.createTempDir();
@@ -367,7 +301,7 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
     
       ArrayList<String> urls = new ArrayList<>();
       for (String page : pages) {
-        if (urls.size()==INJECT) break;
+        if (urls.size()==WIDTH) break;
         addUrl(urls, page, server);
       }
       sites.get(0).inject(urls).get();
@@ -379,16 +313,12 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
       for(Future<Integer> future : futures)
         future.get();
 
-      List<URLWebPage> resultPages = readPageDB(Mark.UPDATEDB_MARK, "key");
-      List<Link> resultLinks = readLinkDB();
+      List<URLWebPage> resultPages = readPageDB(Mark.UPDATEDB_MARK, "key", "markers");
       LOG.info("Pages: " + resultPages.size());
-      LOG.info("Links: " + resultLinks.size());
+      assertEquals(DEPTH*WIDTH, resultPages.size()); // very likely when WIDTH * DEGREE >> PAGES.
       if (LOG.isDebugEnabled()) {
         for (URLWebPage urlWebPage : resultPages) {
           System.out.println(urlWebPage.getDatum().getKey());
-        }
-        for (Link link: resultLinks) {
-          System.out.println(link.getKey());
         }
       }
     
@@ -406,11 +336,11 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
 
   // Helpers
 
-  public int nbGeneratedPages(){
+  public int nbPages(){
     return 10;
   }
 
-  public int nbGeneratedLinks(){
+  public int nbLinks(){
     return 1000;
   }
 

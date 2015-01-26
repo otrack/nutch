@@ -16,10 +16,8 @@
  ******************************************************************************/
 package org.apache.nutch.crawl;
 
-import org.apache.gora.filter.FilterOp;
 import org.apache.gora.filter.MapFieldValueFilter;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.UrlWithScore.UrlOnlyPartitioner;
 import org.apache.nutch.crawl.UrlWithScore.UrlScoreComparator;
@@ -38,10 +36,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
+import static org.apache.nutch.util.FilterUtils.getBatchIdFilter;
+
 public class DbUpdaterJob extends NutchTool {
 
   public static final Logger LOG = LoggerFactory.getLogger(DbUpdaterJob.class);
-
 
   private static final Collection<WebPage.Field> FIELDS =
     new HashSet<WebPage.Field>();
@@ -64,6 +63,11 @@ public class DbUpdaterJob extends NutchTool {
   }
 
   public static final String DISTANCE = "dist";
+
+  public static enum probes{
+    UPDATED_PAGES,
+    NEW_PAGES
+  }
 
   public DbUpdaterJob() {
 
@@ -100,35 +104,22 @@ public class DbUpdaterJob extends NutchTool {
     currentJob.setPartitionerClass(UrlOnlyPartitioner.class);
     currentJob.setSortComparatorClass(UrlScoreComparator.class);
     currentJob.setGroupingComparatorClass(UrlOnlyComparator.class);
+
+    MapFieldValueFilter<String, WebPage> batchIdFilter = getBatchIdFilter(batchId, Mark.FETCH_MARK);
     
-    MapFieldValueFilter<String, WebPage> batchIdFilter = getBatchIdFilter(batchId);
     StorageUtils.initMapperJob(
       currentJob,
       fields,
-      String.class,
-      WebPage.class,
+      UrlWithScore.class,
+      NutchWritable.class,
       DbUpdateMapper.class,
       batchIdFilter);
 
-    currentJob.setReducerClass(Reducer.class);
-    currentJob.setNumReduceTasks(0);
+    currentJob.setReducerClass(DbUpdateReducer.class);
 
     currentJob.waitForCompletion(true);
     ToolUtil.recordJobStatus(null, currentJob, results);
     return results;
-  }
-
-  private MapFieldValueFilter<String, WebPage> getBatchIdFilter(String batchId) {
-    if (batchId.equals(Nutch.ALL_CRAWL_ID)) {
-      return null;
-    }
-    MapFieldValueFilter<String, WebPage> filter = new MapFieldValueFilter<String, WebPage>();
-    filter.setFieldName(WebPage.Field.MARKERS.toString());
-    filter.setFilterOp(FilterOp.EQUALS);
-    filter.setFilterIfMissing(true);
-    filter.setMapKey(Mark.GENERATE_MARK.getName());
-    filter.getOperands().add(batchId);
-    return filter;
   }
 
   private int updateTable(String crawlId,String batchId) throws Exception {
@@ -143,6 +134,8 @@ public class DbUpdaterJob extends NutchTool {
             Nutch.ARG_BATCH, batchId));
     
     long finish = System.currentTimeMillis();
+    LOG.info("DbUpdaterJob: updated page(s): "+ currentJob.getCounters().findCounter(probes.UPDATED_PAGES).getValue());
+    LOG.info("DbUpdaterJob: new page(s): "+ currentJob.getCounters().findCounter(probes.NEW_PAGES).getValue());
     LOG.info("DbUpdaterJob: finished at " + sdf.format(finish) + ", time elapsed: " + TimingUtil.elapsedTime(start, finish));
     return 0;
   }

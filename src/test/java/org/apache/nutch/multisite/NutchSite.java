@@ -1,6 +1,5 @@
 package org.apache.nutch.multisite;
 
-import org.apache.gora.infinispan.store.InfinispanStore;
 import org.apache.gora.store.DataStore;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -48,14 +47,12 @@ public class NutchSite {
   private DataStore<String, WebPage> pageDB;
   private DataStore<String, Link> linkDB;
   private boolean isPersistent;
-  private String partitionSize;
 
   public NutchSite(Path path, String siteName, boolean isPersistent, String connectionString, String partitionSize) throws IOException {
     this.testdir = path;
     this.siteName = siteName;
     this.isPersistent = isPersistent;
     this.connectionString = connectionString;
-    this.partitionSize = partitionSize;
   }
 
 
@@ -65,7 +62,6 @@ public class NutchSite {
       fs = FileSystem.get(conf);
       conf.set(Nutch.CRAWL_ID_KEY, siteName);
       conf.set(GORA_CONNECTION_STRING_KEY,connectionString);
-      conf.set(InfinispanStore.PARTITION_SIZE_KEY,partitionSize);
       pageDB = StorageUtils.createStore(conf, String.class, WebPage.class);
       pageDB.deleteSchema();
       linkDB = StorageUtils.createStore(conf, String.class, Link.class);
@@ -80,7 +76,7 @@ public class NutchSite {
       }
       throw new RuntimeException();
     }
-    LOG.info("Site "+siteName+" set-up succeed");
+    LOG.info("Site "+siteName+" set-up success");
   }
 
   public void tearDownClass() throws IOException {
@@ -157,18 +153,6 @@ public class NutchSite {
     });
   }
 
-  public Future<Integer>frontier(final String batchId)
-    throws Exception {
-    LOG.info("Frontier");
-    return pool.submit(new Callable<Integer>() {
-      @Override
-      public Integer call() throws Exception {
-        FrontierJob frontierJob= new FrontierJob(conf);
-        return frontierJob.frontier(batchId);
-      }
-    });
-  }
-
   public Future<Integer> crawl(final int width, final int depth)
     throws Exception {
 
@@ -182,10 +166,9 @@ public class NutchSite {
           conf.set(GeneratorJob.GENERATOR_MAX_COUNT, Integer.toString(width));
           String batchId = generate(width, System.currentTimeMillis(), false, false)
             .get();
-          fetch(batchId, 4, false, 4).get();
+          fetch(batchId, 4, false, 1).get();
           parse(batchId, false, false).get();
-          update(batchId).get();
-          frontier(batchId).get();
+          update("-all").get();
           round++;
         }
         return 0;

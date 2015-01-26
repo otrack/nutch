@@ -41,7 +41,7 @@ extends GoraMapper<String, WebPage, SelectorEntry, WebPage> {
   private FetchSchedule schedule;
   private ScoringFilters scoringFilters;
   private long curTime;
-  private SelectorEntry entry = new SelectorEntry();
+  private SelectorEntry entry;
   private int maxDistance;
 
   @Override
@@ -101,6 +101,7 @@ extends GoraMapper<String, WebPage, SelectorEntry, WebPage> {
     } catch (ScoringFilterException e) {
       //ignore
     }
+    entry = new SelectorEntry();
     entry.set(url, score);
     context.write(entry, page);
   }

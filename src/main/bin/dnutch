@@ -1,7 +1,10 @@
 #!/bin/bash
 
-export NUTCH_DIR="/opt/nutch/"
-export HADOOP_CLASSPATH="${NUTCH_DIR}/lib/nutch-2.2-jar-with-dependencies.jar:${NUTCH_DIR}/lib/nutch-2.2.jar"
+export NUTCH_DIR="/opt/nutch"
+export HADOOP_CLASSPATH=$(JARS=("$NUTCH_DIR"/lib/*.jar); IFS=:; echo "${JARS[*]}")
+export LIBJARS=$(JARS=("$NUTCH_DIR"/lib/*.jar); IFS=,; echo "${JARS[*]}")
+export EXTJARS=$(echo $LIBJARS | sed 's|'${NUTCH_DIR}'/lib/nutch-2.2.jar||'| sed 's|'${NUTCH_DIR}'|hdfs://172.16.0.200:8020|g')
+export ARGS="-Dmapred.cache.files=${EXTJARS} -Dmapred.cache.archives=hdfs://172.16.0.200:8020/plugin"
 
 hadoop fs -mkdir /inject &> /dev/null
 if (($? == 0));
@@ -9,7 +12,7 @@ then
     hadoop fs -put ${NUTCH_DIR}/inject/* /inject &> /dev/null
 fi
 
-hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.crawl.InjectorJob /inject &> tmp
+hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.crawl.InjectorJob ${ARGS} /inject &> tmp
 if (($? != 0)); then cat tmp; exit -1; fi
 injected=`grep urls\_injected tmp | awk -F "=" '{print $2}'`
 rejected=`grep urls\_rejected tmp | awk -F "=" '{print $2}'`
@@ -24,7 +27,7 @@ do
     it=$((it+1))
     echo "======== Round #${it} ========"
 
-    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.crawl.GeneratorJob -batchId ${it} -topN 1000 &> tmp
+    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.crawl.GeneratorJob ${ARGS} -batchId ${it} -topN 10000 &> tmp
     if (($? != 0)); then cat tmp; exit -1; fi
     generated=`grep GENERATE tmp | awk -F "=" '{print $2}'`
     limit=`grep LIMIT tmp | awk -F "=" '{print $2}'`
@@ -32,7 +35,7 @@ do
     echo "GENERATE ${elapsed} ${generated} ${limit}"
     if [ "${generated}" == "" ]; then exit 0; fi
 
-    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.fetcher.FetcherJob ${it} -threads 100 -numTasks 10 &> tmp
+    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.fetcher.FetcherJob ${ARGS} ${it} -threads 100 -numTasks 3 &> tmp
     if (($? != 0)); then cat tmp; exit -1; fi
     success=`grep SUCCESS tmp | awk -F "=" '{print $2}'`
     notfound=`grep NOTFOUND tmp | awk -F "=" '{print $2}'`
@@ -40,9 +43,7 @@ do
     elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'`
     echo "FETCH ${elapsed} ${success} ${notfound} ${temp_moved}"
 
-    continue # need fixing phases below
-
-    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.parse.ParserJob ${it} &> tmp
+    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.parse.ParserJob -all &> tmp
     if (($? != 0)); then cat tmp; exit -1; fi
     newurls=`grep NEW_LINKS tmp | awk -F "=" '{print $2}'`
     elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'`
@@ -53,11 +54,4 @@ do
     elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'`
     echo "DBUPDATE ${elapsed}"
 
-    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.crawl.FrontierJob ${it} &> tmp
-    if (($? != 0)); then cat tmp; exit -1; fi
-    elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'`
-    newpages=`grep NEW_PAGES tmp | awk -F "=" '{print $2}'`
-    echo "FRONTIER ${elapsed} ${newpages}"
-
 done
-
