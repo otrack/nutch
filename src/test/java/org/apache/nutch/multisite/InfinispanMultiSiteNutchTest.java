@@ -32,10 +32,10 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author PIerre Sutra
  */
-public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
+public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
 
   public static final Logger LOG
-    = LoggerFactory.getLogger(InfinispanMultiNutchSiteTest.class);
+    = LoggerFactory.getLogger(InfinispanMultiSiteNutchTest.class);
 
   @Override
   protected GoraTestDriver createDriver() {
@@ -52,7 +52,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
 
   @Override
   protected int numberOfNodes() {
-    return 3;
+    return 1;
   }
 
   @Override
@@ -407,7 +407,7 @@ public class InfinispanMultiNutchSiteTest extends AbstractMultiNutchSiteTest {
   // Helpers
 
   public int nbGeneratedPages(){
-    return 100;
+    return 10;
   }
 
   public int nbGeneratedLinks(){
