@@ -1321,21 +1321,4 @@
         </description>
     </property>
 
-    <property>
-        <name>gora.buffer.read.limit</name>
-        <value>10000</value>
-        <description>The maximum number of buffered Records we wish to
-            read in on batch. @see org.apache.gora.mapreduce.GoraRecordReader
-        </description>
-    </property>
-
-    <property>
-        <name>gora.buffer.write.limit</name>
-        <value>10000</value>
-        <description>Configures (for the Hadoop record writer) the maximum number of
-            buffered Records we wish to regularly flush to the Gora datastore.
-            @see org.apache.gora.mapreduce.GoraRecordWriter.
-        </description>
-    </property>
-
 </configuration>
