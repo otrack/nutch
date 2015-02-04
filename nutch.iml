@@ -99,9 +99,9 @@
     <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils-core:1.8.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.5" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.6.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.avro:avro:1.7.6" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.avro:avro:1.7.4" level="project" />
     <orderEntry type="library" name="Maven: com.thoughtworks.paranamer:paranamer:2.3" level="project" />
-    <orderEntry type="library" name="Maven: org.xerial.snappy:snappy-java:1.0.5" level="project" />
+    <orderEntry type="library" name="Maven: org.xerial.snappy:snappy-java:1.0.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.tukaani:xz:1.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:2.5.0" level="project" />
@@ -176,12 +176,12 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-context:3.0.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aop:3.0.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:3.0.6.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.avro:avro-mapred:1.7.6" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.avro:avro-ipc:1.7.6" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.avro:avro-mapred:1.7.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.avro:avro-ipc:1.7.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.velocity:velocity:1.7" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.avro:avro-ipc:tests:1.7.6" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.avro:avro-ipc:tests:1.7.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.gora:gora-infinispan:0.5-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-remote-query-server:7.0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-query-dsl:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-query:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-core:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-commons:7.0.1-SNAPSHOT" level="project" />
@@ -189,7 +189,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.jgroups:jgroups:3.6.0.Final" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec:1.0.1.Final" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jboss.marshalling:jboss-marshalling-osgi:1.4.4.Final" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-query-dsl:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-objectfilter:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hibernate.hql:hibernate-hql-parser:1.1.0.Alpha3" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.antlr:antlr-runtime:3.5" level="project" />
@@ -205,10 +204,12 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.hibernate:hibernate-search-infinispan:5.0.0.Beta1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-lucene-directory:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hibernate:hibernate-search-serialization-avro:5.0.0.Beta1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-client-hotrod:7.0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: commons-pool:commons-pool:1.6" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-remote-query-client:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan.protostream:protostream:2.0.2.Final" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.squareup:protoparser:3.1.4" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.avro:avro-maven-plugin:1.7.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.avro:avro-maven-plugin:1.7.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.maven:maven-plugin-api:2.0.10" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.maven:maven-project:2.0.10" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.maven:maven-settings:2.0.10" level="project" />
@@ -225,16 +226,12 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.maven:maven-plugin-registry:2.0.10" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.maven.shared:file-management:1.2.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.maven.shared:maven-shared-io:1.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.avro:avro-compiler:1.7.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.apache.avro:avro-compiler:1.7.4" level="project" />
+    <orderEntry type="library" name="Maven: org.infinispan:infinispan-ensemble:7.0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-remote-query-server:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-server-core:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: io.netty:netty-all:4.0.20.Final" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.scala-lang:scala-library:2.11.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-versioning:7.0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-atomic-factory:7.0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.18.0-GA" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-client-hotrod:7.0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: commons-pool:commons-pool:1.6" level="project" />
-    <orderEntry type="library" name="Maven: org.infinispan:infinispan-ensemble:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: net.killa.kept:KeptCollections:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.resteasy:tjws:3.0.8.Final" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.resteasy:resteasy-jaxrs:3.0.7.Final" level="project" />
@@ -273,6 +270,9 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.gora:gora-core:test-jar:tests:0.5-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.gora:gora-infinispan:test-jar:tests:0.5-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-ensemble:test-jar:tests:7.0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-versioning:7.0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-atomic-factory:7.0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.18.0-GA" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-core:test-jar:tests:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-client-hotrod:test-jar:tests:7.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.infinispan:infinispan-server-core:test-jar:tests:7.0.1-SNAPSHOT" level="project" />
@@ -323,6 +323,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: com.carrotsearch.randomizedtesting:junit4-ant:2.1.6" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.carrotsearch.randomizedtesting:randomizedtesting-runner:2.1.6" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apache.ant:ant:1.8.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:4.10.1" level="project" />
   </component>
 </module>
 

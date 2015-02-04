@@ -590,7 +590,7 @@ public class WebTableReader extends NutchTool implements Tool {
     LongWritable totalCnt = stats.get("T");
     if (totalCnt==null)totalCnt=new LongWritable(0);
     stats.remove("T");
-    results.put("TOTAL urls", totalCnt.get());
+    results.put("total pages", totalCnt.get());
     for (Map.Entry<String, LongWritable> entry : stats.entrySet()) {
       String k = entry.getKey();
       LongWritable val = entry.getValue();

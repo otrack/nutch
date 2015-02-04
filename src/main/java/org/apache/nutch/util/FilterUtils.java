@@ -47,6 +47,15 @@ public class FilterUtils {
     filter.getOperands().add(batchId);
     return filter;
   }
-
+  
+  public static MapFieldValueFilter<String, WebPage> getExcludeNonGeneratedFilter() {
+    MapFieldValueFilter<String, WebPage> filter = new MapFieldValueFilter<>();
+    filter.setFieldName(WebPage.Field.MARKERS.toString());
+    filter.setFilterOp(FilterOp.LIKE);
+    filter.setFilterIfMissing(false);
+    filter.setMapKey(Mark.GENERATE_MARK.getName());
+    filter.getOperands().add("*");
+    return filter;
+  }
 
 }

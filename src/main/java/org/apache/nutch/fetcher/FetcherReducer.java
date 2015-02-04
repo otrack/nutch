@@ -643,6 +643,8 @@ extends GoraReducer<IntWritable, FetchEntry, String, WebPage> {
       if (parse) {
         if (!skipTruncated || (skipTruncated && !ParserJob.isTruncated(fit.url, fit.page))) {
           parseUtil.process(key, fit.page);
+          context.getCounter(ParserJob.probes.NEW_LINKS).increment(
+            fit.page.getOutlinks().size());
         }
       }
       //remove content if storingContent is false. Content is added to fit.page above 

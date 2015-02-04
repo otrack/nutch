@@ -34,6 +34,11 @@
         <name>fetcher.threads.per.queue</name>
         <value>4</value>
     </property>
+    
+    <property>
+        <name>fetcher.parse</name>
+        <value>yes</value>
+    </property>
 
     <property>
         <name>content.server.port</name>

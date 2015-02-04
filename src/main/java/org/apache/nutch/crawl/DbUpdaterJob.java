@@ -16,7 +16,7 @@
  ******************************************************************************/
 package org.apache.nutch.crawl;
 
-import org.apache.gora.filter.MapFieldValueFilter;
+import org.apache.gora.filter.Filter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.UrlWithScore.UrlOnlyPartitioner;
@@ -37,6 +37,8 @@ import java.util.HashSet;
 import java.util.Map;
 
 import static org.apache.nutch.util.FilterUtils.getBatchIdFilter;
+import static org.apache.nutch.util.FilterUtils.getExcludeNonGeneratedFilter;
+import static org.apache.nutch.metadata.Nutch.ALL_CRAWL_ID;
 
 public class DbUpdaterJob extends NutchTool {
 
@@ -66,6 +68,7 @@ public class DbUpdaterJob extends NutchTool {
 
   public static enum probes{
     UPDATED_PAGES,
+    UPDATED_LINKS,
     NEW_PAGES
   }
 
@@ -105,15 +108,19 @@ public class DbUpdaterJob extends NutchTool {
     currentJob.setSortComparatorClass(UrlScoreComparator.class);
     currentJob.setGroupingComparatorClass(UrlOnlyComparator.class);
 
-    MapFieldValueFilter<String, WebPage> batchIdFilter = getBatchIdFilter(batchId, Mark.FETCH_MARK);
-    
+    Filter<String, WebPage> filter;
+    if ( batchId.equals(ALL_CRAWL_ID))
+      filter = getExcludeNonGeneratedFilter();
+    else
+      filter = getBatchIdFilter(batchId, Mark.FETCH_MARK);
+
     StorageUtils.initMapperJob(
       currentJob,
       fields,
       UrlWithScore.class,
       NutchWritable.class,
       DbUpdateMapper.class,
-      batchIdFilter);
+      filter);
 
     currentJob.setReducerClass(DbUpdateReducer.class);
 
@@ -135,7 +142,9 @@ public class DbUpdaterJob extends NutchTool {
     
     long finish = System.currentTimeMillis();
     LOG.info("DbUpdaterJob: updated page(s): "+ currentJob.getCounters().findCounter(probes.UPDATED_PAGES).getValue());
+    LOG.info("DbUpdaterJob: updated link(s): "+ currentJob.getCounters().findCounter(probes.UPDATED_LINKS).getValue());
     LOG.info("DbUpdaterJob: new page(s): "+ currentJob.getCounters().findCounter(probes.NEW_PAGES).getValue());
+
     LOG.info("DbUpdaterJob: finished at " + sdf.format(finish) + ", time elapsed: " + TimingUtil.elapsedTime(start, finish));
     return 0;
   }

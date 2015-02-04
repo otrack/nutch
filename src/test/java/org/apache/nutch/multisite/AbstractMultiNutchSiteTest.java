@@ -22,7 +22,8 @@ public abstract class AbstractMultiNutchSiteTest {
     for(int i=0; i<numberOfSites(); i++) {
       Path path = new Path("build/test/working/site"+i);
       NutchSite site = new NutchSite(
-        path,Integer.toString(i),isPersistent,connectionString(i),Integer.toString(partitionSize()));
+        path,Integer.toString(i),isPersistent,connectionString(i),Integer.toString(
+        splitSize()));
       site.setUpClass();
       sites.add(site);
     }
@@ -38,7 +39,7 @@ public abstract class AbstractMultiNutchSiteTest {
   protected abstract int numberOfSites();
   protected abstract int numberOfNodes();
   protected abstract String connectionString(int i);
-  protected abstract int partitionSize();
+  protected abstract int splitSize();
 
   // Helpers
 

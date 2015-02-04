@@ -56,7 +56,7 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
   }
 
   @Override
-  protected int partitionSize() {
+  protected int splitSize() {
     return 1;
   }
 
@@ -281,11 +281,11 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
   @Test
   public void longCrawl() throws  Exception{
 
-    final int NPAGES = 1000;
-    final int DEGREE = 30;
+    final int NPAGES = 100;
+    final int DEGREE = 3;
 
-    final int DEPTH = 3;
-    final int WIDTH = 100;
+    final int DEPTH = 1;
+    final int WIDTH = 10;
 
     Configuration conf = NutchConfiguration.create();
     File tmpDir = Files.createTempDir();

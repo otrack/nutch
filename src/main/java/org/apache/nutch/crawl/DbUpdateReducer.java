@@ -205,11 +205,12 @@ public class DbUpdateReducer extends
     if (parse_mark != null) {
       Mark.UPDATEDB_MARK.putMark(page, parse_mark);
       context.getCounter(DbUpdaterJob.probes.UPDATED_PAGES).increment(1);
+      context.getCounter(DbUpdaterJob.probes.UPDATED_LINKS).increment(page.getOutlinks().size());
+      context.write(keyUrl, page);
     } else {
       context.getCounter(DbUpdaterJob.probes.NEW_PAGES).increment(1);
     }
     
-    context.write(keyUrl, page);
   }
 
 }

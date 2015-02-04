@@ -1,10 +1,14 @@
 package org.apache.nutch.multisite;
 
+import org.apache.gora.mapreduce.GoraRecordReader;
 import org.apache.gora.store.DataStore;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.nutch.crawl.*;
+import org.apache.nutch.crawl.DbUpdaterJob;
+import org.apache.nutch.crawl.GeneratorJob;
+import org.apache.nutch.crawl.InjectorJob;
+import org.apache.nutch.crawl.URLWebPage;
 import org.apache.nutch.fetcher.FetcherJob;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.parse.ParserJob;
@@ -44,15 +48,17 @@ public class NutchSite {
   private Path testdir;
 
   private String connectionString;
+  private String splitSize;
   private DataStore<String, WebPage> pageDB;
   private DataStore<String, Link> linkDB;
   private boolean isPersistent;
 
-  public NutchSite(Path path, String siteName, boolean isPersistent, String connectionString, String partitionSize) throws IOException {
+  public NutchSite(Path path, String siteName, boolean isPersistent, String connectionString, String splitSize) throws IOException {
     this.testdir = path;
     this.siteName = siteName;
     this.isPersistent = isPersistent;
     this.connectionString = connectionString;
+    this.splitSize = splitSize;
   }
 
 
@@ -62,6 +68,7 @@ public class NutchSite {
       fs = FileSystem.get(conf);
       conf.set(Nutch.CRAWL_ID_KEY, siteName);
       conf.set(GORA_CONNECTION_STRING_KEY,connectionString);
+      conf.set(GoraRecordReader.BUFFER_LIMIT_READ_NAME, splitSize);
       pageDB = StorageUtils.createStore(conf, String.class, WebPage.class);
       pageDB.deleteSchema();
       linkDB = StorageUtils.createStore(conf, String.class, Link.class);
@@ -155,7 +162,6 @@ public class NutchSite {
 
   public Future<Integer> crawl(final int width, final int depth)
     throws Exception {
-
     return pool.submit(new Callable<Integer>() {
       @Override
       public Integer call() throws Exception {
@@ -164,10 +170,10 @@ public class NutchSite {
           LOG.info("Starting round #" + round + " @" + siteName);
           conf.set(GeneratorJob.BATCH_ID, Integer.toString(round));
           conf.set(GeneratorJob.GENERATOR_MAX_COUNT, Integer.toString(width));
+          conf.set("fetcher.parse","true");
           String batchId = generate(width, System.currentTimeMillis(), false, false)
             .get();
           fetch(batchId, 4, false, 1).get();
-          parse(batchId, false, false).get();
           update("-all").get();
           round++;
         }

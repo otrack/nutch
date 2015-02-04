@@ -52,7 +52,7 @@ public class ParserJob extends NutchTool {
   public static final String SKIP_TRUNCATED = "parser.skip.truncated";
 
   private static final Collection<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
-  private static enum probes{
+  public static enum probes{
     FILTERED_OUT,
     NEW_LINKS
   }
@@ -255,8 +255,6 @@ public class ParserJob extends NutchTool {
     currentJob.waitForCompletion(true);
     ToolUtil.recordJobStatus(null, currentJob, results);
 
-    LOG.info("ParserJob: new link(s): "+ currentJob.getCounters().findCounter(probes.NEW_LINKS).getValue());
-
     return results;
   }
 
@@ -272,6 +270,7 @@ public class ParserJob extends NutchTool {
         Nutch.ARG_FORCE, force));
 
     long finish = System.currentTimeMillis();
+    LOG.info("ParserJob: new link(s): "+ currentJob.getCounters().findCounter(probes.NEW_LINKS).getValue());
     LOG.info("ParserJob: finished at " + sdf.format(finish) + ", time elapsed: " + TimingUtil.elapsedTime(start, finish));
     return 0;
   }

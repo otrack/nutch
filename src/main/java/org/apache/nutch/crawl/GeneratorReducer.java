@@ -86,7 +86,7 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
       try {
         context.write(TableUtil.reverseUrl(key.getKey()), page);
       } catch (MalformedURLException e) {
-    	context.getCounter("Generator", "MALFORMED_URL").increment(1);
+        context.getCounter("Generator", "MALFORMED_URL").increment(1);
         continue;
       }
       context.getCounter("Generator", "GENERATE_MARK").increment(1);

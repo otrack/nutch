@@ -57,12 +57,22 @@ public class GeneratorJob extends NutchTool {
   public static final String BATCH_ID = "generate.batch.id";
 
   private static final Set<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
-
-  static {
-    FIELDS.add(WebPage.Field.FETCH_TIME);
-    FIELDS.add(WebPage.Field.SCORE);
+  
+   static {
+    FIELDS.add(WebPage.Field.OUTLINKS);
+    FIELDS.add(WebPage.Field.INLINKS);
     FIELDS.add(WebPage.Field.STATUS);
+    FIELDS.add(WebPage.Field.PREV_SIGNATURE);
+    FIELDS.add(WebPage.Field.SIGNATURE);
     FIELDS.add(WebPage.Field.MARKERS);
+    FIELDS.add(WebPage.Field.METADATA);
+    FIELDS.add(WebPage.Field.RETRIES_SINCE_FETCH);
+    FIELDS.add(WebPage.Field.FETCH_TIME);
+    FIELDS.add(WebPage.Field.MODIFIED_TIME);
+    FIELDS.add(WebPage.Field.FETCH_INTERVAL);
+    FIELDS.add(WebPage.Field.PREV_FETCH_TIME);
+    FIELDS.add(WebPage.Field.PREV_MODIFIED_TIME);
+    FIELDS.add(WebPage.Field.HEADERS);
   }
 
   public static final Logger LOG = LoggerFactory.getLogger(GeneratorJob.class);
@@ -257,7 +267,7 @@ public class GeneratorJob extends NutchTool {
   public int run(String[] args) throws Exception {
     if (args.length <= 0) {
       System.out.println("Usage: GeneratorJob [-topN N] [-crawlId id] [-noFilter] [-noNorm] [-adddays numDays] [-batchId <batchid>]");
-      System.out.println("    -topN <N>      - number of top URLs to be selected, default is Long.MAX_VALUE ");
+      System.out.println("    -topN <N>      - number of top URLs to be selected per mapper, default is Long.MAX_VALUE ");
       System.out.println("    -crawlId <id>  - the id to prefix the schemas to operate on, \n \t \t    (default: storage.crawl.id)\");");
       System.out.println("    -noFilter      - do not activate the filter plugin to filter the url, default is true ");
       System.out.println("    -noNorm        - do not activate the normalizer plugin to normalize the url, default is true ");

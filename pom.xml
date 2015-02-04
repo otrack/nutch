@@ -34,7 +34,7 @@ limitations under the License.
         </license>
     </licenses>
     <properties>
-        <avro.version>1.7.6</avro.version>
+        <avro.version>1.7.4</avro.version>
         <jackson.version>1.8.8</jackson.version>
         <hadoop.version>2.5.2</hadoop.version>
         <gora.version>0.5-SNAPSHOT</gora.version>
