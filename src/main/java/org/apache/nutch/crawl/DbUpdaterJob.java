@@ -153,10 +153,10 @@ public class DbUpdaterJob extends NutchTool {
     String crawlId = null;
     String batchId;
 
-    String usage = "Usage: DbUpdaterJob (<batchId> | -all) [-crawlId <id>] " +
-            "    <batchId>     - crawl identifier returned by Generator, or -all for all \n \t \t    generated batchId-s\n" +
-            "    -crawlId <id> - the id to prefix the schemas to operate on, \n \t \t    (default: storage.crawl.id)\n";
-
+    String usage = "Usage: DbUpdaterJob (<batchId> | -all) [-crawlId <id>] [-topN <n>" +
+      "    <batchId>     - crawl identifier returned by Generator, or -all for all \n \t \t    generated batchId-s\n" +
+      "    -crawlId <id> - the id to prefix the schemas to operate on, \n \t \t    (default: storage.crawl.id)\n";
+    
     if (args.length == 0) {
       System.err.println(usage);
       return -1;
@@ -171,7 +171,9 @@ public class DbUpdaterJob extends NutchTool {
     for (int i = 1; i < args.length; i++) {
       if ("-crawlId".equals(args[i])) {
         getConf().set(Nutch.CRAWL_ID_KEY, args[++i]);
-      } else {
+      } if ("-topN".equals(args[i])) {
+        getConf().set(Nutch.CRAWL_ID_KEY, args[++i]);
+      }else {
         throw new IllegalArgumentException("arg " +args[i]+ " not recognized");
       }
     }

@@ -622,8 +622,8 @@ extends GoraReducer<IntWritable, FetchEntry, String, WebPage> {
     }
 
     private void output(FetchItem fit, Content content,
-        ProtocolStatus pstatus, byte status)
-    throws IOException, InterruptedException {
+        ProtocolStatus pstatus, byte status) 
+      throws Exception{
       fit.page.setStatus((int)status);
       final long prevFetchTime = fit.page.getFetchTime();
       fit.page.setPrevFetchTime(prevFetchTime);
@@ -768,7 +768,7 @@ extends GoraReducer<IntWritable, FetchEntry, String, WebPage> {
   throws IOException, InterruptedException {
     Configuration conf = context.getConfiguration();
     this.fetchQueues = new FetchItemQueues(conf);
-    int threadCount = conf.getInt("fetcher.threads.fetch", 10);
+    int threadCount = conf.getInt(FetcherJob.THREADS_KEY,10);
     parse = conf.getBoolean(FetcherJob.PARSE_KEY, false);
     storingContent=conf.getBoolean("fetcher.store.content", true);
     if (parse) {

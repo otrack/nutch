@@ -40,6 +40,7 @@ public class DbUpdateReducer extends
     GoraReducer<UrlWithScore, NutchWritable, String, WebPage> {
 
   public static final String CRAWLDB_ADDITIONS_ALLOWED = "db.update.additions.allowed";
+  public static final String CRAWLDB_MAX_NEWPAGES = "db.update.max.newpages";
 
   public static final Logger LOG = DbUpdaterJob.LOG;
 
@@ -50,6 +51,7 @@ public class DbUpdateReducer extends
   private ScoringFilters scoringFilters;
   private List<ScoreDatum> inlinkedScoreData = new ArrayList<>();
   private int maxLinks;
+  private long maxNewPages;
 
   @Override
   protected void setup(Context context) throws IOException, 
@@ -61,6 +63,7 @@ public class DbUpdateReducer extends
     schedule = FetchScheduleFactory.getFetchSchedule(conf);
     scoringFilters = new ScoringFilters(conf);
     maxLinks = conf.getInt("db.update.max.inlinks", 10000);
+    maxNewPages = conf.getInt(CRAWLDB_MAX_NEWPAGES, 0);
   }
 
   @Override
@@ -94,6 +97,9 @@ public class DbUpdateReducer extends
 
     if (page == null) { // new webpage
       if (!additionsAllowed) {
+        return;
+      }
+      if (maxNewPages!=0 && context.getCounter(DbUpdaterJob.probes.NEW_PAGES).getValue() > maxNewPages) {
         return;
       }
       page = WebPage.newBuilder().build();
@@ -203,14 +209,13 @@ public class DbUpdateReducer extends
 
     String parse_mark = Mark.PARSE_MARK.checkMark(page);
     if (parse_mark != null) {
-      Mark.UPDATEDB_MARK.putMark(page, parse_mark);
       context.getCounter(DbUpdaterJob.probes.UPDATED_PAGES).increment(1);
       context.getCounter(DbUpdaterJob.probes.UPDATED_LINKS).increment(page.getOutlinks().size());
-      context.write(keyUrl, page);
     } else {
       context.getCounter(DbUpdaterJob.probes.NEW_PAGES).increment(1);
     }
-    
+
+    context.write(keyUrl, page);
   }
 
 }

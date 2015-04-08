@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.apache.nutch.crawl.GeneratorJob.*;
 
@@ -50,12 +52,21 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
   private long maxCount;
   private boolean byDomain = false;
   private Map<String, Integer> hostCountMap = new HashMap<String, Integer>();
+  private Set<String> generated = new HashSet<>();
   private String batchId;
 
   @Override
-  protected void reduce(SelectorEntry key, Iterable<WebPage> values,
+  protected void reduce(SelectorEntry entry, Iterable<WebPage> values,
       Context context) throws IOException, InterruptedException {
     for (WebPage page : values) {
+      
+      if (generated.contains(entry.getKey())) {
+        GeneratorJob.LOG
+          .trace("Skipping " + page.getKey() + "; already generated");
+        context.getCounter("Generator", "DUPLICATE").increment(1);
+        continue;
+      }
+      
       if (limit!=0 && count >= limit) {
         GeneratorJob.LOG.trace("Skipping " + page.getKey()+ "; too many generated urls");
         context.getCounter("Generator", "LIMIT").increment(1);
@@ -64,9 +75,9 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
       if (maxCount > 0) {
         String hostordomain;
         if (byDomain) {
-          hostordomain = URLUtil.getDomainName(key.getKey());
+          hostordomain = URLUtil.getDomainName(entry.getKey());
         } else {
-          hostordomain = URLUtil.getHost(key.getKey());
+          hostordomain = URLUtil.getHost(entry.getKey());
         }
 
         Integer hostCount = hostCountMap.get(hostordomain);
@@ -84,13 +95,14 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
       Mark.GENERATE_MARK.putMark(page, batchId);
       page.setBatchId(batchId);
       try {
-        context.write(TableUtil.reverseUrl(key.getKey()), page);
+        context.write(TableUtil.reverseUrl(entry.getKey()), page);
+        generated.add(entry.getKey());
       } catch (MalformedURLException e) {
         context.getCounter("Generator", "MALFORMED_URL").increment(1);
         continue;
       }
       context.getCounter("Generator", "GENERATE_MARK").increment(1);
-      LOG.trace("GeneratedUrl : "+key.getKey());
+      LOG.trace("GeneratedUrl : " + entry.getKey());
       count++;
     }
   }
@@ -99,15 +111,10 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
   protected void setup(Context context)
       throws IOException, InterruptedException {
     Configuration conf = context.getConfiguration();
-    long totalLimit = conf.getLong(GeneratorJob.GENERATOR_TOP_N, 0);
-    if (totalLimit == 0) {
-      limit = 0;
-    } else {
-      limit = Math.max(totalLimit, 1);
-      GeneratorJob.LOG.info("Limit:"+limit);
-    }
+    limit = conf.getLong(GeneratorJob.GENERATOR_TOP_N, 0);
+    GeneratorJob.LOG.info("Limit (per reducer):"+limit);
     maxCount = conf.getLong(GENERATOR_MAX_COUNT, 0);
-    GeneratorJob.LOG.info("Maxcount:"+maxCount);
+    GeneratorJob.LOG.info("Maxcount (per host):"+maxCount);
     batchId = conf.get(BATCH_ID);
     String countMode = conf.get(GENERATOR_COUNT_MODE, GENERATOR_COUNT_VALUE_HOST);
     if (countMode.equals(GENERATOR_COUNT_VALUE_DOMAIN)) {

@@ -141,6 +141,11 @@ public class GeneratorJob extends NutchTool {
     public String getKey(){
       return key;
     }
+    
+    @Override
+    public String toString(){
+      return "<"+key+","+score+">";
+    }
 
   }
 

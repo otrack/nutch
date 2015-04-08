@@ -52,12 +52,12 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
 
   @Override
   protected int numberOfNodes() {
-    return 3;
+    return 1;
   }
 
   @Override
   protected int splitSize() {
-    return 1;
+    return 100;
   }
 
   @Override
@@ -100,7 +100,9 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
       urls.add("http://zzz.com/" + i + ".html\tnutch.score=0");
     }
 
+    long start = System.currentTimeMillis();
     site(0).inject(urls).get();
+    LOG.info("Inject speed: "+(nbPages()/((System.currentTimeMillis()-start)*Math.pow(10,-3)))+" page/s");
     assertEquals(nbPages(),readPageDB(null).size());
 
   }
@@ -111,6 +113,8 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
     for (int i = 0; i < nbPages(); i++) {
       urls.add("http://zzz.com/" + i + ".html\tnutch.score=0");
     }
+    
+    assert nbPages()%10==0;
 
     // inject
     site(0).inject(urls).get();
@@ -118,11 +122,16 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
     List<Future<String>> futures = new ArrayList<>();
 
     // generate
-    for(NutchSite site : sites)
-      futures.add(site
-        .generate(nbPages(), System.currentTimeMillis(), false, false));
-    for(Future<String> future : futures)
-      future.get();
+    for(int i =0; i<10; i++) {
+
+      for (NutchSite site : sites)
+        futures.add(site
+          .generate(nbPages()/10, System.currentTimeMillis(), false, false));
+
+      for (Future<String> future : futures)
+        future.get();
+
+    }
 
     // check result
     assertEquals(nbPages(),readPageDB(Mark.GENERATE_MARK).size());
@@ -281,11 +290,11 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
   @Test
   public void longCrawl() throws  Exception{
 
-    final int NPAGES = 100;
-    final int DEGREE = 3;
+    final int NPAGES = 1000;
+    final int DEGREE = 10;
 
-    final int DEPTH = 1;
-    final int WIDTH = 10;
+    final int DEPTH = 3;
+    final int WIDTH = 100;
 
     Configuration conf = NutchConfiguration.create();
     File tmpDir = Files.createTempDir();
@@ -315,7 +324,8 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
 
       List<URLWebPage> resultPages = readPageDB(Mark.UPDATEDB_MARK, "key", "markers");
       LOG.info("Pages: " + resultPages.size());
-      assertEquals(DEPTH*WIDTH, resultPages.size()); // very likely when WIDTH * DEGREE >> PAGES.
+      if (DEPTH*WIDTH!=resultPages.size())
+        LOG.warn("Depth*width: "+DEPTH*WIDTH);
       if (LOG.isDebugEnabled()) {
         for (URLWebPage urlWebPage : resultPages) {
           System.out.println(urlWebPage.getDatum().getKey());
@@ -337,7 +347,7 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
   // Helpers
 
   public int nbPages(){
-    return 10;
+    return 10000;
   }
 
   public int nbLinks(){

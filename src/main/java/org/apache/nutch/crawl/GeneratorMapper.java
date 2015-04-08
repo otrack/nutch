@@ -103,6 +103,8 @@ extends GoraMapper<String, WebPage, SelectorEntry, WebPage> {
     }
     entry = new SelectorEntry();
     entry.set(url, score);
+    
+    GeneratorJob.LOG.trace("Adding "+entry.toString());
     context.write(entry, page);
   }
 
