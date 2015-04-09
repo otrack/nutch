@@ -12,7 +12,6 @@ import org.apache.nutch.crawl.URLWebPage;
 import org.apache.nutch.fetcher.FetcherJob;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.parse.ParserJob;
-import org.apache.nutch.storage.Link;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
@@ -22,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -50,7 +48,6 @@ public class NutchSite {
   private String connectionString;
   private String splitSize;
   private DataStore<String, WebPage> pageDB;
-  private DataStore<String, Link> linkDB;
   private boolean isPersistent;
 
   public NutchSite(Path path, String siteName, boolean isPersistent, String connectionString, String splitSize) throws IOException {
@@ -71,8 +68,6 @@ public class NutchSite {
       conf.set(GoraRecordReader.BUFFER_LIMIT_READ_NAME, splitSize);
       pageDB = StorageUtils.createStore(conf, String.class, WebPage.class);
       pageDB.deleteSchema();
-      linkDB = StorageUtils.createStore(conf, String.class, Link.class);
-      linkDB.deleteSchema();
     } catch (Exception e) {
       e.printStackTrace();
       LOG.error("Site "+siteName+" creation failed", e);
@@ -190,16 +185,8 @@ public class NutchSite {
     return CrawlTestUtil.readPageDB(pageDB, requiredMark, fields);
   }
 
-  public Collection<? extends Link> readLinkDB() throws Exception {
-    return CrawlTestUtil.readLinkDB(linkDB);
-  }
-
   public DataStore<String,WebPage> getPageDB(){
     return pageDB;
-  }
-
-  public DataStore<String,Link> getLinkDB(){
-    return linkDB;
   }
 
 }

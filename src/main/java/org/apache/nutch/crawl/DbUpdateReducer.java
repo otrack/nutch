@@ -209,6 +209,7 @@ public class DbUpdateReducer extends
 
     String parse_mark = Mark.PARSE_MARK.checkMark(page);
     if (parse_mark != null) {
+      Mark.UPDATEDB_MARK.putMark(page, parse_mark);
       context.getCounter(DbUpdaterJob.probes.UPDATED_PAGES).increment(1);
       context.getCounter(DbUpdaterJob.probes.UPDATED_LINKS).increment(page.getOutlinks().size());
     } else {

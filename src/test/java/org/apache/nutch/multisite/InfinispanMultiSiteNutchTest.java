@@ -6,7 +6,6 @@ import org.apache.gora.GoraTestDriver;
 import org.apache.gora.infinispan.GoraInfinispanTestDriver;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.nutch.crawl.URLWebPage;
-import org.apache.nutch.storage.Link;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.Bytes;
@@ -41,7 +40,6 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
   protected GoraTestDriver createDriver() {
     List<String> cacheNames = new ArrayList<>();
     cacheNames.add(WebPage.class.getSimpleName());
-    cacheNames.add(Link.class.getSimpleName());
     return new GoraInfinispanTestDriver(numberOfSites(),numberOfNodes(),cacheNames);
   }
 
@@ -361,15 +359,6 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
       content.addAll(site.readPageDB(requiredMark, fields));
     }
     return content;
-  }
-
-  public List<Link> readLinkDB()
-    throws Exception {
-    List<Link> links = new ArrayList<>();
-    for(NutchSite site : sites){
-      links.addAll(site.readLinkDB());
-    }
-    return links;
   }
 
 }
