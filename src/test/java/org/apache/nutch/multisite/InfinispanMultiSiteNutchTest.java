@@ -63,7 +63,7 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
 
     String ret="";
 
-    String connectionString = ((GoraInfinispanTestDriver) driver).connectionString();
+    String connectionString = "127.0.0.1:15233"; //((GoraInfinispanTestDriver) driver).connectionString();
     String[] splits = connectionString.split("\\|");
 
     if (splits.length==1)
@@ -345,11 +345,11 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
   // Helpers
 
   public int nbPages(){
-    return 10000;
+    return 1000;
   }
 
   public int nbLinks(){
-    return 1000;
+    return 1;
   }
 
   public List<URLWebPage> readPageDB(Mark requiredMark, String... fields)
