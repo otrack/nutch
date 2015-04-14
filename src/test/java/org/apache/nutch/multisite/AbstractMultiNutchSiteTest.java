@@ -16,8 +16,8 @@ public abstract class AbstractMultiNutchSiteTest {
   protected boolean isPersistent= false;
 
   public void setUpClass() throws Exception {
-//    driver = createDriver();
-//    driver.setUpClass();
+    driver = createDriver();
+    driver.setUpClass();
     sites = new ArrayList<>();
     for(int i=0; i<numberOfSites(); i++) {
       Path path = new Path("build/test/working/site"+i);
@@ -32,7 +32,7 @@ public abstract class AbstractMultiNutchSiteTest {
   public void tearDownClass() throws Exception {
     for (NutchSite site : sites)
       site.tearDownClass();
-    // driver.tearDownClass();
+    driver.tearDownClass();
   }
 
   protected abstract GoraTestDriver createDriver();

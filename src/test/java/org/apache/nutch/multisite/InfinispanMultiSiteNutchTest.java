@@ -63,7 +63,7 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
 
     String ret="";
 
-    String connectionString = "127.0.0.1:15233"; //((GoraInfinispanTestDriver) driver).connectionString();
+    String connectionString = ((GoraInfinispanTestDriver) driver).connectionString();
     String[] splits = connectionString.split("\\|");
 
     if (splits.length==1)

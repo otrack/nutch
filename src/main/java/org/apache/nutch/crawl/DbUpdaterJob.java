@@ -57,6 +57,8 @@ public class DbUpdaterJob extends NutchTool {
     FIELDS.add(WebPage.Field.METADATA);
     FIELDS.add(WebPage.Field.RETRIES_SINCE_FETCH);
     FIELDS.add(WebPage.Field.FETCH_TIME);
+    FIELDS.add(WebPage.Field.CONTENT);
+    FIELDS.add(WebPage.Field.CONTENT_TYPE);
     FIELDS.add(WebPage.Field.MODIFIED_TIME);
     FIELDS.add(WebPage.Field.FETCH_INTERVAL);
     FIELDS.add(WebPage.Field.PREV_FETCH_TIME);
