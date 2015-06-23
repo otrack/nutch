@@ -1,8 +1,9 @@
 #!/bin/bash
-source "/mnt/cdrom/context.sh" 
+
+   
 
 function generate {
-    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.crawl.GeneratorJob ${ARGS2} -batchId ${d} -topN 50000 &> tmp
+    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.crawl.GeneratorJob ${ARGS2} -batchId ${batchID} -topN 44 &> tmp
     if (($? != 0)); then cat tmp; exit -1; fi
     generated=`grep GENERATE tmp | awk -F "=" '{print $2}'`
     limit=`grep LIMIT tmp | awk -F "=" '{print $2}'`
@@ -12,12 +13,12 @@ function generate {
 }
 
 function fetch {
-    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.fetcher.FetcherJob ${ARGS} ${d} -threads 20 &> tmp
+    hadoop jar ${NUTCH_DIR}/lib/nutch-2.2.jar org.apache.nutch.fetcher.FetcherJob ${ARGS} ${batchID} &> tmp
     if (($? != 0)); then cat tmp; exit -1; fi
     success=`grep SUCCESS tmp | awk -F "=" '{print $2}'`
     notfound=`grep NOTFOUND tmp | awk -F "=" '{print $2}'`
     exception=`grep EXCEPTION tmp | awk -F "=" '{print $2}'`
-    temp_moved=`grep TEMP_MOVED tmp | awk -F "=" '{print $2}'`
+    temp_moved=`grep MOVED tmp | awk -F "=" '{print $2}'`
     elapsed=`grep "finished at" tmp | awk -F "elapsed" '{print $2}' | awk -F " " '{print $2}' | awk -F : '{print $1*3600+$2*60+$3}'`
     echo "FETCH ${elapsed} SUCCESS=${success} NOTFOUND=${notfound} EXC=${exception} MOVED=${temp_moved}"
 }
@@ -50,8 +51,7 @@ function seed {
 	hadoop fs -put ${NUTCH_DIR}/inject/* /inject &> /dev/null
     fi
 }
-
-export NUTCH_DIR="/opt/nutch"
+export NUTCH_DIR="/home/ubuntu/nutch"
 export HADOOP_CLASSPATH=$(JARS=("$NUTCH_DIR"/lib/*.jar); IFS=:; echo "${JARS[*]}")
 export LIBJARS=$(JARS=("$NUTCH_DIR"/lib/*.jar); IFS=,; echo "${JARS[*]}")
 export EXTJARS=$(echo $LIBJARS | sed 's|'${NUTCH_DIR}'/lib/nutch-2.2.jar||'| sed 's|'${NUTCH_DIR}'|hdfs://'${HDFS_NAMENODE}':8020/nutch|g')
@@ -76,7 +76,7 @@ while true;
 do
 
     echo "======== Depth #${d} ========"
-
+    export batchID=${RANDOM}
     generate
     fetch
     dbupdate

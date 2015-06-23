@@ -15,7 +15,7 @@
 
 # config file for urlfilter-prefix plugin
 
-http://
+# http://
 # https://
 # ftp://
 # file://

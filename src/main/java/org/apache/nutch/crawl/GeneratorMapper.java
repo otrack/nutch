@@ -49,9 +49,9 @@ extends GoraMapper<String, WebPage, SelectorEntry, WebPage> {
       Context context) throws IOException, InterruptedException {
     String url = TableUtil.unreverseUrl(reversedUrl.toString());
 
-    if (Mark.GENERATE_MARK.checkMark(page) != null) {
+    if (Mark.FETCH_MARK.checkMark(page) != null) {
       if (GeneratorJob.LOG.isDebugEnabled()) {
-        GeneratorJob.LOG.debug("Skipping " + url + "; already generated");
+        GeneratorJob.LOG.debug("Skipping " + url + "; already fetched");
       }
       return;
     }

@@ -20,12 +20,6 @@
     </property>
 
     <property>
-        <name>plugin.includes</name>
-        <value>protocol-httpclient|urlfilter-regex|parse-(text|html|tika)|index-(basic|anchor)|query-(basic|site|url)|response-(json|xml)|summary-basic|scoring-opic|urlnormalizer-(pass|regex|basic)</value>
-        <description>Enable required plugins.</description>
-    </property>
-
-    <property>
         <name>fetcher.threads.fetch</name>
         <value>4</value>
     </property>
@@ -44,6 +38,12 @@
         <name>content.server.port</name>
         <value>55000</value>
         <description>Port of http server serving content.</description>
+    </property>
+
+    <property>
+        <name>fetcher.store.content</name>
+        <value>true</value>
+        <description>If true, fetcher will store content.</description>
     </property>
 
     <property>

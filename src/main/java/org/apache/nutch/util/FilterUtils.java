@@ -29,13 +29,12 @@ public class FilterUtils {
     return filter;
   }
 
-  public static MapFieldValueFilter<String, WebPage> getExcludeAnyBatchIdFilter(
-    Mark mark){
+  public static MapFieldValueFilter<String, WebPage> getExcludeFetchedFilter(){
     MapFieldValueFilter<String, WebPage> filter = new MapFieldValueFilter<>();
     filter.setFieldName(WebPage.Field.MARKERS.toString());
     filter.setFilterOp(FilterOp.UNLIKE);
     filter.setFilterIfMissing(false);
-    filter.setMapKey(mark.getName());
+    filter.setMapKey(Mark.FETCH_MARK.getName());
     filter.getOperands().add("*");
     return filter;
   }

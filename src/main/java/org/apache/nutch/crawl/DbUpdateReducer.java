@@ -102,6 +102,7 @@ public class DbUpdateReducer extends
       if (maxNewPages!=0 && context.getCounter(DbUpdaterJob.probes.NEW_PAGES).getValue() > maxNewPages) {
         return;
       }
+      maxNewPages++;
       page = WebPage.newBuilder().build();
       schedule.initializeSchedule(url, page);
       page.setStatus((int) CrawlStatus.STATUS_UNFETCHED);

@@ -25,7 +25,6 @@ import org.apache.hadoop.util.StringUtils;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.URLPartitioner.SelectorEntryPartitioner;
 import org.apache.nutch.metadata.Nutch;
-import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.*;
@@ -37,6 +36,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 import static org.apache.nutch.crawl.URLPartitioner.PARTITION_MODE_HOST;
 import static org.apache.nutch.crawl.URLPartitioner.PARTITION_MODE_KEY;
 
@@ -169,7 +169,7 @@ public class GeneratorJob extends NutchTool {
   }
 
   public Collection<WebPage.Field> getFields(Job job) {
-    Collection<WebPage.Field> fields = new HashSet<WebPage.Field>(FIELDS);
+    Collection<WebPage.Field> fields = new HashSet<>(FIELDS);
     fields.addAll(FetchScheduleFactory.getFetchSchedule(job.getConfiguration()).getFields());
     return fields;
   }
@@ -217,7 +217,7 @@ public class GeneratorJob extends NutchTool {
       WebPage.class,
       GeneratorMapper.class,
       SelectorEntryPartitioner.class,
-      FilterUtils.getExcludeAnyBatchIdFilter(Mark.GENERATE_MARK),
+      FilterUtils.getExcludeFetchedFilter(),
       topN,"score",false, false);
 
     StorageUtils.initReducerJob(
