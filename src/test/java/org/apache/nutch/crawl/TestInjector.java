@@ -113,12 +113,12 @@ public class TestInjector extends AbstractNutchTest {
   };
 
   private List<String> readDb() throws Exception {
-    List<URLWebPage> pages = CrawlTestUtil.readPageDB(webPageStore, null,
+    List<KeyWebPage> pages = CrawlTestUtil.readPageDB(webPageStore, null,
       fields);
     ArrayList<String> read = new ArrayList<String>();
-    for (URLWebPage up : pages) {
+    for (KeyWebPage up : pages) {
       WebPage page = up.getDatum();
-      String representation = up.getUrl();
+      String representation = up.getKey();
       representation += "\tnutch.score=" + page.getScore().intValue();
       ByteBuffer bb = page.getMetadata().get("custom.attribute");
       if (bb != null) {

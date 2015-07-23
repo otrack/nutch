@@ -24,7 +24,6 @@ import org.apache.nutch.scoring.ScoringFilterException;
 import org.apache.nutch.scoring.ScoringFilters;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.WebPage;
-import org.apache.nutch.util.TableUtil;
 import org.apache.nutch.util.WebPageWritable;
 import org.slf4j.Logger;
 
@@ -52,14 +51,15 @@ public class DbUpdateMapper
   @Override
   public void map(String key, WebPage page, Context context)
     throws IOException, InterruptedException {
+
+    String url = page.getUrl();
+
     if(Mark.GENERATE_MARK.checkMark(page) == null) {
       if (LOG.isDebugEnabled()) {
-        LOG.debug("Skipping " + TableUtil.unreverseUrl(key) + "; not generated yet");
+        LOG.debug("Skipping " + url + "; not generated yet");
       }
       return;
     }
-
-    String url = TableUtil.unreverseUrl(key);
 
     scoreData.clear();
     Map<String, String> outlinks = page.getOutlinks();
@@ -68,31 +68,33 @@ public class DbUpdateMapper
         int depth=Integer.MAX_VALUE;
         String depthString = page.getMarkers().get(DbUpdaterJob.DISTANCE);
         if (depthString != null) depth=Integer.parseInt(depthString);
-        scoreData.add(new ScoreDatum(0.0f, e.getKey(),e.getValue(), depth));
+        scoreData.add(new ScoreDatum(0.0f, e.getKey(), e.getValue(), page.getFetchTime(), depth));
       }
     }
 
     try {
       scoringFilters.distributeScoreToOutlinks(url, page, scoreData, (outlinks == null ? 0 : outlinks.size()));
     } catch (ScoringFilterException e) {
-      LOG.warn("Distributing score failed for URL: " + key +
+      LOG.warn("Distributing score failed for URL: " + url +
         " exception:" + StringUtils.stringifyException(e));
     }
 
-    urlWithScore.setUrl(key);
+    urlWithScore.setUrl(url);
     urlWithScore.setScore(Float.MAX_VALUE);
     pageWritable.setWebPage(page);
     nutchWritable.set(pageWritable);
     context.write(urlWithScore, nutchWritable);
 
+    LOG.trace(page.toString());
     for (ScoreDatum scoreDatum : scoreData) {
-      String reversedOut = TableUtil.reverseUrl(scoreDatum.getUrl());
-      scoreDatum.setUrl(url);
-      urlWithScore.setUrl(reversedOut);
+      urlWithScore.setUrl(scoreDatum.getUrl());
       urlWithScore.setScore(scoreDatum.getScore());
+      LOG.trace(scoreDatum.toString());
+      scoreDatum.setUrl(url);
       nutchWritable.set(scoreDatum);
       context.write(urlWithScore, nutchWritable);
     }
+
   }
 
   @Override

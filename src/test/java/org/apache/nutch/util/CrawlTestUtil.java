@@ -23,7 +23,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.nutch.crawl.URLWebPage;
+import org.apache.nutch.crawl.KeyWebPage;
 import org.apache.nutch.storage.Link;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.WebPage;
@@ -94,19 +94,29 @@ public class CrawlTestUtil {
     out.flush();
     out.close();
   }
-  
+
+  public static ArrayList<KeyWebPage> readPageDB(
+    DataStore<String, WebPage> store,
+    Mark requiredMark, String... fields) throws Exception {
+    return readPageDB(store,requiredMark,"url",true,fields);
+  }
+
+
   /**
    * Read entries from a data store
    *
-   * @return list of matching {@link URLWebPage} objects
+   * @return list of matching {@link org.apache.nutch.crawl.KeyWebPage} objects
    * @throws Exception
    */
-  public static ArrayList<URLWebPage> readPageDB(
+  public static ArrayList<KeyWebPage> readPageDB(
     DataStore<String, WebPage> store,
-    Mark requiredMark, String... fields) throws Exception {
-    ArrayList<URLWebPage> l = new ArrayList<>();
+    Mark requiredMark, String sortingField, boolean isAscendant,
+    String... fields) throws Exception {
+    ArrayList<KeyWebPage> l = new ArrayList<>();
 
     Query<String, WebPage> query = store.newQuery();
+    query.setSortingField(sortingField);
+    query.setSortingOrder(isAscendant);
     if (fields != null) {
       query.setFields(fields);
     }
@@ -115,7 +125,7 @@ public class CrawlTestUtil {
     while (results.next()) {
       try {
         WebPage page = results.get();
-        String url = results.getKey();
+        String key = page.getKey();
 
         if (page == null)
           continue;
@@ -123,13 +133,38 @@ public class CrawlTestUtil {
         if (requiredMark != null && requiredMark.checkMark(page) == null)
           continue;
 
-        l.add(new URLWebPage(TableUtil.unreverseUrl(url), WebPage.newBuilder(page).build()));
+        l.add(new KeyWebPage(key, WebPage.newBuilder(page).build()));
       } catch (Exception e) {
         e.printStackTrace();
       }
     }
     return l;
   }
+
+  public static List<KeyWebPage> readLastVersionPageDB(
+    DataStore<String, WebPage> store,
+    Mark requiredMark,String sortingField,
+    boolean isAscendant, String... fields)
+    throws Exception {
+
+    List<KeyWebPage> result
+      = readPageDB(store, requiredMark, sortingField, isAscendant, fields);
+    List<KeyWebPage> toRemove = new ArrayList<>();
+
+    for (KeyWebPage keyWebPage : result) {
+      WebPage page = keyWebPage.getDatum();
+      for (KeyWebPage keyWebPage1 : result) {
+        WebPage page1 = keyWebPage1.getDatum();
+        if (page.getUrl().equals(page1.getUrl())
+          && page.getFetchTime() < page1.getFetchTime())
+          toRemove.add(keyWebPage);
+      }
+    }
+
+    result.removeAll(toRemove);
+    return result;
+  }
+
 
   public static Collection<? extends Link> readLinkDB(
     DataStore<String, Link> linkDB)

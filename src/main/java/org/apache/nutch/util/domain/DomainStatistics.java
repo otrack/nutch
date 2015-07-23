@@ -17,10 +17,6 @@
 
 package org.apache.nutch.util.domain;
 
-import java.io.IOException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-
 import org.apache.gora.mapreduce.GoraMapper;
 import org.apache.gora.query.Query;
 import org.apache.gora.store.DataStore;
@@ -41,11 +37,14 @@ import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.NutchConfiguration;
 import org.apache.nutch.util.NutchJob;
-import org.apache.nutch.util.TableUtil;
 import org.apache.nutch.util.TimingUtil;
 import org.apache.nutch.util.URLUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 
 /**
  * Extracts some very basic statistics about domains from the crawldb
@@ -198,7 +197,7 @@ public class DomainStatistics extends Configured implements Tool {
             throws IOException, InterruptedException {
       if (value.getStatus() == CrawlStatus.STATUS_FETCHED) {
         try {
-          URL url = new URL(TableUtil.unreverseUrl(key.toString()));
+          URL url = new URL(value.getUrl());
           String out = null;
           switch (mode) {
           case MODE_HOST:

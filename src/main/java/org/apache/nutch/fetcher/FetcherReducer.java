@@ -638,11 +638,10 @@ extends GoraReducer<IntWritable, FetchEntry, String, WebPage> {
         fit.page.setBaseUrl(content.getBaseUrl());
       }
       Mark.FETCH_MARK.putMark(fit.page, Mark.GENERATE_MARK.checkMark(fit.page));
-      String key = TableUtil.reverseUrl(fit.url);
 
       if (parse) {
         if (!skipTruncated || (skipTruncated && !ParserJob.isTruncated(fit.url, fit.page))) {
-          parseUtil.process(key, fit.page);
+          parseUtil.process(fit.page.getUrl(), fit.page);
           context.getCounter(ParserJob.probes.NEW_LINKS).increment(
             fit.page.getOutlinks().size());
         }
@@ -652,7 +651,7 @@ extends GoraReducer<IntWritable, FetchEntry, String, WebPage> {
       if(content != null && !storingContent){
         fit.page.setContent(ByteBuffer.wrap(new byte[0]));
       }
-      context.write(key, fit.page);
+      context.write(fit.page.getKey(), fit.page);
     }
 
     private void logFetchFailure(String url, String message) {
@@ -722,8 +721,7 @@ extends GoraReducer<IntWritable, FetchEntry, String, WebPage> {
           }
           while (feed > 0 && currentIter.hasNext()) {
             FetchEntry entry = currentIter.next();
-            final String url =
-              TableUtil.unreverseUrl(entry.getKey());
+            final String url =entry.getKey();
             queues.addFetchItem(url, entry.getWebPage());
             feed--;
             cnt++;

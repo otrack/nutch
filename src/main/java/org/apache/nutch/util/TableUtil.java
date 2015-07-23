@@ -17,6 +17,8 @@
 package org.apache.nutch.util;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.nutch.storage.WebPage;
+import org.elasticsearch.common.UUID;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -140,4 +142,8 @@ public class TableUtil {
     return reverseHost(reversedHostName); // Reversible
   }
 
+  public static String computeKey(WebPage page) {
+    return UUID.randomUUID().toString();
+  }
+  
 }

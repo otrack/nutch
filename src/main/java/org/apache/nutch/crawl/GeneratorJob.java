@@ -59,20 +59,13 @@ public class GeneratorJob extends NutchTool {
   private static final Set<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
   
    static {
-    FIELDS.add(WebPage.Field.OUTLINKS);
-    FIELDS.add(WebPage.Field.INLINKS);
-    FIELDS.add(WebPage.Field.STATUS);
-    FIELDS.add(WebPage.Field.PREV_SIGNATURE);
-    FIELDS.add(WebPage.Field.SIGNATURE);
-    FIELDS.add(WebPage.Field.MARKERS);
-    FIELDS.add(WebPage.Field.METADATA);
-    FIELDS.add(WebPage.Field.RETRIES_SINCE_FETCH);
-    FIELDS.add(WebPage.Field.FETCH_TIME);
-    FIELDS.add(WebPage.Field.MODIFIED_TIME);
-    FIELDS.add(WebPage.Field.FETCH_INTERVAL);
-    FIELDS.add(WebPage.Field.PREV_FETCH_TIME);
-    FIELDS.add(WebPage.Field.PREV_MODIFIED_TIME);
-    FIELDS.add(WebPage.Field.HEADERS);
+     FIELDS.add(WebPage.Field.URL);
+     FIELDS.add(WebPage.Field.PREV_FETCH_TIME);
+     FIELDS.add(WebPage.Field.FETCH_TIME);
+     FIELDS.add(WebPage.Field.METADATA);
+     FIELDS.add(WebPage.Field.SCORE);
+     FIELDS.add(WebPage.Field.STATUS);
+     FIELDS.add(WebPage.Field.MARKERS);
   }
 
   public static final Logger LOG = LoggerFactory.getLogger(GeneratorJob.class);
@@ -80,31 +73,43 @@ public class GeneratorJob extends NutchTool {
   public static class SelectorEntry
   implements WritableComparable<SelectorEntry> {
 
-    private String key;
+    private String url;
+    private long fetchTime;
     private float score;
 
     public SelectorEntry() {  }
 
-    public SelectorEntry(String key, float score) {
-      this.key = key;
+    public SelectorEntry(String url, long fetchTime, float score) {
+      this.url = url;
+      this.fetchTime = fetchTime;
       this.score = score;
     }
 
     public void readFields(DataInput in) throws IOException {
-      key= Text.readString(in);
+      url= Text.readString(in);
+      fetchTime = in.readLong();
       score = in.readFloat();
     }
 
     public void write(DataOutput out) throws IOException {
-      Text.writeString(out, key);
+      Text.writeString(out, url);
+      out.writeLong(fetchTime);
       out.writeFloat(score);
     }
 
+    /**
+     * The output order of keys in the reducer is ascending.
+     * @param se
+     * @return
+     */
     public int compareTo(SelectorEntry se) {
+      int result = url.compareTo(se.url);
+      if (result==0)
+        return Long.compare(se.fetchTime,this.fetchTime);
+      if (se.score == score)
+        return result;
       if (se.score > score)
         return 1;
-      else if (se.score == score)
-        return key.compareTo(se.key);
       return -1;
     }
 
@@ -112,39 +117,40 @@ public class GeneratorJob extends NutchTool {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result +  key.hashCode();
+      result = prime * result +  url.hashCode();
       result = prime * result + Float.floatToIntBits(score);
+      result = prime * result + (int)score;
       return result;
     }
 
     @Override
     public boolean equals(Object obj) {
       SelectorEntry other = (SelectorEntry) obj;
-      if (!key.equals(other.key))
-        return false;
-      if (Float.floatToIntBits(score) != Float.floatToIntBits(other.score))
-        return false;
-      return true;
+      return url.equals(other.url)
+          && fetchTime == other.fetchTime
+          && score == other.score;
     }
 
     /**
      * Sets key with score on this writable. Allows for writable reusing.
      *
-     * @param key
+     * @param url
+     * @param fetchTime 
      * @param score
      */
-    public void set(String key, float score) {
-      this.key=key;
+    public void set(String url, long fetchTime, float score) {
+      this.url= url;
+      this.fetchTime = fetchTime;
       this.score=score;
     }
 
-    public String getKey(){
-      return key;
+    public String getUrl(){
+      return url;
     }
     
     @Override
     public String toString(){
-      return "<"+key+","+score+">";
+      return "<"+url+","+fetchTime+","+score+">";
     }
 
   }
@@ -217,8 +223,8 @@ public class GeneratorJob extends NutchTool {
       WebPage.class,
       GeneratorMapper.class,
       SelectorEntryPartitioner.class,
-      FilterUtils.getExcludeFetchedFilter(),
-      topN,"score",false, false);
+      null,
+      0,"score",false, false);
 
     StorageUtils.initReducerJob(
       currentJob,

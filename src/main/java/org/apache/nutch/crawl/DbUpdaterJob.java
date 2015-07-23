@@ -32,40 +32,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 
-import static org.apache.nutch.util.FilterUtils.getBatchIdFilter;
-import static org.apache.nutch.util.FilterUtils.getExcludeNonGeneratedFilter;
 import static org.apache.nutch.metadata.Nutch.ALL_CRAWL_ID;
+import static org.apache.nutch.util.FilterUtils.getBatchIdFilter;
+import static org.apache.nutch.util.FilterUtils.getFetchedFilter;
 
 public class DbUpdaterJob extends NutchTool {
 
   public static final Logger LOG = LoggerFactory.getLogger(DbUpdaterJob.class);
-
-  private static final Collection<WebPage.Field> FIELDS =
-    new HashSet<WebPage.Field>();
-
-  static {
-    FIELDS.add(WebPage.Field.OUTLINKS);
-    FIELDS.add(WebPage.Field.INLINKS);
-    FIELDS.add(WebPage.Field.STATUS);
-    FIELDS.add(WebPage.Field.PREV_SIGNATURE);
-    FIELDS.add(WebPage.Field.SIGNATURE);
-    FIELDS.add(WebPage.Field.MARKERS);
-    FIELDS.add(WebPage.Field.METADATA);
-    FIELDS.add(WebPage.Field.RETRIES_SINCE_FETCH);
-    FIELDS.add(WebPage.Field.FETCH_TIME);
-    FIELDS.add(WebPage.Field.CONTENT);
-    FIELDS.add(WebPage.Field.CONTENT_TYPE);
-    FIELDS.add(WebPage.Field.MODIFIED_TIME);
-    FIELDS.add(WebPage.Field.FETCH_INTERVAL);
-    FIELDS.add(WebPage.Field.PREV_FETCH_TIME);
-    FIELDS.add(WebPage.Field.PREV_MODIFIED_TIME);
-    FIELDS.add(WebPage.Field.HEADERS);
-  }
-
   public static final String DISTANCE = "dist";
 
   public static enum probes{
@@ -94,9 +69,7 @@ public class DbUpdaterJob extends NutchTool {
     getConf().set(Nutch.BATCH_NAME_KEY, batchId);
     //job.setBoolean(ALL, updateAll);
     ScoringFilters scoringFilters = new ScoringFilters(getConf());
-    HashSet<WebPage.Field> fields = new HashSet<WebPage.Field>(FIELDS);
-    fields.addAll(scoringFilters.getFields());
-    
+
     currentJob = new NutchJob(getConf(), "update-table");
     if (crawlId != null) {
       currentJob.getConfiguration().set(Nutch.CRAWL_ID_KEY, crawlId);
@@ -112,13 +85,13 @@ public class DbUpdaterJob extends NutchTool {
 
     Filter<String, WebPage> filter;
     if ( batchId.equals(ALL_CRAWL_ID))
-      filter = getExcludeNonGeneratedFilter();
+      filter = getFetchedFilter();
     else
       filter = getBatchIdFilter(batchId, Mark.FETCH_MARK);
 
     StorageUtils.initMapperJob(
       currentJob,
-      fields,
+      null,
       UrlWithScore.class,
       NutchWritable.class,
       DbUpdateMapper.class,

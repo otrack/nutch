@@ -3,6 +3,7 @@
  "namespace": "org.apache.nutch.storage",
  "fields": [
         {"name": "key", "type": ["null","string"], "default":null},
+        {"name": "url", "type": ["null","string"], "default":null},
         {"name": "baseUrl", "type": ["null","string"], "default":null},
         {"name": "status", "type": "int", "default":0},
         {"name": "fetchTime", "type": "long", "default":0},

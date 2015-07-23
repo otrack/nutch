@@ -76,15 +76,18 @@ public class TestGoraStorage extends AbstractNutchTest {
       // store a page with title
       String baseUrl = "key-" + id + "-" + i;
       String title = "title" + i;
+      Float score = new Float(i);
       page.setTitle(title);
       page.setBaseUrl(baseUrl);
+      page.setScore(score);
       store.put(baseUrl, page);
       store.flush();
 
       // retrieve page and check title
       page = store.get(baseUrl);
       assertNotNull(page);
-      assertEquals(title, page.getTitle().toString());
+      assertEquals(title, page.getTitle());
+      assertEquals(score, page.getScore());
     }
 
     // scan over the rows

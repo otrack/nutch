@@ -48,6 +48,7 @@ public class TestGenerator extends AbstractNutchTest {
   public static final Logger LOG = LoggerFactory.getLogger(TestGenerator.class);
 
   private static String[] FIELDS = new String[] {
+    WebPage.Field.KEY.getName(),
     WebPage.Field.MARKERS.getName(),
     WebPage.Field.SCORE.getName()
   };
@@ -79,20 +80,20 @@ public class TestGenerator extends AbstractNutchTest {
 
     final int NUM_RESULTS = 2;
 
-    ArrayList<URLWebPage> list = new ArrayList<URLWebPage>();
+    ArrayList<KeyWebPage> list = new ArrayList<KeyWebPage>();
 
     for (int i = 0; i <= 100; i++) {
       list.add(createURLWebPage("http://aaa/" + pad(i), 1, i));
     }
 
-    for (URLWebPage uwp : list) {
-      webPageStore.put(TableUtil.reverseUrl(uwp.getUrl()), uwp.getDatum());
+    for (KeyWebPage uwp : list) {
+      webPageStore.put(uwp.getKey(), uwp.getDatum());
     }
     webPageStore.flush();
 
     generateFetchlist(NUM_RESULTS, conf, false);
 
-    ArrayList<URLWebPage> l = CrawlTestUtil.readPageDB(webPageStore,
+    ArrayList<KeyWebPage> l = CrawlTestUtil.readPageDB(webPageStore,
       Mark.GENERATE_MARK, FIELDS);
 
     // sort urls by score desc
@@ -102,8 +103,41 @@ public class TestGenerator extends AbstractNutchTest {
     assertEquals(NUM_RESULTS, l.size());
 
     // verify we have the highest scoring urls
-    assertEquals("http://aaa/100", (l.get(0).getUrl()));
-    assertEquals("http://aaa/099", (l.get(1).getUrl()));
+    assertEquals("http://aaa/100", (l.get(0).getDatum()).getUrl());
+    assertEquals("http://aaa/099", (l.get(1).getDatum().getUrl()));
+  }
+  
+  @Test
+  public void testGenerateMultipleVersion() throws Exception{
+
+    CrawlTestUtil.readPageDB(webPageStore, null);
+
+    final int NUM_RESULTS = 1;
+
+    ArrayList<KeyWebPage> list = new ArrayList<>();
+
+    for (int i = 0; i <= 100; i++) {
+      list.add(createURLWebPage("http://aaa",i,0,i));
+    }
+
+    for (KeyWebPage uwp : list) {
+      webPageStore.put(uwp.getKey(), uwp.getDatum());
+    }
+    webPageStore.flush();
+
+    generateFetchlist(NUM_RESULTS, conf, false);
+
+    ArrayList<KeyWebPage> l = CrawlTestUtil.readPageDB(webPageStore,
+      Mark.GENERATE_MARK, FIELDS);
+
+    // sort urls by score desc
+    Collections.sort(list, new FetchTimeComparator());
+
+    // verify we got right amount of records
+    assertEquals(NUM_RESULTS, l.size());
+
+    // verify we have the oldest version
+    assertEquals(list.get(0).getKey(),l.get(0).getDatum().getKey());
   }
 
   private String pad(int i) {
@@ -117,9 +151,9 @@ public class TestGenerator extends AbstractNutchTest {
   /**
    * Comparator that sorts by score desc.
    */
-  public class ScoreComparator implements Comparator<URLWebPage> {
+  public class ScoreComparator implements Comparator<KeyWebPage> {
 
-    public int compare(URLWebPage tuple1, URLWebPage tuple2) {
+    public int compare(KeyWebPage tuple1, KeyWebPage tuple2) {
       if (tuple2.getDatum().getScore() - tuple1.getDatum().getScore() < 0) {
         return -1;
       }
@@ -130,6 +164,16 @@ public class TestGenerator extends AbstractNutchTest {
     }
   }
 
+  public class FetchTimeComparator implements Comparator<KeyWebPage> {
+
+    // order is ascending.
+    public int compare(KeyWebPage tuple1, KeyWebPage tuple2) {
+      return Long.compare(tuple2.getDatum().getFetchTime(),
+        tuple1.getDatum().getFetchTime()); 
+    }
+  }
+
+
   /**
    * Test that generator obeys the property "generate.max.count" and "generate.count.mode".
    *
@@ -137,14 +181,14 @@ public class TestGenerator extends AbstractNutchTest {
    */
   @Test
   public void testGenerateHostLimit() throws Exception {
-    ArrayList<URLWebPage> list = new ArrayList<URLWebPage>();
+    ArrayList<KeyWebPage> list = new ArrayList<KeyWebPage>();
 
     list.add(createURLWebPage("http://www.example.com/index1.html", 1, 1));
     list.add(createURLWebPage("http://www.example.com/index2.html", 1, 1));
     list.add(createURLWebPage("http://www.example.com/index3.html", 1, 1));
 
-    for (URLWebPage uwp : list) {
-      webPageStore.put(TableUtil.reverseUrl(uwp.getUrl()), uwp.getDatum());
+    for (KeyWebPage uwp : list) {
+      webPageStore.put(uwp.getKey(), uwp.getDatum());
     }
     webPageStore.flush();
 
@@ -154,7 +198,7 @@ public class TestGenerator extends AbstractNutchTest {
 
     generateFetchlist(Integer.MAX_VALUE, myConfiguration, false);
 
-    ArrayList<URLWebPage> fetchList = CrawlTestUtil.readPageDB(webPageStore,
+    ArrayList<KeyWebPage> fetchList = CrawlTestUtil.readPageDB(webPageStore,
       Mark.GENERATE_MARK, FIELDS);
 
     // verify we got right amount of records
@@ -189,7 +233,7 @@ public class TestGenerator extends AbstractNutchTest {
    */
   @Test
   public void testGenerateDomainLimit() throws Exception {
-    ArrayList<URLWebPage> list = new ArrayList<URLWebPage>();
+    ArrayList<KeyWebPage> list = new ArrayList<KeyWebPage>();
 
     list.add(createURLWebPage("http://one.example.com/index.html", 1, 1));
     list.add(createURLWebPage("http://one.example.com/index1.html", 1, 1));
@@ -198,8 +242,8 @@ public class TestGenerator extends AbstractNutchTest {
     list.add(createURLWebPage("http://three.example.com/index.html", 1, 1));
     list.add(createURLWebPage("http://three.example.com/index1.html", 1, 1));
 
-    for (URLWebPage uwp : list) {
-      webPageStore.put(TableUtil.reverseUrl(uwp.getUrl()), uwp.getDatum());
+    for (KeyWebPage uwp : list) {
+      webPageStore.put(uwp.getKey(), uwp.getDatum());
     }
     webPageStore.flush();
 
@@ -211,7 +255,7 @@ public class TestGenerator extends AbstractNutchTest {
 
     generateFetchlist(Integer.MAX_VALUE, myConfiguration, false);
 
-    ArrayList<URLWebPage> fetchList = CrawlTestUtil.readPageDB(webPageStore,
+    ArrayList<KeyWebPage> fetchList = CrawlTestUtil.readPageDB(webPageStore,
       Mark.GENERATE_MARK, FIELDS);
     System.out.println(fetchList);
 
@@ -248,14 +292,14 @@ public class TestGenerator extends AbstractNutchTest {
   @Test
   public void testFilter() throws IOException, Exception {
 
-    ArrayList<URLWebPage> list = new ArrayList<URLWebPage>();
+    ArrayList<KeyWebPage> list = new ArrayList<KeyWebPage>();
 
     list.add(createURLWebPage("http://www.example.com/index.html", 1, 1));
     list.add(createURLWebPage("http://www.example.net/index.html", 1, 1));
     list.add(createURLWebPage("http://www.example.org/index.html", 1, 1));
 
-    for (URLWebPage uwp : list) {
-      webPageStore.put(TableUtil.reverseUrl(uwp.getUrl()), uwp.getDatum());
+    for (KeyWebPage uwp : list) {
+      webPageStore.put(uwp.getKey(), uwp.getDatum());
     }
     webPageStore.flush();
 
@@ -266,7 +310,7 @@ public class TestGenerator extends AbstractNutchTest {
 
     generateFetchlist(Integer.MAX_VALUE, myConfiguration, true);
 
-    ArrayList<URLWebPage> fetchList = CrawlTestUtil.readPageDB(webPageStore,
+    ArrayList<KeyWebPage> fetchList = CrawlTestUtil.readPageDB(webPageStore,
       Mark.GENERATE_MARK, FIELDS);
 
     assertEquals(0, fetchList.size());
@@ -302,22 +346,32 @@ public class TestGenerator extends AbstractNutchTest {
   }
 
   /**
-   * Constructs new {@link URLWebPage} from submitted parameters.
+   * Constructs new {@link KeyWebPage} from submitted parameters.
    *
-   * @param url
-   *          url to use
+   * @param url url to use
+   * @param fetchTume            
    * @param fetchInterval
    * @param score
    * @return Constructed object
    */
-  private URLWebPage createURLWebPage(final String url,
-      final int fetchInterval, final float score) {
+  private KeyWebPage createURLWebPage(
+    final String url, final long  fetchTume,  
+    final int fetchInterval, final float score) {
     WebPage page = WebPage.newBuilder().build();
-    page.setBaseUrl(url);
+    page.setUrl(url);
+    page.setFetchTime(fetchTume);
     page.setFetchInterval(fetchInterval);
     page.setScore(score);
     page.setStatus((int)CrawlStatus.STATUS_UNFETCHED);
-    return new URLWebPage(url, page);
+    String key = TableUtil.computeKey(page);
+    page.setKey(key);
+    return new KeyWebPage(key, page);
   }
+
+  private KeyWebPage createURLWebPage(
+    final String url, final int fetchInterval, final float score) {
+    return createURLWebPage(url,0,fetchInterval,score);
+  }
+  
 
 }

@@ -155,7 +155,7 @@ public class StorageUtils {
       throw new RuntimeException("Could not create datastore");
 
     Query<String, WebPage> query = store.newQuery();
-    query.setFields(toStringArray(fields));
+    query.setFields(fields==null ? null : toStringArray(fields));
     if (limit>0)
       query.setLimit(limit);
     if (filter != null)

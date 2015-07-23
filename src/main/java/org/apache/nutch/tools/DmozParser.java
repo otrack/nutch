@@ -24,7 +24,6 @@ import org.apache.hadoop.io.MD5Hash;
 import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.NutchConfiguration;
-import org.apache.nutch.util.TableUtil;
 import org.apache.xerces.util.XMLChar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,27 +188,20 @@ public class DmozParser {
           // possibly print status.
           //
           if(snippet){
-            try {
-              String reversedUrl = TableUtil.reverseUrl(curURL);
-              WebPage row = store.get(reversedUrl);
-              
-              if(row!=null){
+              WebPage page = store.get(curURL);
+              if(page!=null){
                 if (desc.length() > 0) {
-                  row.getMetadata().put("_dmoz_desc_", ByteBuffer.wrap(desc.toString().getBytes()));
+                  page.getMetadata().put("_dmoz_desc_", ByteBuffer.wrap(desc.toString().getBytes()));
                   desc.delete(0, desc.length());
                 }
                 if (title.length() > 0) {
-                  row.getMetadata().put("_dmoz_title_", ByteBuffer.wrap(title.toString().getBytes()));
+                  page.getMetadata().put("_dmoz_title_", ByteBuffer.wrap(title.toString().getBytes()));
                   title.delete(0, title.length());
                 }
-                store.put(reversedUrl, row);
+                store.put(curURL, page);
                 store.flush();
               }
-              
-             } catch (IOException e) {
-              // TODO Auto-generated catch block
-              e.printStackTrace();
-             }
+
           } else {
             System.out.println(curURL); 
             

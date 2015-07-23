@@ -57,11 +57,14 @@ public class ParserJob extends NutchTool {
     NEW_LINKS
   }
   static {
+    FIELDS.add(WebPage.Field.SCORE);
+    FIELDS.add(WebPage.Field.URL);
+    FIELDS.add(WebPage.Field.METADATA);
+    FIELDS.add(WebPage.Field.MARKERS);
     FIELDS.add(WebPage.Field.STATUS);
     FIELDS.add(WebPage.Field.CONTENT);
     FIELDS.add(WebPage.Field.CONTENT_TYPE);
     FIELDS.add(WebPage.Field.SIGNATURE);
-    FIELDS.add(WebPage.Field.MARKERS);
     FIELDS.add(WebPage.Field.PARSE_STATUS);
     FIELDS.add(WebPage.Field.OUTLINKS);
     FIELDS.add(WebPage.Field.METADATA);
@@ -98,10 +101,10 @@ public class ParserJob extends NutchTool {
     public void map(String key, WebPage page, Context context)
       throws IOException, InterruptedException {
 
-      String url = TableUtil.unreverseUrl(key);
+      String url = page.getUrl();
       if (Mark.FETCH_MARK.checkMark(page) == null) {
         if (LOG.isDebugEnabled()) {
-          LOG.warn("Skipping " + TableUtil.unreverseUrl(key) + "; not fetched yet !");
+          LOG.warn("Skipping " + url + "; not fetched yet !");
         }
         context.getCounter(probes.FILTERED_OUT).increment(1);
         return;

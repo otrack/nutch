@@ -25,7 +25,6 @@ import org.apache.nutch.crawl.GeneratorJob.SelectorEntry;
 import org.apache.nutch.fetcher.FetchEntry;
 import org.apache.nutch.net.URLNormalizers;
 import org.apache.nutch.storage.WebPage;
-import org.apache.nutch.util.TableUtil;
 import org.apache.nutch.util.URLUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,7 +123,7 @@ public class URLPartitioner implements Configurable {
     
     @Override
     public int getPartition(SelectorEntry selectorEntry, WebPage page, int numReduces) {
-      return partitioner.getPartition(selectorEntry.getKey(), numReduces);
+      return partitioner.getPartition(selectorEntry.getUrl(), numReduces);
     }
 
     @Override
@@ -146,8 +145,7 @@ public class URLPartitioner implements Configurable {
 
     @Override
     public int getPartition(IntWritable intWritable, FetchEntry fetchEntry, int numReduces) {
-      String key = fetchEntry.getKey();
-      String url = TableUtil.unreverseUrl(key);
+      String url= fetchEntry.getKey();
       return partitioner.getPartition(url, numReduces);
     }
     

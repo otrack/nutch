@@ -29,6 +29,10 @@ public enum Mark {
   public void putMark(WebPage page, String markValue) {
       page.getMarkers().put(name, markValue);
   }
+  
+  public void putMark(WebPage page) {
+    page.getMarkers().put(name, "");
+  }
 
   public String removeMark(WebPage page) {
     return (String) page.getMarkers().put(name, null);
@@ -36,6 +40,11 @@ public enum Mark {
 
   public String checkMark(WebPage page) {
     return (String) page.getMarkers().get(name);
+  }
+  
+  public boolean containsMark(WebPage page){
+    return page.getMarkers().containsKey(name);
+    
   }
 
   /**

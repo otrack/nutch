@@ -21,7 +21,7 @@ public class FilterUtils {
       return null;
     }
     MapFieldValueFilter<String, WebPage> filter = new MapFieldValueFilter<>();
-    filter.setFieldName(WebPage.Field.MARKERS.toString());
+    filter.setFieldName(WebPage.Field.MARKERS.getName());
     filter.setFilterOp(FilterOp.EQUALS);
     filter.setFilterIfMissing(true);
     filter.setMapKey(mark.getName());
@@ -29,15 +29,16 @@ public class FilterUtils {
     return filter;
   }
 
-  public static MapFieldValueFilter<String, WebPage> getExcludeFetchedFilter(){
+  public static MapFieldValueFilter<String, WebPage> getFetchedFilter(){
     MapFieldValueFilter<String, WebPage> filter = new MapFieldValueFilter<>();
-    filter.setFieldName(WebPage.Field.MARKERS.toString());
-    filter.setFilterOp(FilterOp.UNLIKE);
+    filter.setFieldName(WebPage.Field.MARKERS.getName());
+    filter.setFilterOp(FilterOp.LIKE);
     filter.setFilterIfMissing(false);
     filter.setMapKey(Mark.FETCH_MARK.getName());
     filter.getOperands().add("*");
     return filter;
   }
+
 
   public static SingleFieldValueFilter<String, Link> getBatchIdLinkFilter(String batchId) {
     SingleFieldValueFilter<String, Link> filter = new SingleFieldValueFilter<>();
@@ -49,7 +50,7 @@ public class FilterUtils {
   
   public static MapFieldValueFilter<String, WebPage> getExcludeNonGeneratedFilter() {
     MapFieldValueFilter<String, WebPage> filter = new MapFieldValueFilter<>();
-    filter.setFieldName(WebPage.Field.MARKERS.toString());
+    filter.setFieldName(WebPage.Field.MARKERS.getName());
     filter.setFilterOp(FilterOp.LIKE);
     filter.setFilterIfMissing(false);
     filter.setMapKey(Mark.GENERATE_MARK.getName());
@@ -57,4 +58,13 @@ public class FilterUtils {
     return filter;
   }
 
+  public static SingleFieldValueFilter<String, WebPage> getShouldFetchFilter(long time) {
+    SingleFieldValueFilter<String, WebPage> filter = new SingleFieldValueFilter<>();
+    filter.setFieldName(WebPage.Field.FETCH_TIME.getName());
+    filter.setFilterOp(FilterOp.LESS_OR_EQUAL);
+    filter.setFilterIfMissing(false);
+    filter.getOperands().add(time);
+    return filter;
+  }
+  
 }

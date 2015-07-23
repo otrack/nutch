@@ -84,35 +84,41 @@ public class OPICScoringFilter implements ScoringFilter {
     row.getMetadata().put(CASH_KEY, ByteBuffer.wrap(Bytes.toBytes(score)));
   }
 
-  /** Set to 0.0f (unknown value) - inlink contributions will bring it to
-   * a correct level. Newly discovered pages have at least one inlink. */
+  /**
+   * Set to 1.0f.
+   * The initial value should equal the injected value,
+   * and it should (obviously) be non-zero.
+   *
+   * */
   @Override
   public void initialScore(String url, WebPage row) throws ScoringFilterException {
-    row.setScore(0.0f);
-    row.getMetadata().put(CASH_KEY, ByteBuffer.wrap(Bytes.toBytes(0.0f)));
+    row.setScore(1.0f);
+    row.getMetadata().put(CASH_KEY, ByteBuffer.wrap(Bytes.toBytes(1.0f)));
   }
 
   /** Use {@link WebPage#getScore()}. */
   @Override
   public float generatorSortValue(String url, WebPage row, float initSort) throws ScoringFilterException {
-    return row.getScore() * initSort;
+    return row.getScore(); // ignore initSort
   }
 
   /** Increase the score by a sum of inlinked scores. */
   @Override
-  public void updateScore(String url, WebPage row, List<ScoreDatum> inlinkedScoreData) {
-    float adjust = 0.0f;
+  public void updateScore(String url, WebPage page, List<ScoreDatum> inlinkedScoreData) {
+    float score = page.getScore();
     for (ScoreDatum scoreDatum : inlinkedScoreData) {
-      adjust += scoreDatum.getScore();
+      LOG.trace("adding <"+scoreDatum.getUrl()+", "+scoreDatum.getScore()+">");
+      score += scoreDatum.getScore();
     }
-    float oldScore = row.getScore();
-    row.setScore(oldScore + adjust);
-    ByteBuffer cashRaw = row.getMetadata().get(CASH_KEY);
-    float cash = 0.0f;
+    LOG.trace(url+": " + score+" ("+page.getScore()+")");
+    page.setScore(score);
+
+    ByteBuffer cashRaw = page.getMetadata().get(CASH_KEY);
+    float cash = 1.0f;
     if (cashRaw != null) {
       cash = Bytes.toFloat(cashRaw.array(), cashRaw.arrayOffset() + cashRaw.position());
     }
-    row.getMetadata().put(CASH_KEY, ByteBuffer.wrap(Bytes.toBytes(cash + adjust)));
+    page.getMetadata().put(CASH_KEY, ByteBuffer.wrap(Bytes.toBytes(cash + score)));
   }
 
   /** Get cash on hand, divide it by the number of outlinks and apply. */

@@ -16,9 +16,9 @@
  ******************************************************************************/
 package org.apache.nutch.util;
 
-import org.apache.nutch.util.TableUtil;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestTableUtil {
 
@@ -62,9 +62,8 @@ public class TestTableUtil {
     assertUnreverse(reversedUrlString7, urlString7);
   }
 
-  private static void assertReverse(String url, String expectedReversedUrl) throws Exception {
-    String reversed = TableUtil.reverseUrl(url);
-    assertEquals(expectedReversedUrl, reversed);
+  private static void assertReverse(String url, String expected) throws Exception {
+    assertEquals(expected, url);
   }
 
   private static void assertUnreverse(String reversedUrl, String expectedUrl) {

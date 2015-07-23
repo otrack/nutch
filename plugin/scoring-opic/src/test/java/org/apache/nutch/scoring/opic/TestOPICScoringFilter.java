@@ -43,77 +43,54 @@ import static org.junit.Assert.assertTrue;
 public class TestOPICScoringFilter {
 
   // These lists will be used when simulating the graph
-  private Map<String, String[]> linkList = new LinkedHashMap<String, String[]>();
-  private final List<ScoreDatum> outlinkedScoreData = new ArrayList<ScoreDatum>();
+  private Map<String, String[]> linkList = new LinkedHashMap<>();
+  private final List<ScoreDatum> outlinkedScoreData = new ArrayList<>();
+
   private static final int DEPTH = 3;
 
   DecimalFormat df = new DecimalFormat("#.###");
 
-  private final String[] seedList = new String[] { "http://a.com",
-      "http://b.com", "http://c.com", };
+  public static final HashMap<String, String[]> graph =
+    new HashMap<String, String[]>() {
+      {
+        put("a.html", new String[] { "b.html" });
+        put("b.html", new String[] { "a.html", "c.html" });
+        put("c.html", new String[] { "a.html", "b.html", "d.html" });
+        put("d.html", new String[] {});
+      }
+    };
 
-  // An example graph; shows websites as connected nodes
-  private void fillLinks() {
-    linkList.put("http://a.com", new String[] { "http://b.com" });
-    linkList.put("http://b.com",
-        new String[] { "http://a.com", "http://c.com" });
-    linkList.put("http://c.com", new String[] { "http://a.com", "http://b.com",
-        "http://d.com" });
-    linkList.put("http://d.com", new String[] {});
-  }
-
-  // Previously calculated values for each three depths. We will compare these
-  // to the results this test generates
-  private static HashMap<Integer, HashMap<String, Float>> acceptedScores = new HashMap<Integer, HashMap<String, Float>>() {
-    /**
-	 * 
-	 */
-    private static final long serialVersionUID = 278328450774664407L;
-
+  public static HashMap<Integer, HashMap<String, Float>> acceptedScores
+    = new HashMap<Integer, HashMap<String, Float>>() {
     {
       put(1, new HashMap<String, Float>() {
-        /**
-		 * 
-		 */
-        private static final long serialVersionUID = 6145080304388858096L;
-
         {
-          put(new String("http://a.com"), new Float(1.833));
-          put(new String("http://b.com"), new Float(2.333));
-          put(new String("http://c.com"), new Float(1.5));
-          put(new String("http://d.com"), new Float(0.333));
+          put("a.html", new Float(1.833));
+          put("b.html", new Float(2.333));
+          put("c.html", new Float(1.5));
+          put("d.html", new Float(1.333));
         }
       });
       put(2, new HashMap<String, Float>() {
-        /**
-		 * 
-		 */
-        private static final long serialVersionUID = 8948751511219885073L;
-
         {
-          put(new String("http://a.com"), new Float(2.666));
-          put(new String("http://b.com"), new Float(3.333));
-          put(new String("http://c.com"), new Float(2.166));
-          put(new String("http://d.com"), new Float(0.278));
+          put("a.html", new Float(3.5));
+          put("b.html", new Float(4.666));
+          put("c.html", new Float(2.666));
+          put("d.html", new Float(1.833));
         }
       });
       put(3, new HashMap<String, Float>() {
-        /**
-		 * 
-		 */
-        private static final long serialVersionUID = -7025018421800845103L;
-
         {
-          put(new String("http://a.com"), new Float(3.388));
-          put(new String("http://b.com"), new Float(4.388));
-          put(new String("http://c.com"), new Float(2.666));
-          put(new String("http://d.com"), new Float(0.5));
+          put("a.html", new Float(6.722));
+          put("b.html", new Float(9.055));
+          put("c.html", new Float(5.0));
+          put("d.html", new Float(2.722));
         }
       });
     }
   };
 
-  private HashMap<Integer, HashMap<String, Float>> resultScores = new HashMap<Integer, HashMap<String, Float>>();
+  private HashMap<Integer, HashMap<String, Float>> resultScores = new HashMap<>();
 
   private OPICScoringFilter scoringFilter;
 
@@ -123,14 +100,13 @@ public class TestOPICScoringFilter {
     Configuration conf = NutchConfiguration.create();
     // LinkedHashMap dbWebPages is used instead of a persistent
     // data store for this test class
-    Map<String, Map<WebPage, List<ScoreDatum>>> dbWebPages = new LinkedHashMap<String, Map<WebPage, List<ScoreDatum>>>();
+    Map<String, Map<WebPage, List<ScoreDatum>>> dbWebPages = new LinkedHashMap<>();
 
     // All WebPages stored in this map with an initial true value.
     // After processing, it is set to false.
-    Map<String, Boolean> dbWebPagesControl = new LinkedHashMap<String, Boolean>();
+    Map<String, Boolean> dbWebPagesControl = new LinkedHashMap<>();
 
     TestOPICScoringFilter self = new TestOPICScoringFilter();
-    self.fillLinks();
 
     float scoreInjected = conf.getFloat("db.score.injected", 1.0f);
 
@@ -138,16 +114,18 @@ public class TestOPICScoringFilter {
     scoringFilter.setConf(conf);
 
     // injecting seed list, with scored attached to webpages
-    for (String url : self.seedList) {
-      WebPage row = WebPage.newBuilder().build();
-      row.setScore(scoreInjected);
-      scoringFilter.injectedScore(url, row);
+    for (String url : self.graph.keySet()) {
+      WebPage page = WebPage.newBuilder().build();
+      page.setScore(scoreInjected);
+      page.setUrl(url);
+      page.setKey(TableUtil.computeKey(page));
+      scoringFilter.injectedScore(url, page);
 
       List<ScoreDatum> scList = new LinkedList<ScoreDatum>();
       Map<WebPage, List<ScoreDatum>> webPageMap = new HashMap<WebPage, List<ScoreDatum>>();
-      webPageMap.put(row, scList);
-      dbWebPages.put(TableUtil.reverseUrl(url), webPageMap);
-      dbWebPagesControl.put(TableUtil.reverseUrl(url), true);
+      webPageMap.put(page, scList);
+      dbWebPages.put(url, webPageMap);
+      dbWebPagesControl.put(url, true);
     }
 
     // Depth Loop
@@ -170,11 +148,10 @@ public class TestOPICScoringFilter {
           scoreList = values.getValue();
         }
 
-        String reverseUrl = entry.getKey();
-        String url = TableUtil.unreverseUrl(reverseUrl);
+        String url = entry.getKey();
         float score = row.getScore();
 
-        if (dbWebPagesControl.get(TableUtil.reverseUrl(url))) {
+        if (dbWebPagesControl.get(url)) {
           row.setScore(scoringFilter.generatorSortValue(url, row, score));
           dbWebPagesControl.put(TableUtil.reverseUrl(url), false);
         }
@@ -193,7 +170,7 @@ public class TestOPICScoringFilter {
           for (Entry<String, String> e : outlinks.entrySet()) {
             int depth = Integer.MAX_VALUE;
             self.outlinkedScoreData.add(new ScoreDatum(0.0f, e.getKey()
-                .toString(), e.getValue().toString(), depth));
+                .toString(), e.getValue().toString(), 0, depth));
           }
         }
         scoringFilter.distributeScoreToOutlinks(url, row,

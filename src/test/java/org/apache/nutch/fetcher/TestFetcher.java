@@ -19,7 +19,7 @@ package org.apache.nutch.fetcher;
 import org.apache.hadoop.fs.Path;
 import org.apache.nutch.crawl.GeneratorJob;
 import org.apache.nutch.crawl.InjectorJob;
-import org.apache.nutch.crawl.URLWebPage;
+import org.apache.nutch.crawl.KeyWebPage;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.util.AbstractNutchTest;
 import org.apache.nutch.util.Bytes;
@@ -32,6 +32,7 @@ import org.mortbay.jetty.Server;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -95,7 +96,7 @@ public class TestFetcher extends AbstractNutchTest {
     GeneratorJob g = new GeneratorJob(conf);
     String batchId = g.generate(Long.MAX_VALUE, time, false, false);
 
-    ArrayList<URLWebPage> l = CrawlTestUtil.readPageDB(webPageStore,
+    ArrayList<KeyWebPage> l = CrawlTestUtil.readPageDB(webPageStore,
       Mark.GENERATE_MARK);
 
     assertTrue(
@@ -114,18 +115,18 @@ public class TestFetcher extends AbstractNutchTest {
         conf.getFloat("fetcher.server.delay", 5));
     assertTrue(time > minimumTime);
 
-    List<URLWebPage> pages = CrawlTestUtil.readPageDB(webPageStore,
+    List<KeyWebPage> pages = CrawlTestUtil.readPageDB(webPageStore,
       Mark.FETCH_MARK);
     assertEquals(urls.size(), pages.size());
     List<String> handledurls = new ArrayList<String>();
-    for (URLWebPage up : pages) {
+    for (KeyWebPage up : pages) {
       ByteBuffer bb = up.getDatum().getContent();
       if (bb == null) {
         continue;
       }
       String content = Bytes.toString(bb);
       if (content.indexOf("Nutch fetcher test page")!=-1) {
-        handledurls.add(up.getUrl());
+        handledurls.add(up.getKey());
       }
     }
     Collections.sort(urls);
@@ -139,8 +140,9 @@ public class TestFetcher extends AbstractNutchTest {
     assertTrue(urls.containsAll(handledurls));
   }
 
-  public static void addUrl(ArrayList<String> urls, String page, Server server) {
-    urls.add("http://127.0.0.1:" + server.getConnectors()[0].getPort() + "/" + page);
+  public static void addUrl(Collection<String> collection, String url, Server server) {
+    collection.add(
+      "http://127.0.0.1:" + server.getConnectors()[0].getPort() + "/" + url);
   }
 
   @Test

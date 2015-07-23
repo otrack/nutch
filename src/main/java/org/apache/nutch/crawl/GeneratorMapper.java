@@ -24,9 +24,7 @@ import org.apache.nutch.net.URLFilters;
 import org.apache.nutch.net.URLNormalizers;
 import org.apache.nutch.scoring.ScoringFilterException;
 import org.apache.nutch.scoring.ScoringFilters;
-import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.WebPage;
-import org.apache.nutch.util.TableUtil;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -45,20 +43,15 @@ extends GoraMapper<String, WebPage, SelectorEntry, WebPage> {
   private int maxDistance;
 
   @Override
-  public void map(String reversedUrl, WebPage page,
+  public void map(String key, WebPage page,
       Context context) throws IOException, InterruptedException {
-    String url = TableUtil.unreverseUrl(reversedUrl.toString());
-
-    if (Mark.FETCH_MARK.checkMark(page) != null) {
-      if (GeneratorJob.LOG.isDebugEnabled()) {
-        GeneratorJob.LOG.debug("Skipping " + url + "; already fetched");
-      }
-      return;
-    }
+    
+    String url = page.getUrl();
+    long fetchTime = page.getFetchTime();
 
     //filter on distance
     if (maxDistance > -1) {
-      String distanceString = page.getMarkers().get(DbUpdaterJob.DISTANCE).toString();
+      String distanceString = page.getMarkers().get(DbUpdaterJob.DISTANCE);
       if (distanceString != null) {
         int distance=Integer.parseInt(distanceString);
         if (distance > maxDistance) {
@@ -95,6 +88,7 @@ extends GoraMapper<String, WebPage, SelectorEntry, WebPage> {
       }
       return;
     }
+    
     float score = page.getScore();
     try {
       score = scoringFilters.generatorSortValue(url, page, score);
@@ -102,7 +96,7 @@ extends GoraMapper<String, WebPage, SelectorEntry, WebPage> {
       //ignore
     }
     entry = new SelectorEntry();
-    entry.set(url, score);
+    entry.set(url, fetchTime, score);
     
     GeneratorJob.LOG.trace("Adding "+entry.toString());
     context.write(entry, page);

@@ -90,7 +90,7 @@ public class WebTableReader extends NutchTool implements Tool {
       context.write(new Text("s"), new LongWritable(
           (long) (value.getScore() * 1000.0)));
       if (sort) {
-        URL u = new URL(TableUtil.unreverseUrl(key.toString()));
+        URL u = new URL(value.getUrl());
         String host = u.getHost();
         context.write(new Text("status " + value.getStatus() + " " + host),
             COUNT_1);
@@ -228,7 +228,7 @@ public class WebTableReader extends NutchTool implements Tool {
       String.class, WebPage.class);
 
     Query<String, WebPage> query = datastore.newQuery();
-    String reversedUrl = TableUtil.reverseUrl(key);
+    String reversedUrl = key;
     query.setKey(reversedUrl);
 
     Result<String, WebPage> result = datastore.execute(query);
@@ -242,7 +242,7 @@ public class WebTableReader extends NutchTool implements Tool {
         if (page == null || skey == null)
           break;
         found = true;
-        String url = TableUtil.unreverseUrl(skey);
+        String url = page.getUrl();
         System.out.println(getPageRepresentation(url, page, dumpContent,
             dumpHeaders, dumpLinks, dumpText));
       }catch (Exception e) {
@@ -278,7 +278,7 @@ public class WebTableReader extends NutchTool implements Tool {
         org.apache.hadoop.mapreduce.Mapper<String, WebPage, Text, Text>.Context context)
         throws IOException, InterruptedException {
       // checks whether the Key passes the regex
-      String url = TableUtil.unreverseUrl(key);
+      String url = value.getUrl();
       if (regex.matcher(url).matches()) {
         context.write(new Text(url),
             new Text(getPageRepresentation(key, value, dumpContent, dumpHeaders,
@@ -345,6 +345,7 @@ public class WebTableReader extends NutchTool implements Tool {
       boolean dumpContent, boolean dumpHeaders, boolean dumpLinks, boolean dumpText) {
     StringBuffer sb = new StringBuffer();
     sb.append("key:\t" + key).append("\n");
+    sb.append("url:\t" + page.getUrl()).append("\n");
     sb.append("baseUrl:\t" + page.getBaseUrl()).append("\n");
     sb.append("status:\t").append(page.getStatus()).append(" (").append(
         CrawlStatus.getName(page.getStatus().byteValue())).append(")\n");

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,10 +34,11 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DbUpdateReducer extends
-    GoraReducer<UrlWithScore, NutchWritable, String, WebPage> {
+  GoraReducer<UrlWithScore, NutchWritable, String, WebPage> {
 
   public static final String CRAWLDB_ADDITIONS_ALLOWED = "db.update.additions.allowed";
   public static final String CRAWLDB_MAX_NEWPAGES = "db.update.max.newpages";
@@ -49,12 +50,12 @@ public class DbUpdateReducer extends
   private int maxInterval;
   private FetchSchedule schedule;
   private ScoringFilters scoringFilters;
-  private List<ScoreDatum> inlinkedScoreData = new ArrayList<>();
+  private Map<String, ScoreDatum> inlinkedScoreData = new HashMap<>();
   private int maxLinks;
   private long maxNewPages;
 
   @Override
-  protected void setup(Context context) throws IOException, 
+  protected void setup(Context context) throws IOException,
     InterruptedException {
     Configuration conf = context.getConfiguration();
     retryMax = conf.getInt("db.fetch.retry.max", 3);
@@ -68,100 +69,106 @@ public class DbUpdateReducer extends
 
   @Override
   protected void reduce(UrlWithScore key, Iterable<NutchWritable> values,
-      Context context) throws IOException, InterruptedException {
-    
-    String keyUrl = key.getUrl().toString();
+    Context context) throws IOException, InterruptedException {
+
+    String url = key.getUrl().toString();
     WebPage page = null;
     inlinkedScoreData.clear();
 
     for (NutchWritable nutchWritable : values) {
       Writable val = nutchWritable.get();
       if (val instanceof WebPageWritable) {
-        page = ((WebPageWritable) val).getWebPage();
+        if (page==null || page.getFetchTime() < ((WebPageWritable)val).getWebPage().getFetchTime()) { // get latest version
+          page = ((WebPageWritable) val).getWebPage();
+        }
       } else {
-        inlinkedScoreData.add((ScoreDatum) val);
+        ScoreDatum scoreDatum = (ScoreDatum)val;
+        if (!inlinkedScoreData.containsKey(scoreDatum.getUrl())
+          || inlinkedScoreData.get(scoreDatum.getUrl()).getFetchTime() < scoreDatum.getFetchTime())
+          inlinkedScoreData.put(((ScoreDatum)val).getUrl(),(ScoreDatum) val); // add only if fetchTime is more recent
         if (inlinkedScoreData.size() >= maxLinks) {
-          LOG.info("Limit reached, skipping further inlinks for " + keyUrl);
+          LOG.info("Limit reached, skipping further inlinks for " + url);
           break;
         }
       }
     }
-    String url;
-    try {
-      url = TableUtil.unreverseUrl(keyUrl);
-    } catch (Exception e) {
-      // this can happen because a newly discovered malformed link
-      // may slip by url filters
-      return;
-    }
-
+    
     if (page == null) { // new webpage
+
       if (!additionsAllowed) {
         return;
       }
+
       if (maxNewPages!=0 && context.getCounter(DbUpdaterJob.probes.NEW_PAGES).getValue() > maxNewPages) {
         return;
       }
+
       maxNewPages++;
       page = WebPage.newBuilder().build();
+      page.setUrl(url);
       schedule.initializeSchedule(url, page);
       page.setStatus((int) CrawlStatus.STATUS_UNFETCHED);
+      page.setKey(TableUtil.computeKey(page));
       try {
         scoringFilters.initialScore(url, page);
       } catch (ScoringFilterException e) {
         page.setScore(0.0f);
       }
+
     } else {
+
       byte status = page.getStatus().byteValue();
+
       switch (status) {
-      case CrawlStatus.STATUS_FETCHED: // succesful fetch
-      case CrawlStatus.STATUS_REDIR_TEMP: // successful fetch, redirected
-      case CrawlStatus.STATUS_REDIR_PERM:
-      case CrawlStatus.STATUS_NOTMODIFIED: // successful fetch, notmodified
-        int modified = FetchSchedule.STATUS_UNKNOWN;
-        if (status == CrawlStatus.STATUS_NOTMODIFIED) {
-          modified = FetchSchedule.STATUS_NOTMODIFIED;
-        }
-        ByteBuffer prevSig = page.getPrevSignature();
-        ByteBuffer signature = page.getSignature();
-        if (prevSig != null && signature != null) {
-          if (SignatureComparator.compare(prevSig, signature) != 0) {
-            modified = FetchSchedule.STATUS_MODIFIED;
-          } else {
+        case CrawlStatus.STATUS_FETCHED: // succesful fetch
+        case CrawlStatus.STATUS_REDIR_TEMP: // successful fetch, redirected
+        case CrawlStatus.STATUS_REDIR_PERM:
+        case CrawlStatus.STATUS_NOTMODIFIED: // successful fetch, notmodified
+          int modified = FetchSchedule.STATUS_UNKNOWN;
+          if (status == CrawlStatus.STATUS_NOTMODIFIED) {
             modified = FetchSchedule.STATUS_NOTMODIFIED;
           }
-        }
-        long fetchTime = page.getFetchTime();
-        long prevFetchTime = page.getPrevFetchTime();
-        long modifiedTime = page.getModifiedTime();
-        long prevModifiedTime = page.getPrevModifiedTime();
-        String lastModified = page.getHeaders().get("Last-Modified");
-        if (lastModified != null) {
-          try {
-            modifiedTime = HttpDateFormat.toLong(lastModified.toString());
-            prevModifiedTime = page.getModifiedTime();
-          } catch (Exception e) {
+          ByteBuffer prevSig = page.getPrevSignature();
+          ByteBuffer signature = page.getSignature();
+          if (prevSig != null && signature != null) {
+            if (SignatureComparator.compare(prevSig, signature) != 0) {
+              modified = FetchSchedule.STATUS_MODIFIED;
+            } else {
+              modified = FetchSchedule.STATUS_NOTMODIFIED;
+            }
           }
-        }
-        schedule.setFetchSchedule(url, page, prevFetchTime, prevModifiedTime,
+          long fetchTime = page.getFetchTime();
+          long prevFetchTime = page.getPrevFetchTime();
+          long modifiedTime = page.getModifiedTime();
+          long prevModifiedTime = page.getPrevModifiedTime();
+          String lastModified = page.getHeaders().get("Last-Modified");
+          if (lastModified != null) {
+            try {
+              modifiedTime = HttpDateFormat.toLong(lastModified.toString());
+              prevModifiedTime = page.getModifiedTime();
+            } catch (Exception e) {
+            }
+          }
+          schedule.setFetchSchedule(url, page, prevFetchTime, prevModifiedTime,
             fetchTime, modifiedTime, modified);
-        if (maxInterval < page.getFetchInterval())
-          schedule.forceRefetch(url, page, false);
-        break;
-      case CrawlStatus.STATUS_RETRY:
-        schedule.setPageRetrySchedule(url, page, 0L,
+          if (maxInterval < page.getFetchInterval())
+            schedule.forceRefetch(url, page, false);
+          break;
+        case CrawlStatus.STATUS_RETRY:
+          schedule.setPageRetrySchedule(url, page, 0L,
             page.getPrevModifiedTime(), page.getFetchTime());
-        if (page.getRetriesSinceFetch() < retryMax) {
-          page.setStatus((int) CrawlStatus.STATUS_UNFETCHED);
-        } else {
-          page.setStatus((int) CrawlStatus.STATUS_GONE);
-        }
-        break;
-      case CrawlStatus.STATUS_GONE:
-        schedule.setPageGoneSchedule(url, page, 0L, page.getPrevModifiedTime(),
+          if (page.getRetriesSinceFetch() < retryMax) {
+            page.setStatus((int) CrawlStatus.STATUS_UNFETCHED);
+          } else {
+            page.setStatus((int) CrawlStatus.STATUS_GONE);
+          }
+          break;
+        case CrawlStatus.STATUS_GONE:
+          schedule.setPageGoneSchedule(url, page, 0L, page.getPrevModifiedTime(),
             page.getFetchTime());
-        break;
+          break;
       }
+      
     }
 
     if (page.getInlinks() != null) {
@@ -175,7 +182,7 @@ public class DbUpdateReducer extends
     // yet),
     // write it to the page.
     int smallestDist = Integer.MAX_VALUE;
-    for (ScoreDatum inlink : inlinkedScoreData) {
+    for (ScoreDatum inlink : new ArrayList<>(inlinkedScoreData.values())) {
       int inlinkDist = inlink.getDistance();
       if (inlinkDist < smallestDist) {
         smallestDist = inlinkDist;
@@ -198,10 +205,10 @@ public class DbUpdateReducer extends
     }
 
     try {
-      scoringFilters.updateScore(url, page, inlinkedScoreData);
+      scoringFilters.updateScore(url, page, new ArrayList<>(inlinkedScoreData.values()));
     } catch (ScoringFilterException e) {
       LOG.warn("Scoring filters failed with exception "
-          + StringUtils.stringifyException(e));
+        + StringUtils.stringifyException(e));
     }
 
     if (page.getMetadata().get(FetcherJob.REDIRECT_DISCOVERED) != null) {
@@ -217,7 +224,7 @@ public class DbUpdateReducer extends
       context.getCounter(DbUpdaterJob.probes.NEW_PAGES).increment(1);
     }
 
-    context.write(keyUrl, page);
+    context.write(page.getKey(), page);
   }
 
 }

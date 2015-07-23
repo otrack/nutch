@@ -58,26 +58,29 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
   @Override
   protected void reduce(SelectorEntry entry, Iterable<WebPage> values,
       Context context) throws IOException, InterruptedException {
+
     for (WebPage page : values) {
-      
-      if (generated.contains(entry.getKey())) {
+
+      if (limit != 0 && count >= limit) {
         GeneratorJob.LOG
-          .trace("Skipping " + page.getKey() + "; already generated");
-        context.getCounter("Generator", "DUPLICATE").increment(1);
-        continue;
-      }
-      
-      if (limit!=0 && count >= limit) {
-        GeneratorJob.LOG.trace("Skipping " + page.getKey()+ "; too many generated urls");
+          .trace("Skipping " + page.getKey() + "; too many generated urls");
         context.getCounter("Generator", "LIMIT").increment(1);
         return;
       }
+
+      if (generated.contains(entry.getUrl())) {
+        GeneratorJob.LOG
+          .trace("Skipping " + page.getUrl() + "; already generated");
+        context.getCounter("Generator", "DUPLICATE").increment(1);
+        continue;
+      }
+
       if (maxCount > 0) {
         String hostordomain;
         if (byDomain) {
-          hostordomain = URLUtil.getDomainName(entry.getKey());
+          hostordomain = URLUtil.getDomainName(entry.getUrl());
         } else {
-          hostordomain = URLUtil.getHost(entry.getKey());
+          hostordomain = URLUtil.getHost(entry.getUrl());
         }
 
         Integer hostCount = hostCountMap.get(hostordomain);
@@ -92,19 +95,28 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
         hostCountMap.put(hostordomain, hostCount + 1);
       }
 
+      // if already fetched, create a new version by correcting the key with the new fetch time
+      if (Mark.FETCH_MARK.checkMark(page) != null) {
+        page.getMarkers().clear();
+        page.setKey(TableUtil.computeKey(page));
+      }
+
       Mark.GENERATE_MARK.putMark(page, batchId);
       page.setBatchId(batchId);
       try {
-        context.write(TableUtil.reverseUrl(entry.getKey()), page);
-        generated.add(entry.getKey());
+        context.write(page.getKey(), page);
+        generated.add(page.getUrl());
       } catch (MalformedURLException e) {
         context.getCounter("Generator", "MALFORMED_URL").increment(1);
         continue;
       }
-      context.getCounter("Generator", "GENERATE_MARK").increment(1);
-      LOG.trace("GeneratedUrl : " + entry.getKey());
-      count++;
+      
     }
+
+    context.getCounter("Generator", "GENERATE_MARK").increment(1);
+    LOG.trace("GeneratedUrl : " + entry.getUrl());
+    count++;
+
   }
 
   @Override

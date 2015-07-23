@@ -26,7 +26,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import org.apache.hadoop.io.RawComparator;
-import org.apache.nutch.crawl.UrlWithScore;
 import org.apache.nutch.crawl.UrlWithScore.UrlOnlyPartitioner;
 import org.apache.nutch.crawl.UrlWithScore.UrlScoreComparator;
 import org.apache.nutch.crawl.UrlWithScore.UrlScoreComparator.UrlOnlyComparator;
@@ -152,7 +151,7 @@ public class TestUrlWithScore {
    * @return The compare result. (When k1 != k2, assert failure kicks in)
    * @throws IOException 
    */
-  private Object compareBothRegularAndRaw(RawComparator<UrlWithScore> comp, 
+  private Object compareBothRegularAndRaw(RawComparator<UrlWithScore> comp,
       UrlWithScore k1, UrlWithScore k2) throws IOException {
     int regular = comp.compare(k1, k2);
     

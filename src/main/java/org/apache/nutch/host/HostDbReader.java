@@ -16,8 +16,6 @@
  ******************************************************************************/
 package org.apache.nutch.host;
 
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.gora.query.Query;
@@ -31,6 +29,8 @@ import org.apache.nutch.storage.Host;
 import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.util.NutchConfiguration;
 import org.apache.nutch.util.TableUtil;
+
+import java.io.IOException;
 
 /**
  * Display entries from the hostDB. Allows to verify that the storage is OK.
@@ -47,7 +47,7 @@ public class HostDbReader extends Configured implements Tool {
     Query<String, Host> query = datastore.newQuery();
     // possibly add a contraint to the query
     if (key != null) {
-      query.setKey(TableUtil.reverseUrl(key));
+      query.setKey(key);
     }
     // query.setFields(Host._ALL_FIELDS);
     Result<String, Host> result = datastore.execute(query);

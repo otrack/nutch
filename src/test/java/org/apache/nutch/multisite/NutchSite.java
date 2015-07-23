@@ -8,7 +8,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.nutch.crawl.DbUpdaterJob;
 import org.apache.nutch.crawl.GeneratorJob;
 import org.apache.nutch.crawl.InjectorJob;
-import org.apache.nutch.crawl.URLWebPage;
+import org.apache.nutch.crawl.KeyWebPage;
 import org.apache.nutch.fetcher.FetcherJob;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.parse.ParserJob;
@@ -149,7 +149,7 @@ public class NutchSite {
     return pool.submit(new Callable<Integer>() {
       @Override
       public Integer call() throws Exception {
-        DbUpdaterJob dbUpdaterJob= new DbUpdaterJob(conf);
+        DbUpdaterJob dbUpdaterJob = new DbUpdaterJob(conf);
         return dbUpdaterJob.update(batchId);
       }
     });
@@ -165,8 +165,9 @@ public class NutchSite {
           LOG.info("Starting round #" + round + " @" + siteName);
           conf.set(GeneratorJob.BATCH_ID, Integer.toString(round));
           conf.set(GeneratorJob.GENERATOR_MAX_COUNT, Integer.toString(width));
-          conf.set("fetcher.parse","true");
-          String batchId = generate(width, System.currentTimeMillis(), false, false)
+          conf.set("fetcher.parse", "true");
+          String batchId = generate(width, System.currentTimeMillis(), false,
+            false)
             .get();
           fetch(batchId, 4, false, 1).get();
           update("-all").get();
@@ -180,13 +181,31 @@ public class NutchSite {
 
   // Helpers
 
-  public List<URLWebPage> readPageDB(Mark requiredMark, String... fields)
+  public List<KeyWebPage> readPageDB(Mark requiredMark, String... fields)
     throws Exception {
     return CrawlTestUtil.readPageDB(pageDB, requiredMark, fields);
   }
 
+  public List<KeyWebPage> readPageDB(
+    Mark requiredMark, String sortingField,boolean isAscendant, String... fields)
+    throws Exception {
+    return CrawlTestUtil.readPageDB(pageDB, requiredMark, sortingField,
+      isAscendant, fields);
+  }
+
+  public List<KeyWebPage> readLastVersionPageDB(Mark requiredMark,
+    String sortingField, boolean isAscendant, String... fields)
+    throws Exception  {
+    return CrawlTestUtil.readLastVersionPageDB(pageDB, requiredMark, sortingField,
+      isAscendant, fields);
+  }
+
   public DataStore<String,WebPage> getPageDB(){
     return pageDB;
+  }
+  
+  public Configuration getConf(){
+    return conf;
   }
 
 }

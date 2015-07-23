@@ -23,7 +23,6 @@ import org.apache.gora.query.Result;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.WebPage;
 import org.apache.nutch.util.NutchJob;
-import org.apache.nutch.util.TableUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,8 +81,8 @@ public class DbIterator extends UnmodifiableIterator<Map<String, Object>> {
   }
 
   public Map<String, Object> next() {
-    url = result.getKey();
     page = WebPage.newBuilder(result.get()).build();
+    url = page.getUrl();
     try {
       skipNonRelevant();
       if (!hasNext) {
@@ -101,7 +100,7 @@ public class DbIterator extends UnmodifiableIterator<Map<String, Object>> {
     Map<String, Object> result = DbPageConverter.convertPage(page, commonFields);
 
     if (CollectionUtils.isEmpty(commonFields) || commonFields.contains("url")) {
-      result.put("url", TableUtil.unreverseUrl(url));
+      result.put("url", url);
     }
     return result;
   }

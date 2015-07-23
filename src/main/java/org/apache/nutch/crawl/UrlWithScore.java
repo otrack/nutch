@@ -35,7 +35,8 @@ import org.apache.hadoop.mapreduce.Partitioner;
  * integration with jobs.
  * 
  */
-public final class UrlWithScore implements WritableComparable<UrlWithScore> {
+public final class UrlWithScore
+  implements WritableComparable<UrlWithScore> {
   private static final Comparator<UrlWithScore> comp = new UrlScoreComparator();
 
   private Text url;

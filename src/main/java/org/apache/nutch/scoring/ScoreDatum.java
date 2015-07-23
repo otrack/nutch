@@ -33,16 +33,18 @@ public class ScoreDatum implements Writable {
   private float score;
   private String url;
   private String anchor;
+  private long fetchTime;
   private int distance;
   private Map<String, byte[]> metaData = new HashMap<>();
   
   public ScoreDatum() { }
   
-  public ScoreDatum(float score, String url, String anchor, int depth) {
+  public ScoreDatum(float score, String url, String anchor, long fetchTime, int distance) {
     this.score = score;
     this.url = url;
     this.anchor = anchor;
-    this.distance = depth;
+    this.fetchTime = fetchTime;
+    this.distance = distance;
   }
 
   @Override
@@ -50,6 +52,7 @@ public class ScoreDatum implements Writable {
     score = in.readFloat();
     url = Text.readString(in);
     anchor = Text.readString(in);
+    fetchTime = in.readLong();
     distance = WritableUtils.readVInt(in);
     metaData.clear();
     
@@ -66,6 +69,7 @@ public class ScoreDatum implements Writable {
     out.writeFloat(score);
     Text.writeString(out, url);
     Text.writeString(out, anchor);
+    out.writeLong(fetchTime);
     WritableUtils.writeVInt(out, distance);
     
     WritableUtils.writeVInt(out, metaData.size());
@@ -111,10 +115,14 @@ public class ScoreDatum implements Writable {
     return distance;
   }
 
+  public long getFetchTime() { return fetchTime; }
+
+  public void setFetchTime(long fetchTime) { this.fetchTime = fetchTime; }
+
   @Override
   public String toString() {
     return "ScoreDatum [score=" + score + ", url=" + url + ", anchor=" + anchor
-        + ", distance="+distance + ", metaData=" + metaData + "]";
+        + ", fetchTime"+ fetchTime + ", distance="+distance + ", metaData=" + metaData + "]";
   }
   
   

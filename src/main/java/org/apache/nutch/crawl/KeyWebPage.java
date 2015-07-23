@@ -18,23 +18,22 @@ package org.apache.nutch.crawl;
 
 import org.apache.nutch.storage.WebPage;
 
-public class URLWebPage {
+public class KeyWebPage {
 
-  private String url;
-
+  private String key;
   private WebPage datum;
 
-  public URLWebPage(String url, WebPage datum) {
-    this.url = url;
+  public KeyWebPage(String key, WebPage datum) {
+    this.key = key;
     this.datum = datum;
   }
 
-  public String getUrl() {
-    return url;
+  public String getKey() {
+    return key;
   }
 
-  public void setUrl(String url) {
-    this.url = url;
+  public void setKey(String key) {
+    this.key = key;
   }
 
   public WebPage getDatum() {

@@ -160,7 +160,7 @@ public class ParseUtil extends Configured {
    * @param page
    */
   public void process(String key, WebPage page) {
-    String url = TableUtil.unreverseUrl(key);
+    String url = page.getUrl();
     byte status = page.getStatus().byteValue();
     if (status != CrawlStatus.STATUS_FETCHED) {
       if (LOG.isDebugEnabled()) {

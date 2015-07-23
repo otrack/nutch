@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,14 +20,11 @@ import org.apache.gora.filter.MapFieldValueFilter;
 import org.apache.gora.mapreduce.GoraMapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.nutch.crawl.GeneratorJob;
 import org.apache.nutch.crawl.URLPartitioner.FetchEntryPartitioner;
 import org.apache.nutch.metadata.Nutch;
-import org.apache.nutch.parse.ParserJob;
-import org.apache.nutch.protocol.ProtocolFactory;
 import org.apache.nutch.storage.Mark;
 import org.apache.nutch.storage.StorageUtils;
 import org.apache.nutch.storage.WebPage;
@@ -37,8 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 
@@ -62,14 +57,6 @@ public class FetcherJob extends NutchTool {
   public static final String PARSE_KEY = "fetcher.parse";
   public static final String THREADS_KEY = "fetcher.threads.fetch";
 
-  private static final Collection<WebPage.Field> FIELDS = new HashSet<WebPage.Field>();
-
-  static {
-    FIELDS.add(WebPage.Field.MARKERS);
-    FIELDS.add(WebPage.Field.REPR_URL);
-    FIELDS.add(WebPage.Field.FETCH_TIME);
-  }
-
   /**
    * <p>
    * Mapper class for Fetcher.
@@ -88,7 +75,7 @@ public class FetcherJob extends NutchTool {
    * </p>
    */
   public static class FetcherMapper
-  extends GoraMapper<String, WebPage, IntWritable, FetchEntry> {
+    extends GoraMapper<String, WebPage, IntWritable, FetchEntry> {
 
     private boolean shouldContinue;
 
@@ -105,23 +92,27 @@ public class FetcherJob extends NutchTool {
 
     @Override
     protected void map(String key, WebPage page, Context context)
-        throws IOException, InterruptedException {
+      throws IOException, InterruptedException {
+
+      String url = page.getUrl();
+
       if (Mark.GENERATE_MARK.checkMark(page) == null) {
         if (LOG.isDebugEnabled()) {
-          LOG.debug("Skipping " + TableUtil.unreverseUrl(key)
-              + "; not generated yet");
+          LOG.debug("Skipping " + url + "; not generated yet");
         }
         return;
       }
-      if (shouldContinue && Mark.FETCH_MARK.checkMark(page) != null) {
+
+      if (shouldContinue && Mark.FETCH_MARK.checkMark(page) != null ) {
         if (LOG.isDebugEnabled()) {
-          LOG.debug("Skipping " + TableUtil.unreverseUrl(key) + "; already fetched");
+          LOG.debug("Skipping " + url + "; already fetched");
         }
         return;
       }
+
       context.write(
         new IntWritable(random.nextInt(65536)),
-        new FetchEntry(context.getConfiguration(),key, page));
+        new FetchEntry(context.getConfiguration(),url, page));
     }
   }
 
@@ -135,18 +126,6 @@ public class FetcherJob extends NutchTool {
     setConf(conf);
   }
 
-  public Collection<WebPage.Field> getFields(Job job) {
-    Collection<WebPage.Field> fields = new HashSet<WebPage.Field>(FIELDS);
-    if (job.getConfiguration().getBoolean(PARSE_KEY, false)) {
-      ParserJob parserJob = new ParserJob();
-      fields.addAll(parserJob.getFields(job));
-    }
-    ProtocolFactory protocolFactory = new ProtocolFactory(job.getConfiguration());
-    fields.addAll(protocolFactory.getFields());
-
-    return fields;
-  }
-
   @Override
   public Map<String,Object> run(Map<String,Object> args) throws Exception {
     checkConfiguration();
@@ -154,7 +133,7 @@ public class FetcherJob extends NutchTool {
     Integer threads = (Integer)args.get(Nutch.ARG_THREADS);
     Boolean shouldResume = (Boolean)args.get(Nutch.ARG_RESUME);
     Integer numTasks = (Integer)args.get(Nutch.ARG_NUMTASKS);
- 
+
     if (threads != null && threads > 0) {
       getConf().setInt(THREADS_KEY, threads);
     }
@@ -165,7 +144,7 @@ public class FetcherJob extends NutchTool {
     if (shouldResume != null) {
       getConf().setBoolean(RESUME_KEY, shouldResume);
     }
-    
+
     LOG.info("FetcherJob: threads: " + getConf().getInt(THREADS_KEY, 10));
     LOG.info("FetcherJob: parsing: " + getConf().getBoolean(PARSE_KEY, false));
     LOG.info("FetcherJob: resuming: " + getConf().getBoolean(RESUME_KEY, false));
@@ -182,10 +161,10 @@ public class FetcherJob extends NutchTool {
     LOG.info("FetcherJob: timelimit set for : " + getConf().getLong("fetcher.timelimit", -1));
     numJobs = 1;
     currentJob = new NutchJob(getConf(), "fetch");
-    
+
     // for politeness, don't permit parallel execution of a single task
     currentJob.setReduceSpeculativeExecution(false);
-    
+
     if (numTasks == null || numTasks < 1) {
       currentJob.setNumReduceTasks(
         currentJob.getConfiguration().getInt(
@@ -196,10 +175,9 @@ public class FetcherJob extends NutchTool {
     }
     LOG.info("FetcherJob: tasks: " +numTasks);
 
-    Collection<WebPage.Field> fields = getFields(currentJob);
     MapFieldValueFilter<String, WebPage> batchIdFilter = getBatchIdFilter(batchId, Mark.GENERATE_MARK);
     StorageUtils.initMapperJob(
-      currentJob, fields, IntWritable.class,
+      currentJob, null, IntWritable.class,
       FetchEntry.class, FetcherMapper.class, FetchEntryPartitioner.class,
       batchIdFilter, true);
     StorageUtils.initReducerJob(currentJob, FetcherReducer.class);
@@ -210,7 +188,7 @@ public class FetcherJob extends NutchTool {
     return results;
   }
 
-    /**
+  /**
    * Run fetcher.
    * @param batchId batchId (obtained from Generator) or null to fetch all generated fetchlists
    * @param threads number of threads per map task
@@ -221,8 +199,8 @@ public class FetcherJob extends NutchTool {
    * @throws Exception
    */
   public int fetch(String batchId, int threads, boolean shouldResume, int numTasks)
-      throws Exception {
-    
+    throws Exception {
+
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     long start = System.currentTimeMillis();
     LOG.debug("FetcherJob: starting at " + sdf.format(start));
@@ -234,14 +212,14 @@ public class FetcherJob extends NutchTool {
     }
 
     run(ToolUtil.toArgMap(
-        Nutch.ARG_BATCH, batchId,
-        Nutch.ARG_THREADS, threads,
-        Nutch.ARG_RESUME, shouldResume,
-        Nutch.ARG_NUMTASKS, numTasks));
-    
+      Nutch.ARG_BATCH, batchId,
+      Nutch.ARG_THREADS, threads,
+      Nutch.ARG_RESUME, shouldResume,
+      Nutch.ARG_NUMTASKS, numTasks));
+
     long finish = System.currentTimeMillis();
     LOG.info("FetcherJob: finished at " + sdf.format(finish) + ", time elapsed: " + TimingUtil.elapsedTime(start, finish));
-    
+
     return 0;
   }
 
@@ -250,7 +228,7 @@ public class FetcherJob extends NutchTool {
     String agentName = getConf().get("http.agent.name");
     if (agentName == null || agentName.trim().length() == 0) {
       String message = "Fetcher: No agents listed in 'http.agent.name'"
-          + " property.";
+        + " property.";
       if (LOG.isErrorEnabled()) {
         LOG.error(message);
       }

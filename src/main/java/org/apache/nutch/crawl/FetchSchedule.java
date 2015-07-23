@@ -117,7 +117,7 @@ public interface FetchSchedule extends Configurable {
    * check that fetchTime is not too remote (more than <code>maxInterval</code),
    * in which case it lowers the interval and returns true.
    * @param url URL of the page
-   * @param row url's row
+   * @param page url's row
    * @param curTime reference time (usually set to the time when the
    * fetchlist generation process was started).
    * @return true, if the page should be considered for inclusion in the current
@@ -134,7 +134,7 @@ public interface FetchSchedule extends Configurable {
    * the fetchTime to now. If false, force refetch whenever the next fetch
    * time is set.
    */
-  public void forceRefetch(String url, WebPage row, boolean asap);
+  public void forceRefetch(String url, WebPage page, boolean asap);
 
   public Collection<WebPage.Field> getFields();
 }

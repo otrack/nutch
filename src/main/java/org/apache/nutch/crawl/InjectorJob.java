@@ -149,27 +149,26 @@ public class InjectorJob extends NutchTool {
       if (url == null) {
         context.getCounter("injector", "urls_filtered").increment(1);
         return;
-      } else {                                         // if it passes
-      String reversedUrl = TableUtil.reverseUrl(url);  // collect it
-      WebPage row = builder.build();
-      row.setFetchTime(curTime);
-      row.setFetchInterval(customInterval);
+      } else {                                         // if it passes collect it
+      WebPage page = builder.build();
+      page.setFetchTime(curTime);
+      page.setFetchInterval(customInterval);
 
       // now add the metadata
       Iterator<String> keysIter = metadata.keySet().iterator();
       while (keysIter.hasNext()) {
         String keymd = keysIter.next();
         String valuemd = metadata.get(keymd);
-        row.getMetadata().put(new String(keymd), ByteBuffer.wrap(valuemd.getBytes()));
+        page.getMetadata().put(new String(keymd), ByteBuffer.wrap(valuemd.getBytes()));
       }
 
       if (customScore != -1)
-        row.setScore(customScore);
+        page.setScore(customScore);
       else
-        row.setScore(scoreInjected);
+        page.setScore(scoreInjected);
 
       try {
-        scfilters.injectedScore(url, row);
+        scfilters.injectedScore(url, page);
       } catch (ScoringFilterException e) {
         if (LOG.isWarnEnabled()) {
           LOG.warn("Cannot filter injected score for url " + url
@@ -177,11 +176,12 @@ public class InjectorJob extends NutchTool {
         }
       }
       context.getCounter("injector", "urls_injected").increment(1);
-      row.getMarkers().put(DbUpdaterJob.DISTANCE, String.valueOf(0));
-      row.setKey(reversedUrl);
-      Mark.INJECT_MARK.putMark(row, YES_STRING);
-      LOG.debug("InjectedUrl: "+url);
-      context.write(reversedUrl,row);
+      page.getMarkers().put(DbUpdaterJob.DISTANCE, String.valueOf(0));
+      page.setUrl(url);
+      page.setKey(TableUtil.computeKey(page));
+      Mark.INJECT_MARK.putMark(page, YES_STRING);
+      LOG.debug("InjectedUrl: " + url);
+      context.write(page.getKey(), page);
     }
     }
   }
