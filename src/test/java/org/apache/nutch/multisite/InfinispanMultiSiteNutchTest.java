@@ -15,6 +15,7 @@ import org.apache.nutch.util.NutchConfiguration;
 import org.apache.nutch.util.ServerTestUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mortbay.jetty.Server;
 import org.slf4j.Logger;
@@ -327,13 +328,11 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
 
     // verify content
     List<KeyWebPage> pages = readPageDB(null);
-    assertEquals(4,pages.size());
+    assertEquals(4, pages.size());
     for (KeyWebPage keyWebPage : pages) {
       if (keyWebPage.getKey().contains("index"))
         assertEquals(2, keyWebPage.getDatum().getInlinks().size());
-      else if (keyWebPage.getKey().contains("page")) // pagea and pageb
-        assertEquals(1, keyWebPage.getDatum().getInlinks().size());
-      else // index
+      else if (keyWebPage.getKey().contains("page")) // pagea, pageb, dup_of_pagea
         assertEquals(1, keyWebPage.getDatum().getInlinks().size());
     }
 
@@ -399,6 +398,7 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
   }
 
   @Test
+  @Ignore
   public void realCrawl() throws  Exception {
     final int DEPTH = 3;
     final int WIDTH = 10;
