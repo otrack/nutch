@@ -54,6 +54,7 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
   private Map<String, Integer> hostCountMap = new HashMap<String, Integer>();
   private Set<String> generated = new HashSet<>();
   private String batchId;
+  private FetchSchedule schedule;
 
   @Override
   protected void reduce(SelectorEntry entry, Iterable<WebPage> values,
@@ -95,9 +96,8 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
         hostCountMap.put(hostordomain, hostCount + 1);
       }
 
-      // if already fetched, create a new version by correcting the key with the new fetch time
-      if (Mark.FETCH_MARK.checkMark(page) != null) {
-        page.getMarkers().clear();
+      // if already fetched, create a new version by changing the key
+      if (Mark.FETCH_MARK.containsMark(page)) {
         page.setKey(TableUtil.computeKey(page));
       }
 
@@ -132,7 +132,7 @@ extends GoraReducer<SelectorEntry, WebPage, String, WebPage> {
     if (countMode.equals(GENERATOR_COUNT_VALUE_DOMAIN)) {
       byDomain = true;
     }
-
+    schedule = FetchScheduleFactory.getFetchSchedule(conf);
   }
 
 }

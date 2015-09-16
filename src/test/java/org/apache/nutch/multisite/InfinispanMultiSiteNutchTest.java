@@ -216,6 +216,11 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
     final int DEPTH = 3;
     final int WIDTH = 1;
 
+    // set minimal refetch interval
+    for (NutchSite site : sites) {
+      site.getConf().set("db.fetch.interval.default", "0");
+    }
+
     Configuration conf = NutchConfiguration.create();
     File tmpDir = Files.createTempDir();
     List<String> pages = createPages(NPAGES, DEGREE,
@@ -251,6 +256,7 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
           System.out.println(keyWebPage.getDatum().getKey());
         }
       }
+      assertEquals(DEPTH*WIDTH,resultPages.size());
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -260,6 +266,11 @@ public class InfinispanMultiSiteNutchTest extends AbstractMultiNutchSiteTest {
       FileUtils.deleteDirectory(tmpDir);
       long deleteTime = System.currentTimeMillis() - t0;
       LOG.info("Time to delete tmpDir: "+  deleteTime+"ms");
+    }
+
+    // set refetch interval to default value
+    for (NutchSite site : sites) {
+      site.getConf().set("db.fetch.interval.default", "2592000");
     }
 
   }

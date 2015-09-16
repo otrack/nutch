@@ -105,10 +105,10 @@ public class DbUpdateReducer extends
 
       maxNewPages++;
       page = WebPage.newBuilder().build();
+      page.setKey(TableUtil.computeKey(page));
       page.setUrl(url);
       schedule.initializeSchedule(url, page);
       page.setStatus((int) CrawlStatus.STATUS_UNFETCHED);
-      page.setKey(TableUtil.computeKey(page));
       try {
         scoringFilters.initialScore(url, page);
       } catch (ScoringFilterException e) {
