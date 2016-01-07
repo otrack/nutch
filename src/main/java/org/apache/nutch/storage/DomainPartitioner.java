@@ -2,8 +2,8 @@ package org.apache.nutch.storage;
 
 import org.apache.nutch.util.URLUtil;
 import org.infinispan.ensemble.cache.EnsembleCache;
-import org.infinispan.ensemble.cache.distributed.ClusteringBasedPartitioner;
-import org.infinispan.ensemble.cache.distributed.Coordinates;
+import org.infinispan.ensemble.cache.distributed.partitioning.ClusteringBasedPartitioner;
+import org.infinispan.ensemble.cache.distributed.partitioning.Coordinates;
 
 import java.net.InetAddress;
 import java.net.URL;
